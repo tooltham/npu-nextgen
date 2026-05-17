@@ -31,18 +31,26 @@ const FAQSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4 max-w-3xl">
-        <h2 className="text-3xl font-bold text-center mb-12 text-[#1B5E20] font-noto-thai">
-          คำถามที่พบบ่อย (FAQ)
+    <section className="py-32 bg-white">
+      <div className="container mx-auto px-6 max-w-3xl">
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-20 text-[#1d1d1f] tracking-tight">
+          คำถามที่พบบ่อย
         </h2>
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion
+          type="single"
+          collapsible
+          className="w-full border-t border-black/5"
+        >
           {faqs.map((faq, index) => (
-            <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger className="text-left font-semibold text-lg hover:text-[#1B5E20] font-noto-thai">
+            <AccordionItem
+              key={index}
+              value={`item-${index}`}
+              className="border-b border-black/5 py-4"
+            >
+              <AccordionTrigger className="text-left font-bold text-xl hover:no-underline text-[#1d1d1f] py-4 transition-all hover:opacity-70">
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent className="text-gray-600 text-base leading-relaxed font-noto-thai">
+              <AccordionContent className="text-black/60 text-lg leading-relaxed pt-2 pb-6 font-medium">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>

@@ -1,32 +1,47 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function HeroSection() {
   return (
-    <section className="relative bg-white py-20 lg:py-32 overflow-hidden">
-      <div className="container mx-auto px-6 text-center relative z-10">
-        <h1 className="text-4xl lg:text-6xl font-bold text-[#1B5E20] leading-tight mb-6 font-noto-thai">
-          นักจัดการฟาร์มเกษตรแบบผสมผสานอัจฉริยะ
+    <section className="relative flex min-h-[90vh] flex-col items-center justify-center overflow-hidden px-6 text-center">
+      {/* Background Cinematic Glow */}
+      <div className="absolute -top-24 left-1/2 -z-10 h-[600px] w-[1000px] -translate-x-1/2 bg-green-50/50 blur-[150px] rounded-full" />
+
+      <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
+        <h1 className="max-w-5xl text-5xl font-bold tracking-tighter md:text-7xl lg:text-9xl leading-[1.05]">
+          <span className="block bg-gradient-to-b from-[#1d1d1f] to-[#1d1d1f]/60 bg-clip-text text-transparent">
+            นักจัดการฟาร์ม
+          </span>
+          <span className="mt-2 block bg-gradient-to-b from-[#1B5E20] to-[#2e7d32] bg-clip-text text-transparent">
+            เกษตรอัจฉริยะ
+          </span>
         </h1>
-        <p className="text-xl lg:text-2xl text-slate-600 mb-10 max-w-3xl mx-auto font-noto-thai">
-          ยกระดับเกษตรกรรมด้วย AI และ IoT
-          เพื่อการจัดการฟาร์มอย่างยั่งยืนและมีประสิทธิภาพ
+
+        <p className="mx-auto mt-10 max-w-2xl text-lg font-medium text-black/60 md:text-2xl leading-relaxed">
+          ยกระดับเกษตรกรรมด้วย AI และ IoT <br className="hidden md:block" />
+          ปั้นนวัตกรเกษตรยุคใหม่ สู่การจัดการฟาร์มที่ยั่งยืน
         </p>
-        <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Button className="bg-[#1B5E20] hover:bg-[#154d1a] text-white px-10 py-6 text-lg rounded-xl font-noto-thai shadow-lg">
-            สมัครเข้าร่วมหลักสูตร
-          </Button>
-          <Button
-            variant="outline"
-            className="border-[#1B5E20] text-[#1B5E20] px-10 py-6 text-lg rounded-xl font-noto-thai"
+
+        <div className="mt-14 flex flex-col items-center gap-6 sm:flex-row sm:justify-center">
+          <Link href="/apply">
+            <Button className="h-16 rounded-full bg-[#1B5E20] px-12 text-lg font-semibold text-white transition-all hover:bg-[#154a19] hover:scale-105 shadow-xl shadow-green-900/10">
+              เริ่มใบสมัครของคุณ
+            </Button>
+          </Link>
+          <Link
+            href="#courses"
+            className="group flex items-center gap-2 text-xl font-medium text-[#1B5E20] hover:underline underline-offset-8 decoration-2"
           >
-            ดูรายละเอียดหลักสูตร
-          </Button>
+            เรียนรู้เพิ่มเติม
+            <span className="transition-transform group-hover:translate-x-1">
+              →
+            </span>
+          </Link>
         </div>
       </div>
-      {/* Abstract Background Element */}
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-[#F9A825]/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-96 h-96 bg-[#1B5E20]/5 rounded-full blur-3xl"></div>
+
+      {/* Decorative Floor Gradient */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
     </section>
   );
 }
