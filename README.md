@@ -46,30 +46,30 @@ NPU NextGen is designed to bridge the gap between traditional farming and modern
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                       Browser / Mobile                        │
-│   Landing Page  │  Application Form  │  Admin Dashboard       │
-└───────┬──────────────────┬───────────────────────┬────────────┘
+│                       Browser / Mobile                       │
+│   Landing Page  │  Application Form  │  Admin Dashboard      │
+└───────┬──────────────────┬───────────────────────┬───────────┘
         │                  │                       │ HTTPS (HSTS)
 ┌───────▼──────────────────▼───────────────────────▼────────────┐
-│                      Next.js App (Vercel/Docker)               │
+│                      Next.js App (Vercel/Docker)              │
 │  ┌─────────────────────────┐  ┌──────────────────────────┐    │
 │  │    App Router (Pages)   │  │   API Routes (/api/*)    │    │
-│  │  /          ← Landing   │  │   POST /api/applications  │    │
-│  │  /apply     ← Form      │  │   GET  /api/admin/apps    │    │
-│  │  /apply/success         │  │   GET  /api/admin/export  │    │
-│  │  /admin     ← Dashboard │  │   POST /api/auth/[...]    │    │
+│  │  /          ← Landing   │  │   POST /api/applications │    │
+│  │  /apply     ← Form      │  │   GET  /api/admin/apps   │    │
+│  │  /apply/success         │  │   GET  /api/admin/export │    │
+│  │  /admin     ← Dashboard │  │   POST /api/auth/[...]   │    │
 │  └─────────────────────────┘  └──────────┬───────────────┘    │
-└─────────────────────────────────────────┼──────────────────────┘
+└─────────────────────────────────────────┼─────────────────────┘
                                           │ Prisma Client
 ┌─────────────────────────────────────────▼──────────────────────┐
-│                    PostgreSQL (Supabase)                        │
+│                    PostgreSQL (Supabase)                       │
 │   applications  │  consents  │  admin_users  │  export_logs    │
-└─────────────────────────────────────────────────────────────────┘
+└────────────────────────────────────────────────────────────────┘
                                           │
-              ┌───────────────────────────┴────────────────────┐
-              │                Resend Email                     │
-              │  ① Applicant Confirmation ② Admin Notification │
-              └─────────────────────────────────────────────────┘
+              ┌───────────────────────────┴──────────────────────┐
+              │                Resend Email                      │
+              │  ① Applicant Confirmation ② Admin Notification  │
+              └──────────────────────────────────────────────────┘
 ```
 
 ---
@@ -200,7 +200,7 @@ Connect your GitHub repository to Vercel. Ensure all environment variables from 
 | Name                    | Role                          |
 | ----------------------- | ----------------------------- |
 | **Dr. Apirak Tooltham** | Project Lead / Architect      |
-| **Mina (AI)**           | Lead Orchestrator & Developer |
+| **Mina**                | Lead Orchestrator & Developer |
 
 ---
 
