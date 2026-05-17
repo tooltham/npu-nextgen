@@ -1,0 +1,40 @@
+{
+  "course": {
+    "nameTh": "นักจัดการฟาร์มเกษตรแบบผสมผสานอัจฉริยะ",
+    "nameEn": "Smart Integrated Farm Manager",
+    "organizer": "Nakhon Phanom University",
+    "duration": {
+      "weeks": "16-20",
+      "totalHours": 285,
+      "theory": 45,
+      "practical": 240
+    },
+    "modules": [
+      {
+        "id": 1,
+        "title": "พื้นฐาน AI และ Smart Farming",
+        "description": "AI-Powered Analysis & Planning"
+      },
+      {
+        "id": 2,
+        "title": "ระบบฟาร์มอัจฉริยะด้วย IoT",
+        "description": "IoT Implementation & Control"
+      },
+      {
+        "id": 3,
+        "title": "การตลาดดิจิทัลและ AI",
+        "description": "AI-Commerce Branding & Sales"
+      }
+    ],
+    "eligibility": {
+      "citizenship": "Thai",
+      "experience": "Mixed farming (crops/livestock)",
+      "education": "High School/Vocational or higher"
+    }
+  },
+  "formConfig": {
+    "steps": 4,
+    "pdpaVersion": "v1.0",
+    "encryption": "AES-256-GCM"
+  }
+}

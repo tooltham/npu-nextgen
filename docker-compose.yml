@@ -1,0 +1,24 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - ADMIN_NOTIFY_EMAIL=${ADMIN_NOTIFY_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - UPSTASH_REDIS_REST_URL=${UPSTASH_REDIS_REST_URL}
+      - UPSTASH_REDIS_REST_TOKEN=${UPSTASH_REDIS_REST_TOKEN}
+    networks:
+      - production-network
+    restart: always
+
+networks:
+  production-network:
+    external: true

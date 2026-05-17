@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Application {
+  id                    String    @id @default(cuid())
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  // Step 2: Personal Information
+  email                 String    @unique
+  titleTh               String    // นาย / นาง / นางสาว / อื่นๆ
+  firstNameTh           String
+  lastNameTh            String
+  firstNameEn           String
+  lastNameEn            String
+  nationalId            String    // encrypted at rest (AES-256-GCM)
+  phone                 String
+  lineId                String?
+
+  // Step 3: Background & Qualifications
+  education             Education
+  targetGroup           String[]  // multi-select
+  targetGroupOther      String?
+  hasAgriExperience     Boolean
+  agriExperienceYears   Int?
+  farmName              String?
+  farmLocation          String?
+
+  // Step 4: Readiness & Expectations
+  digitalSkillLevel     DigitalSkill
+  expectations          String[]  // multi-select
+  expectationsOther     String?
+  canCommitTime         Boolean
+
+  // Metadata
+  status                AppStatus @default(PENDING)
+  ipAddress             String
+  userAgent             String?
+
+  consent               Consent?
+}
+
+model Consent {
+  id              String      @id @default(cuid())
+  applicationId   String      @unique
+  application     Application @relation(fields: [applicationId], references: [id])
+  granted         Boolean
+  consentText     String      // snapshot of PDPA text at time of consent
+  consentVersion  String      // "v1.0"
+  grantedAt       DateTime    @default(now())
+  ipAddress       String
+}
+
+model AdminUser {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  createdAt     DateTime  @default(now())
+}
+
+model ExportLog {
+  id          String    @id @default(cuid())
+  adminEmail  String
+  format      String    // "csv" | "pdf"
+  rowCount    Int
+  exportedAt  DateTime  @default(now())
+  ipAddress   String
+}
+
+enum Education {
+  HIGH_SCHOOL_OR_VOC
+  DIPLOMA
+  BACHELOR
+  ABOVE_BACHELOR
+}
+
+enum DigitalSkill {
+  EXCELLENT
+  GOOD
+  AVERAGE
+  LOW
+  NONE
+}
+
+enum AppStatus {
+  PENDING
+  REVIEWED
+  ACCEPTED
+  REJECTED
+}
