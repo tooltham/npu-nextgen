@@ -68,7 +68,7 @@ NPU NextGen is designed to bridge the gap between traditional farming and modern
                                           │
               ┌───────────────────────────┴──────────────────────┐
               │                Resend Email                      │
-              │  ① Applicant Confirmation ② Admin Notification  │
+              │ 1. Applicant Confirmation 2. Admin Notification  │
               └──────────────────────────────────────────────────┘
 ```
 
@@ -200,7 +200,7 @@ Connect your GitHub repository to Vercel. Ensure all environment variables from 
 | Name                    | Role                          |
 | ----------------------- | ----------------------------- |
 | **Dr. Apirak Tooltham** | Project Lead / Architect      |
-| **Mina**                | Lead Orchestrator & Developer |
+| **Mina-Chan**           | Lead Orchestrator & Developer |
 
 ---
 
