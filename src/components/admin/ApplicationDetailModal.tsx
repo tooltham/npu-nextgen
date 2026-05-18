@@ -141,7 +141,11 @@ export function ApplicationDetailModal({
         body: JSON.stringify(editedData),
       });
       if (res.ok) {
-        setData(editedData);
+        const json = await res.json();
+        if (json && json.data) {
+          setData(json.data);
+          setEditedData(json.data);
+        }
         setIsEditing(false);
         onStatusUpdated();
       } else {
