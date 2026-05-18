@@ -111,7 +111,7 @@ export async function updateApplicationData(
         applicationId,
         adminEmail,
         action: "DATA_UPDATE",
-        details: `แอดมินแก้ไขข้อมูลฟิลด์: ${Object.keys(editableData).join(", ")}`,
+        details: "แก้ไขข้อมูลใบสมัคร",
       },
     });
 
