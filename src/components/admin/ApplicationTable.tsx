@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StatusBadge, ApplicationStatus } from "./StatusBadge";
-import { Search, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Loader2, Eye } from "lucide-react";
 import { ApplicationDetailModal } from "./ApplicationDetailModal";
 
 type AppRow = {
@@ -126,14 +126,15 @@ export function ApplicationTable() {
                   </td>
                   <td className="px-5 py-4 text-right">
                     <Button
-                      variant="ghost"
                       size="sm"
-                      className="text-[#1B5E20] hover:bg-green-50"
+                      variant="outline"
+                      className="border-[#1B5E20] text-[#1B5E20] hover:bg-[#1B5E20] hover:text-white transition-all duration-300 shadow-sm flex items-center gap-1.5 font-noto-thai"
                       onClick={() => {
                         setSelectedAppId(app.id);
                         setIsModalOpen(true);
                       }}
                     >
+                      <Eye className="w-4 h-4" />
                       ดูข้อมูล
                     </Button>
                   </td>
