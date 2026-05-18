@@ -72,3 +72,49 @@ export async function changeApplicationStatus(
 
   return updatedApp;
 }
+
+export async function updateApplicationData(
+  applicationId: string,
+  data: any,
+  adminEmail: string,
+) {
+  const {
+    id,
+    nationalId,
+    status,
+    logs,
+    createdAt,
+    updatedAt,
+    isAcceptanceEmailSent,
+    ...editableData
+  } = data;
+
+  return await prisma.$transaction(async (tx) => {
+    // 1. Fetch current application
+    const application = await tx.application.findUnique({
+      where: { id: applicationId },
+    });
+
+    if (!application) {
+      throw new Error("APPLICATION_NOT_FOUND");
+    }
+
+    // 2. Update Application
+    const updatedApp = await tx.application.update({
+      where: { id: applicationId },
+      data: editableData,
+    });
+
+    // 3. Create Log Entry
+    await tx.applicationLog.create({
+      data: {
+        applicationId,
+        adminEmail,
+        action: "DATA_UPDATE",
+        details: `แอดมินแก้ไขข้อมูลฟิลด์: ${Object.keys(editableData).join(", ")}`,
+      },
+    });
+
+    return updatedApp;
+  });
+}

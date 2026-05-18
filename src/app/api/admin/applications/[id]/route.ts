@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@/app/api/auth/[...nextauth]/route";
-import { changeApplicationStatus } from "@/services/applicationService";
+import {
+  changeApplicationStatus,
+  updateApplicationData,
+} from "@/services/applicationService";
 import { AppStatus } from "@prisma/client";
 
 export async function GET(
@@ -67,6 +70,37 @@ export async function PATCH(
     return NextResponse.json(
       { success: false, error: error.message || "Failed to update status" },
       { status: 400 },
+    );
+  }
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const session = await auth();
+
+  if (!session || (session.user as any).role !== "ADMIN") {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  const { id } = await params;
+  const body = await request.json();
+
+  try {
+    const adminEmail = session.user?.email || "unknown@admin.com";
+
+    const updated = await updateApplicationData(id, body, adminEmail);
+
+    return NextResponse.json({ success: true, data: updated });
+  } catch (error: any) {
+    console.error("PUT application error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: error.message || "Failed to update application data",
+      },
+      { status: 500 },
     );
   }
 }

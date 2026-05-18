@@ -2,6 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Loader2,
   X,
@@ -16,6 +24,8 @@ import {
   Mail,
   GraduationCap,
   Cpu,
+  Edit2,
+  CheckCircle,
 } from "lucide-react";
 import { StatusBadge, ApplicationStatus } from "./StatusBadge";
 
@@ -37,6 +47,9 @@ export function ApplicationDetailModal({
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState(false);
   const [activeTab, setActiveTab] = useState<"info" | "logs">("info");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedData, setEditedData] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
 
   // Note Submission state
   const [noteText, setNoteText] = useState("");
@@ -97,6 +110,7 @@ export function ApplicationDetailModal({
         .then((json) => {
           if (json && json.data) {
             setData(json.data);
+            setEditedData(json.data);
           } else {
             setError("ไม่พบข้อมูลผู้สมัคร");
           }
@@ -117,6 +131,30 @@ export function ApplicationDetailModal({
       fetchData();
     }
   }, [isOpen, applicationId]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/admin/applications/${applicationId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editedData),
+      });
+      if (res.ok) {
+        setData(editedData);
+        setIsEditing(false);
+        onStatusUpdated();
+      } else {
+        const err = await res.json();
+        alert(err.error || "บันทึกข้อมูลไม่สำเร็จ");
+      }
+    } catch (error) {
+      console.error("Save error:", error);
+      alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const handleUpdateStatus = async (status: ApplicationStatus) => {
     setUpdating(true);
@@ -218,12 +256,45 @@ export function ApplicationDetailModal({
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b shrink-0">
           <h2 className="text-xl font-bold text-gray-900">รายละเอียดใบสมัคร</h2>
-          <button
-            onClick={onClose}
-            className="rounded-full p-1.5 hover:bg-gray-100 transition-colors"
-          >
-            <X className="h-5 w-5 text-gray-500" />
-          </button>
+          <div className="flex items-center gap-2">
+            {!loading && !error && data && (
+              <Button
+                size="sm"
+                variant={isEditing ? "default" : "outline"}
+                className={
+                  isEditing ? "bg-[#1B5E20] hover:bg-[#154a19] text-white" : ""
+                }
+                onClick={() => {
+                  if (isEditing) {
+                    handleSave();
+                  } else {
+                    setIsEditing(true);
+                  }
+                }}
+                disabled={saving}
+              >
+                {saving ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : isEditing ? (
+                  <>
+                    <CheckCircle className="w-4 h-4 mr-1" />
+                    <span>บันทึก</span>
+                  </>
+                ) : (
+                  <>
+                    <Edit2 className="w-4 h-4 mr-1" />
+                    <span>แก้ไข</span>
+                  </>
+                )}
+              </Button>
+            )}
+            <button
+              onClick={onClose}
+              className="rounded-full p-1.5 hover:bg-gray-100 transition-colors"
+            >
+              <X className="h-5 w-5 text-gray-500" />
+            </button>
+          </div>
         </div>
 
         {loading ? (
@@ -274,85 +345,238 @@ export function ApplicationDetailModal({
                         <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
                           ชื่อ-นามสกุล (TH)
                         </p>
-                        <p className="font-medium text-gray-900">
-                          {data.titleTh}
-                          {data.firstNameTh} {data.lastNameTh}
-                        </p>
+                        {isEditing ? (
+                          <div className="grid grid-cols-3 gap-2">
+                            <Select
+                              value={editedData.titleTh}
+                              onValueChange={(val) =>
+                                setEditedData({ ...editedData, titleTh: val })
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="คำนำหน้า" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="นาย">นาย</SelectItem>
+                                <SelectItem value="นาง">นาง</SelectItem>
+                                <SelectItem value="นางสาว">นางสาว</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Input
+                              value={editedData.firstNameTh}
+                              onChange={(e) =>
+                                setEditedData({
+                                  ...editedData,
+                                  firstNameTh: e.target.value,
+                                })
+                              }
+                              placeholder="ชื่อจริง"
+                            />
+                            <Input
+                              value={editedData.lastNameTh}
+                              onChange={(e) =>
+                                setEditedData({
+                                  ...editedData,
+                                  lastNameTh: e.target.value,
+                                })
+                              }
+                              placeholder="นามสกุล"
+                            />
+                          </div>
+                        ) : (
+                          <p className="font-medium text-gray-900">
+                            {data.titleTh}
+                            {data.firstNameTh} {data.lastNameTh}
+                          </p>
+                        )}
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
                           ชื่อ-นามสกุล (EN)
                         </p>
-                        <p className="font-medium text-gray-900">
-                          {(() => {
-                            const prefixMap: Record<string, string> = {
-                              นาย: "Mr.",
-                              นาง: "Mrs.",
-                              นางสาว: "Ms.",
-                            };
-                            const prefix =
-                              prefixMap[data.titleTh as string] || "";
-                            const fullName = `${data.firstNameEn} ${data.lastNameEn}`;
-                            if (
-                              prefix &&
-                              !data.firstNameEn?.startsWith(prefix)
-                            ) {
-                              return `${prefix} ${fullName}`;
-                            }
-                            return fullName;
-                          })()}
-                        </p>
+                        {isEditing ? (
+                          <div className="grid grid-cols-2 gap-2">
+                            <Input
+                              value={editedData.firstNameEn}
+                              onChange={(e) =>
+                                setEditedData({
+                                  ...editedData,
+                                  firstNameEn: e.target.value,
+                                })
+                              }
+                              placeholder="First Name (EN)"
+                            />
+                            <Input
+                              value={editedData.lastNameEn}
+                              onChange={(e) =>
+                                setEditedData({
+                                  ...editedData,
+                                  lastNameEn: e.target.value,
+                                })
+                              }
+                              placeholder="Last Name (EN)"
+                            />
+                          </div>
+                        ) : (
+                          <p className="font-medium text-gray-900">
+                            {(() => {
+                              const prefixMap: Record<string, string> = {
+                                นาย: "Mr.",
+                                นาง: "Mrs.",
+                                นางสาว: "Ms.",
+                              };
+                              const prefix =
+                                prefixMap[data.titleTh as string] || "";
+                              const fullName = `${data.firstNameEn} ${data.lastNameEn}`;
+                              if (
+                                prefix &&
+                                !data.firstNameEn?.startsWith(prefix)
+                              ) {
+                                return `${prefix} ${fullName}`;
+                              }
+                              return fullName;
+                            })()}
+                          </p>
+                        )}
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
                           อีเมล
                         </p>
-                        <p className="font-medium text-gray-900">
-                          {data.email}
-                        </p>
+                        {isEditing ? (
+                          <Input
+                            value={editedData.email}
+                            onChange={(e) =>
+                              setEditedData({
+                                ...editedData,
+                                email: e.target.value,
+                              })
+                            }
+                          />
+                        ) : (
+                          <p className="font-medium text-gray-900">
+                            {data.email}
+                          </p>
+                        )}
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
                           เบอร์โทรศัพท์
                         </p>
-                        <p className="font-medium text-gray-900">
-                          {data.phone}
-                        </p>
+                        {isEditing ? (
+                          <Input
+                            value={editedData.phone}
+                            onChange={(e) =>
+                              setEditedData({
+                                ...editedData,
+                                phone: e.target.value,
+                              })
+                            }
+                          />
+                        ) : (
+                          <p className="font-medium text-gray-900">
+                            {data.phone}
+                          </p>
+                        )}
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
                           Line ID
                         </p>
-                        <p className="font-medium text-gray-900">
-                          {data.lineId || "-"}
-                        </p>
+                        {isEditing ? (
+                          <Input
+                            value={editedData.lineId || ""}
+                            onChange={(e) =>
+                              setEditedData({
+                                ...editedData,
+                                lineId: e.target.value,
+                              })
+                            }
+                          />
+                        ) : (
+                          <p className="font-medium text-gray-900">
+                            {data.lineId || "-"}
+                          </p>
+                        )}
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
                           การศึกษา
                         </p>
-                        <p className="font-medium text-gray-900">
-                          {educationMap[data.education] || data.education}
-                        </p>
+                        {isEditing ? (
+                          <Select
+                            value={editedData.education}
+                            onValueChange={(val) =>
+                              setEditedData({ ...editedData, education: val })
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="การศึกษา" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="HIGH_SCHOOL_OR_VOC">
+                                มัธยมศึกษาตอนปลาย / ปวช.
+                              </SelectItem>
+                              <SelectItem value="DIPLOMA">
+                                ปวส. / อนุปริญญา
+                              </SelectItem>
+                              <SelectItem value="BACHELOR">
+                                ปริญญาตรี
+                              </SelectItem>
+                              <SelectItem value="ABOVE_BACHELOR">
+                                สูงกว่าปริญญาตรี
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <p className="font-medium text-gray-900">
+                            {educationMap[data.education] || data.education}
+                          </p>
+                        )}
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
                           ทักษะดิจิทัล
                         </p>
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            data.digitalSkillLevel === "EXCELLENT"
-                              ? "bg-green-100 text-green-800"
-                              : data.digitalSkillLevel === "GOOD"
-                                ? "bg-blue-100 text-blue-800"
-                                : data.digitalSkillLevel === "AVERAGE"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : "bg-gray-100 text-gray-800"
-                          }`}
-                        >
-                          {digitalSkillMap[data.digitalSkillLevel] ||
-                            data.digitalSkillLevel}
-                        </span>
+                        {isEditing ? (
+                          <Select
+                            value={editedData.digitalSkillLevel}
+                            onValueChange={(val) =>
+                              setEditedData({
+                                ...editedData,
+                                digitalSkillLevel: val,
+                              })
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="ทักษะดิจิทัล" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="EXCELLENT">
+                                ยอดเยี่ยม
+                              </SelectItem>
+                              <SelectItem value="GOOD">ดี</SelectItem>
+                              <SelectItem value="AVERAGE">ปานกลาง</SelectItem>
+                              <SelectItem value="LOW">พื้นฐาน</SelectItem>
+                              <SelectItem value="NONE">ไม่มีพื้นฐาน</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              data.digitalSkillLevel === "EXCELLENT"
+                                ? "bg-green-100 text-green-800"
+                                : data.digitalSkillLevel === "GOOD"
+                                  ? "bg-blue-100 text-blue-800"
+                                  : data.digitalSkillLevel === "AVERAGE"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {digitalSkillMap[data.digitalSkillLevel] ||
+                              data.digitalSkillLevel}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -381,12 +605,30 @@ export function ApplicationDetailModal({
                       </div>
                       {data.targetGroupOther && (
                         <div className="mt-3 p-3 bg-gray-50 rounded-md border border-gray-100">
-                          <p className="text-sm text-gray-600">
-                            <span className="font-medium text-gray-700">
-                              ระบุอื่นๆ:
-                            </span>{" "}
-                            {data.targetGroupOther}
-                          </p>
+                          {isEditing ? (
+                            <div className="flex flex-col gap-1">
+                              <p className="text-xs text-gray-500 uppercase tracking-wider">
+                                ระบุอื่นๆ (แก้ไข):
+                              </p>
+                              <Input
+                                value={editedData.targetGroupOther || ""}
+                                onChange={(e) =>
+                                  setEditedData({
+                                    ...editedData,
+                                    targetGroupOther: e.target.value,
+                                  })
+                                }
+                                placeholder="ระบุอื่นๆ"
+                              />
+                            </div>
+                          ) : (
+                            <p className="text-sm text-gray-600">
+                              <span className="font-medium text-gray-700">
+                                ระบุอื่นๆ:
+                              </span>{" "}
+                              {data.targetGroupOther}
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>
@@ -417,17 +659,41 @@ export function ApplicationDetailModal({
                             <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
                               ชื่อฟาร์ม
                             </p>
-                            <p className="font-medium text-gray-900">
-                              {data.farmName || "-"}
-                            </p>
+                            {isEditing ? (
+                              <Input
+                                value={editedData.farmName || ""}
+                                onChange={(e) =>
+                                  setEditedData({
+                                    ...editedData,
+                                    farmName: e.target.value,
+                                  })
+                                }
+                              />
+                            ) : (
+                              <p className="font-medium text-gray-900">
+                                {data.farmName || "-"}
+                              </p>
+                            )}
                           </div>
                           <div>
                             <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
                               ที่ตั้งฟาร์ม
                             </p>
-                            <p className="font-medium text-gray-900">
-                              {data.farmLocation || "-"}
-                            </p>
+                            {isEditing ? (
+                              <Input
+                                value={editedData.farmLocation || ""}
+                                onChange={(e) =>
+                                  setEditedData({
+                                    ...editedData,
+                                    farmLocation: e.target.value,
+                                  })
+                                }
+                              />
+                            ) : (
+                              <p className="font-medium text-gray-900">
+                                {data.farmLocation || "-"}
+                              </p>
+                            )}
                           </div>
                         </>
                       )}
@@ -459,12 +725,30 @@ export function ApplicationDetailModal({
                         </div>
                         {data.expectationsOther && (
                           <div className="mt-3 p-3 bg-gray-50 rounded-md border border-gray-100">
-                            <p className="text-sm text-gray-600">
-                              <span className="font-medium text-gray-700">
-                                ระบุอื่นๆ:
-                              </span>{" "}
-                              {data.expectationsOther}
-                            </p>
+                            {isEditing ? (
+                              <div className="flex flex-col gap-1">
+                                <p className="text-xs text-gray-500 uppercase tracking-wider">
+                                  ระบุอื่นๆ (แก้ไข):
+                                </p>
+                                <Input
+                                  value={editedData.expectationsOther || ""}
+                                  onChange={(e) =>
+                                    setEditedData({
+                                      ...editedData,
+                                      expectationsOther: e.target.value,
+                                    })
+                                  }
+                                  placeholder="ระบุอื่นๆ"
+                                />
+                              </div>
+                            ) : (
+                              <p className="text-sm text-gray-600">
+                                <span className="font-medium text-gray-700">
+                                  ระบุอื่นๆ:
+                                </span>{" "}
+                                {data.expectationsOther}
+                              </p>
+                            )}
                           </div>
                         )}
                       </div>
