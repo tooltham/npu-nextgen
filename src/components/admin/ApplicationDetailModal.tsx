@@ -354,7 +354,9 @@ export function ApplicationDetailModal({
                               }
                             >
                               <SelectTrigger>
-                                <SelectValue placeholder="คำนำหน้า" />
+                                <SelectValue placeholder="คำนำหน้า">
+                                  {editedData.titleTh}
+                                </SelectValue>
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="นาย">นาย</SelectItem>
@@ -511,7 +513,10 @@ export function ApplicationDetailModal({
                             }
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="การศึกษา" />
+                              <SelectValue placeholder="การศึกษา">
+                                {educationMap[editedData.education] ||
+                                  editedData.education}
+                              </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="HIGH_SCHOOL_OR_VOC">
@@ -549,7 +554,11 @@ export function ApplicationDetailModal({
                             }
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="ทักษะดิจิทัล" />
+                              <SelectValue placeholder="ทักษะดิจิทัล">
+                                {digitalSkillMap[
+                                  editedData.digitalSkillLevel
+                                ] || editedData.digitalSkillLevel}
+                              </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="EXCELLENT">
