@@ -86,7 +86,7 @@ export function ApplicationTable() {
               <th className="px-5 py-3.5 font-medium">อีเมล / เบอร์โทร</th>
               <th className="px-5 py-3.5 font-medium">วันที่สมัคร</th>
               <th className="px-5 py-3.5 font-medium">สถานะ</th>
-              <th className="px-5 py-3.5 font-medium text-right">จัดการ</th>
+              <th className="px-5 py-3.5 font-medium">จัดการ</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 font-noto-thai">
@@ -124,7 +124,7 @@ export function ApplicationTable() {
                   <td className="px-5 py-4">
                     <StatusBadge status={app.status as ApplicationStatus} />
                   </td>
-                  <td className="px-5 py-4 text-right">
+                  <td className="px-5 py-4">
                     <Button
                       size="sm"
                       variant="outline"
