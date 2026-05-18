@@ -108,6 +108,17 @@ export async function updateApplicationData(
       throw new Error("APPLICATION_NOT_FOUND");
     }
 
+    // Check if any data actually changed
+    const hasChanged = Object.keys(editableData).some((key) => {
+      const oldVal = (application as any)[key] ?? "";
+      const newVal = (editableData as any)[key] ?? "";
+      return oldVal !== newVal;
+    });
+
+    if (!hasChanged) {
+      return application;
+    }
+
     // 1. Create Log Entry (Do this first so it's included in the fetch below)
     await tx.applicationLog.create({
       data: {
