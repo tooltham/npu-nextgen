@@ -57,12 +57,20 @@ export async function PATCH(
 
   try {
     const adminEmail = session.user?.email || "unknown@admin.com";
+    const statusMap: Record<string, string> = {
+      PENDING: "รอดำเนินการ",
+      REVIEWED: "กำลังพิจารณา",
+      ACCEPTED: "อนุมัติผ่าน",
+      REJECTED: "ไม่ผ่าน",
+      WAITLISTED: "ตัวสำรอง",
+    };
 
     const updated = await changeApplicationStatus(
       id,
       status as AppStatus,
       adminEmail,
-      noteDetails || `เปลี่ยนสถานะเป็น ${status}`,
+      noteDetails ||
+        `เปลี่ยนสถานะเป็น ${statusMap[status as string] || status}`,
     );
 
     return NextResponse.json({ success: true, status: updated.status });

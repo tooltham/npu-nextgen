@@ -45,6 +45,14 @@ export async function changeApplicationStatus(
       },
     });
 
+    const statusMap: Record<string, string> = {
+      PENDING: "รอดำเนินการ",
+      REVIEWED: "กำลังพิจารณา",
+      ACCEPTED: "อนุมัติผ่าน",
+      REJECTED: "ไม่ผ่าน",
+      WAITLISTED: "ตัวสำรอง",
+    };
+
     // 5. Create Log Entry
     await tx.applicationLog.create({
       data: {
@@ -52,7 +60,8 @@ export async function changeApplicationStatus(
         adminEmail,
         action: "STATUS_CHANGE",
         details:
-          noteDetails || `Status changed from ${currentStatus} to ${newStatus}`,
+          noteDetails ||
+          `เปลี่ยนสถานะจาก ${statusMap[currentStatus] || currentStatus} เป็น ${statusMap[newStatus] || newStatus}`,
       },
     });
   });
