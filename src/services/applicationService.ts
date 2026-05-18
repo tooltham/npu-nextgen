@@ -103,6 +103,7 @@ export async function updateApplicationData(
     const updatedApp = await tx.application.update({
       where: { id: applicationId },
       data: editableData,
+      include: { logs: { orderBy: { createdAt: "desc" } } },
     });
 
     // 3. Create Log Entry
