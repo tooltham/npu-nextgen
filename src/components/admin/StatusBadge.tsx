@@ -4,7 +4,8 @@ export type ApplicationStatus =
   | "PENDING"
   | "ACCEPTED"
   | "REJECTED"
-  | "REVIEWED";
+  | "REVIEWED"
+  | "WAITLISTED";
 
 const statusConfig = {
   PENDING: {
@@ -22,6 +23,10 @@ const statusConfig = {
   REJECTED: {
     label: "ไม่ผ่าน",
     class: "bg-red-50 text-red-700 border-red-200",
+  },
+  WAITLISTED: {
+    label: "ตัวสำรอง",
+    class: "bg-purple-50 text-purple-700 border-purple-200",
   },
 };
 

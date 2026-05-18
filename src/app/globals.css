@@ -111,6 +111,10 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  a {
+    @apply no-underline;
+  }
+
   h1,
   h2,
   h3,

@@ -5,18 +5,48 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StatusBadge, ApplicationStatus } from "./StatusBadge";
 import { Search, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { ApplicationDetailModal } from "./ApplicationDetailModal";
+
+type AppRow = {
+  id: string;
+  firstNameTh: string;
+  lastNameTh: string;
+  email: string;
+  phone: string;
+  status: string;
+  createdAt: string;
+};
 
 export function ApplicationTable() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 500);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    if (id) {
+      setSelectedAppId(id);
+      setIsModalOpen(true);
+    }
+  }, []);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/applications?page=${page}`);
+      const res = await fetch(
+        `/api/admin/applications?page=${page}&search=${encodeURIComponent(debouncedSearch)}`,
+      );
       const json = await res.json();
       if (res.ok) {
         setData(json.data);
@@ -31,8 +61,8 @@ export function ApplicationTable() {
 
   useEffect(() => {
     fetchData();
-  }, [page]);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, debouncedSearch]);
   return (
     <div className="space-y-4">
       <div className="relative w-full max-w-md">
@@ -41,7 +71,10 @@ export function ApplicationTable() {
           placeholder="ค้นหาชื่อ หรือ อีเมล..."
           className="pl-9 font-noto-thai bg-white border-gray-200"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
         />
       </div>
 
@@ -73,7 +106,7 @@ export function ApplicationTable() {
                 </td>
               </tr>
             ) : (
-              data.map((app) => (
+              (data as AppRow[]).map((app) => (
                 <tr
                   key={app.id}
                   className="hover:bg-gray-50/50 transition-colors"
@@ -96,6 +129,10 @@ export function ApplicationTable() {
                       variant="ghost"
                       size="sm"
                       className="text-[#1B5E20] hover:bg-green-50"
+                      onClick={() => {
+                        setSelectedAppId(app.id);
+                        setIsModalOpen(true);
+                      }}
                     >
                       ดูข้อมูล
                     </Button>
@@ -132,6 +169,12 @@ export function ApplicationTable() {
           </Button>
         </div>
       </div>
+      <ApplicationDetailModal
+        applicationId={selectedAppId || ""}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onStatusUpdated={fetchData}
+      />
     </div>
   );
 }

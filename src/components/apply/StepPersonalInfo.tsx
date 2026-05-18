@@ -12,12 +12,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useStepValidation } from "@/hooks/useStepValidation";
+import { personalInfoSchema } from "@/schemas/applicationSchema";
+
+const FieldError = ({ message }: { message?: string }) =>
+  message ? (
+    <p className="text-red-500 text-xs mt-1 font-noto-thai">{message}</p>
+  ) : null;
 
 const StepPersonalInfo = () => {
   const { formData, updateFormData, nextStep, prevStep } = useFormContext();
+  const { validate, errors } = useStepValidation(personalInfoSchema);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateFormData({ [e.target.name]: e.target.value });
+  };
+
+  const handleNext = () => {
+    const isValid = validate({
+      email: formData.email,
+      titleTh: formData.titleTh,
+      firstNameTh: formData.firstNameTh,
+      lastNameTh: formData.lastNameTh,
+      firstNameEn: formData.firstNameEn,
+      lastNameEn: formData.lastNameEn,
+      nationalId: formData.nationalId,
+      phone: formData.phone,
+      lineId: formData.lineId,
+    });
+    if (isValid) nextStep();
   };
 
   return (
@@ -32,15 +55,31 @@ const StepPersonalInfo = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label htmlFor="titleTh" className="font-noto-thai">
-            คำนำหน้า
+            คำนำหน้า <span className="text-red-500">*</span>
           </Label>
           <Select
-            onValueChange={(val) => updateFormData({ titleTh: val })}
-            defaultValue={formData.titleTh}
+            onValueChange={(val) => {
+              updateFormData({ titleTh: val ?? undefined });
+              const prefixMap: Record<string, string> = {
+                นาย: "Mr. ",
+                นาง: "Mrs. ",
+                นางสาว: "Ms. ",
+              };
+              const prefix = prefixMap[val || ""] || "";
+              if (
+                prefix &&
+                (!formData.firstNameEn || formData.firstNameEn === "")
+              ) {
+                updateFormData({ firstNameEn: prefix });
+              }
+            }}
+            value={formData.titleTh ?? ""}
           >
-            <SelectTrigger className="font-noto-thai">
+            <SelectTrigger
+              className={`font-noto-thai ${errors.titleTh ? "border-red-400 ring-1 ring-red-400" : ""}`}
+            >
               <SelectValue placeholder="เลือก" />
             </SelectTrigger>
             <SelectContent className="font-noto-thai">
@@ -49,10 +88,12 @@ const StepPersonalInfo = () => {
               <SelectItem value="นางสาว">นางสาว</SelectItem>
             </SelectContent>
           </Select>
+          <FieldError message={errors.titleTh} />
         </div>
-        <div className="space-y-2">
+
+        <div className="space-y-1">
           <Label htmlFor="nationalId" className="font-noto-thai">
-            เลขประจำตัวประชาชน (13 หลัก)
+            เลขประจำตัวประชาชน (13 หลัก) <span className="text-red-500">*</span>
           </Label>
           <Input
             id="nationalId"
@@ -61,12 +102,16 @@ const StepPersonalInfo = () => {
             value={formData.nationalId || ""}
             onChange={handleInputChange}
             placeholder="X-XXXX-XXXXX-XX-X"
+            className={
+              errors.nationalId ? "border-red-400 ring-1 ring-red-400" : ""
+            }
           />
+          <FieldError message={errors.nationalId} />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label htmlFor="firstNameTh" className="font-noto-thai">
-            ชื่อ (ภาษาไทย)
+            ชื่อ (ภาษาไทย) <span className="text-red-500">*</span>
           </Label>
           <Input
             id="firstNameTh"
@@ -74,11 +119,16 @@ const StepPersonalInfo = () => {
             value={formData.firstNameTh || ""}
             onChange={handleInputChange}
             placeholder="ชื่อจริง"
+            className={
+              errors.firstNameTh ? "border-red-400 ring-1 ring-red-400" : ""
+            }
           />
+          <FieldError message={errors.firstNameTh} />
         </div>
-        <div className="space-y-2">
+
+        <div className="space-y-1">
           <Label htmlFor="lastNameTh" className="font-noto-thai">
-            นามสกุล (ภาษาไทย)
+            นามสกุล (ภาษาไทย) <span className="text-red-500">*</span>
           </Label>
           <Input
             id="lastNameTh"
@@ -86,12 +136,16 @@ const StepPersonalInfo = () => {
             value={formData.lastNameTh || ""}
             onChange={handleInputChange}
             placeholder="นามสกุล"
+            className={
+              errors.lastNameTh ? "border-red-400 ring-1 ring-red-400" : ""
+            }
           />
+          <FieldError message={errors.lastNameTh} />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label htmlFor="firstNameEn" className="font-noto-thai">
-            First Name (English)
+            First Name (English) <span className="text-red-500">*</span>
           </Label>
           <Input
             id="firstNameEn"
@@ -99,11 +153,16 @@ const StepPersonalInfo = () => {
             value={formData.firstNameEn || ""}
             onChange={handleInputChange}
             placeholder="Ex. Somchai"
+            className={
+              errors.firstNameEn ? "border-red-400 ring-1 ring-red-400" : ""
+            }
           />
+          <FieldError message={errors.firstNameEn} />
         </div>
-        <div className="space-y-2">
+
+        <div className="space-y-1">
           <Label htmlFor="lastNameEn" className="font-noto-thai">
-            Last Name (English)
+            Last Name (English) <span className="text-red-500">*</span>
           </Label>
           <Input
             id="lastNameEn"
@@ -111,12 +170,16 @@ const StepPersonalInfo = () => {
             value={formData.lastNameEn || ""}
             onChange={handleInputChange}
             placeholder="Ex. Jaidee"
+            className={
+              errors.lastNameEn ? "border-red-400 ring-1 ring-red-400" : ""
+            }
           />
+          <FieldError message={errors.lastNameEn} />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           <Label htmlFor="email" className="font-noto-thai">
-            อีเมล
+            อีเมล <span className="text-red-500">*</span>
           </Label>
           <Input
             id="email"
@@ -125,11 +188,14 @@ const StepPersonalInfo = () => {
             value={formData.email || ""}
             onChange={handleInputChange}
             placeholder="example@email.com"
+            className={errors.email ? "border-red-400 ring-1 ring-red-400" : ""}
           />
+          <FieldError message={errors.email} />
         </div>
-        <div className="space-y-2">
+
+        <div className="space-y-1">
           <Label htmlFor="phone" className="font-noto-thai">
-            เบอร์โทรศัพท์ (10 หลัก)
+            เบอร์โทรศัพท์ (10 หลัก) <span className="text-red-500">*</span>
           </Label>
           <Input
             id="phone"
@@ -138,7 +204,26 @@ const StepPersonalInfo = () => {
             value={formData.phone || ""}
             onChange={handleInputChange}
             placeholder="08XXXXXXXX"
+            className={errors.phone ? "border-red-400 ring-1 ring-red-400" : ""}
           />
+          <FieldError message={errors.phone} />
+        </div>
+
+        <div className="space-y-1">
+          <Label htmlFor="lineId" className="font-noto-thai">
+            Line ID (ถ้ามี)
+          </Label>
+          <Input
+            id="lineId"
+            name="lineId"
+            value={formData.lineId || ""}
+            onChange={handleInputChange}
+            placeholder="ระบุไอดีไลน์ (ไม่บังคับ)"
+            className={
+              errors.lineId ? "border-red-400 ring-1 ring-red-400" : ""
+            }
+          />
+          <FieldError message={errors.lineId} />
         </div>
       </div>
 
@@ -151,7 +236,7 @@ const StepPersonalInfo = () => {
           ย้อนกลับ
         </Button>
         <Button
-          onClick={nextStep}
+          onClick={handleNext}
           className="bg-[#1B5E20] hover:bg-[#154a19] text-white px-8 font-noto-thai"
         >
           ขั้นตอนถัดไป

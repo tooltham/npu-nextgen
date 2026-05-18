@@ -20,7 +20,7 @@ export const AdminNotificationEmail = ({
   applicantName,
   applicationId,
 }: AdminNotificationEmailProps) => {
-  const adminUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/admin/applications/${applicationId}`;
+  const adminUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/admin?id=${applicationId}`;
 
   return (
     <Html>
