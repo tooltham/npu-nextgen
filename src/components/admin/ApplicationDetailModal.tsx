@@ -208,7 +208,7 @@ export function ApplicationDetailModal({
       {/* Confirmation Dialog Overlay */}
       {confirmDialog.show && confirmDialog.status && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-sm min-h-[220px] flex flex-col justify-between">
+          <div className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-[440px] min-h-[255px] flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-4 text-amber-600">
                 <AlertCircle className="w-6 h-6" />
