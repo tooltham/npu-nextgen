@@ -6,6 +6,7 @@ import { useState } from "react";
 
 export function ExportButtons() {
   const [isExportingCsv, setIsExportingCsv] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
 
   const handleExportCSV = async () => {
     setIsExportingCsv(true);
@@ -15,6 +16,17 @@ export function ExportButtons() {
       console.error("Export failed", error);
     } finally {
       setTimeout(() => setIsExportingCsv(false), 2000);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    setIsExportingPdf(true);
+    try {
+      window.location.href = "/api/admin/export/pdf";
+    } catch (error) {
+      console.error("Export failed", error);
+    } finally {
+      setTimeout(() => setIsExportingPdf(false), 2000);
     }
   };
 
@@ -37,9 +49,15 @@ export function ExportButtons() {
       <Button
         variant="default"
         size="sm"
+        onClick={handleExportPDF}
+        disabled={isExportingPdf}
         className="font-noto-thai bg-[#1B5E20] hover:bg-[#154a19] text-white"
       >
-        <FileText className="mr-2 h-4 w-4" />
+        {isExportingPdf ? (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          <FileText className="mr-2 h-4 w-4" />
+        )}
         PDF Report
       </Button>
     </div>
