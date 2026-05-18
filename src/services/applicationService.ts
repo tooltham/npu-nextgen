@@ -99,14 +99,7 @@ export async function updateApplicationData(
       throw new Error("APPLICATION_NOT_FOUND");
     }
 
-    // 2. Update Application
-    const updatedApp = await tx.application.update({
-      where: { id: applicationId },
-      data: editableData,
-      include: { logs: { orderBy: { createdAt: "desc" } } },
-    });
-
-    // 3. Create Log Entry
+    // 1. Create Log Entry (Do this first so it's included in the fetch below)
     await tx.applicationLog.create({
       data: {
         applicationId,
@@ -114,6 +107,13 @@ export async function updateApplicationData(
         action: "DATA_UPDATE",
         details: "แก้ไขข้อมูลใบสมัคร",
       },
+    });
+
+    // 2. Update Application
+    const updatedApp = await tx.application.update({
+      where: { id: applicationId },
+      data: editableData,
+      include: { logs: { orderBy: { createdAt: "desc" } } },
     });
 
     return updatedApp;
