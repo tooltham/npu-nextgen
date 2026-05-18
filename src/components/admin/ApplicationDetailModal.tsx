@@ -61,6 +61,27 @@ export function ApplicationDetailModal({
     status: ApplicationStatus | null;
   }>({ show: false, status: null });
 
+  const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+
+  const checkHasChanges = () => {
+    if (!data || !editedData) return false;
+    const keys = Object.keys(editedData);
+    return keys.some((key) => {
+      const oldVal = (data as any)[key] ?? "";
+      const newVal = (editedData as any)[key] ?? "";
+      return oldVal !== newVal;
+    });
+  };
+
+  const onSaveClick = () => {
+    if (!checkHasChanges()) {
+      alert("ไม่มีการแก้ไขข้อมูล");
+      setIsEditing(false);
+      return;
+    }
+    setShowSaveConfirm(true);
+  };
+
   const educationMap: Record<string, string> = {
     HIGH_SCHOOL_OR_VOC: "มัธยมศึกษาตอนปลาย หรือ ปวช.",
     DIPLOMA: "ปวส.",
@@ -206,6 +227,46 @@ export function ApplicationDetailModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 font-noto-thai">
+      {/* Save Confirmation Dialog Overlay */}
+      {showSaveConfirm && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-[440px] min-h-[255px] flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-4 text-amber-600">
+                <AlertCircle className="w-6 h-6" />
+                <h3 className="text-lg font-bold">ยืนยันการแก้ไขข้อมูล</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-6">
+                คุณต้องการบันทึกการแก้ไขข้อมูลใบสมัครใช่หรือไม่?
+              </p>
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowSaveConfirm(false)}
+                disabled={saving}
+              >
+                ยกเลิก
+              </Button>
+              <Button
+                className="bg-[#1B5E20] hover:bg-[#154a19] text-white"
+                onClick={() => {
+                  setShowSaveConfirm(false);
+                  handleSave();
+                }}
+                disabled={saving}
+              >
+                {saving ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  "ยืนยันบันทึก"
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Confirmation Dialog Overlay */}
       {confirmDialog.show && confirmDialog.status && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -273,7 +334,7 @@ export function ApplicationDetailModal({
                 }
                 onClick={() => {
                   if (isEditing) {
-                    handleSave();
+                    onSaveClick();
                   } else {
                     setIsEditing(true);
                   }
