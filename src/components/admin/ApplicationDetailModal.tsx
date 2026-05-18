@@ -75,7 +75,6 @@ export function ApplicationDetailModal({
 
   const onSaveClick = () => {
     if (!checkHasChanges()) {
-      alert("ไม่มีการแก้ไขข้อมูล");
       setIsEditing(false);
       return;
     }
