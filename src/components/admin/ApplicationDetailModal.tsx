@@ -208,30 +208,32 @@ export function ApplicationDetailModal({
       {/* Confirmation Dialog Overlay */}
       {confirmDialog.show && confirmDialog.status && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl p-6 shadow-2xl max-w-sm w-full">
-            <div className="flex items-center gap-3 mb-4 text-amber-600">
-              <AlertCircle className="w-6 h-6" />
-              <h3 className="text-lg font-bold">ยืนยันการเปลี่ยนสถานะ</h3>
+          <div className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-sm min-h-[220px] flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-4 text-amber-600">
+                <AlertCircle className="w-6 h-6" />
+                <h3 className="text-lg font-bold">ยืนยันการเปลี่ยนสถานะ</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-6">
+                คุณต้องการเปลี่ยนสถานะผู้สมัครเป็น{" "}
+                <span className="font-semibold text-gray-900">
+                  {confirmDialog.status === "ACCEPTED"
+                    ? "อนุมัติผ่าน "
+                    : confirmDialog.status === "WAITLISTED"
+                      ? "ตัวสำรอง "
+                      : confirmDialog.status === "REJECTED"
+                        ? "ไม่ผ่าน "
+                        : "กำลังพิจารณา "}
+                </span>
+                ใช่หรือไม่?
+                {confirmDialog.status === "ACCEPTED" &&
+                  !data?.isAcceptanceEmailSent && (
+                    <span className="block mt-2 text-red-600 font-medium">
+                      * ระบบจะทำการส่งอีเมลแจ้งผลไปยังผู้สมัครทันที
+                    </span>
+                  )}
+              </p>
             </div>
-            <p className="text-gray-600 text-sm mb-6">
-              คุณต้องการเปลี่ยนสถานะผู้สมัครเป็น{" "}
-              <span className="font-semibold text-gray-900">
-                {confirmDialog.status === "ACCEPTED"
-                  ? "ผ่านการคัดเลือก"
-                  : confirmDialog.status === "WAITLISTED"
-                    ? "ตัวสำรอง"
-                    : confirmDialog.status === "REJECTED"
-                      ? "ไม่ผ่าน"
-                      : "กำลังพิจารณา"}
-              </span>
-              ใช่หรือไม่?
-              {confirmDialog.status === "ACCEPTED" &&
-                !data?.isAcceptanceEmailSent && (
-                  <span className="block mt-2 text-red-600 font-medium">
-                    * ระบบจะทำการส่งอีเมลแจ้งผลไปยังผู้สมัครทันที
-                  </span>
-                )}
-            </p>
             <div className="flex justify-end gap-3">
               <Button
                 variant="outline"
