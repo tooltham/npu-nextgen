@@ -13,6 +13,35 @@ const ReviewSummary = () => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  const educationMap: Record<string, string> = {
+    HIGH_SCHOOL_OR_VOC: "มัธยมศึกษาตอนปลาย หรือ ปวช.",
+    DIPLOMA: "ปวส.",
+    BACHELOR: "ปริญญาตรี",
+    ABOVE_BACHELOR: "สูงกว่าปริญญาตรี",
+  };
+
+  const targetGroupMap: Record<string, string> = {
+    UNEMPLOYED: "ผู้ที่ยังไม่ได้ทำงาน ต้องการเรียนเพื่อประกอบอาชีพ",
+    FARMER: "เกษตรกร หรือ ทายาทเกษตรกร",
+    COMMUNITY_ENTERPRISE: "ผู้ประกอบการวิสาหกิจชุมชน หรือแรงงานในภาคการเกษตร",
+    OTHER: "อื่นๆ",
+  };
+
+  const digitalSkillMap: Record<string, string> = {
+    EXCELLENT: "ดีมาก",
+    GOOD: "ดี",
+    AVERAGE: "ปานกลาง",
+    LOW: "น้อย",
+    NONE: "ไม่มีพื้นฐานเลย",
+  };
+
+  const expectationMap: Record<string, string> = {
+    AI_IOT_FARM: "ต้องการใช้ AI และ IoT ในการวิเคราะห์และจัดการฟาร์ม",
+    DIGITAL_MARKETING: "ต้องการทักษะการสร้างแบรนด์และการตลาดดิจิทัล",
+    REDUCE_COST: "ต้องการนำเทคโนโลยีมาลดต้นทุนและเพิ่มมูลค่าผลผลิต",
+    OTHER_EXP: "อื่นๆ",
+  };
+
   const sections = [
     {
       title: "ข้อมูลส่วนตัว",
@@ -24,7 +53,19 @@ const ReviewSummary = () => {
         },
         {
           label: "Name (EN)",
-          value: `${formData.firstNameEn} ${formData.lastNameEn}`,
+          value: (() => {
+            const prefixMap: Record<string, string> = {
+              นาย: "Mr.",
+              นาง: "Mrs.",
+              นางสาว: "Ms.",
+            };
+            const prefix = prefixMap[formData.titleTh as string] || "";
+            const fullName = `${formData.firstNameEn} ${formData.lastNameEn}`;
+            if (prefix && !formData.firstNameEn?.startsWith(prefix)) {
+              return `${prefix} ${fullName}`;
+            }
+            return fullName;
+          })(),
         },
         {
           label: "เลขประจำตัวประชาชน",
@@ -41,36 +82,62 @@ const ReviewSummary = () => {
       title: "ประวัติการทำงานและกลุ่มเป้าหมาย",
       step: 2,
       items: [
-        { label: "ระดับการศึกษา", value: formData.education },
+        {
+          label: "ระดับการศึกษา",
+          value:
+            educationMap[formData.education as string] || formData.education,
+        },
         {
           label: "กลุ่มเป้าหมาย",
-          value: (formData.targetGroup as unknown as string[])?.join(", "),
+          value: (formData.targetGroup as unknown as string[])
+            ?.map((id) => targetGroupMap[id] || id)
+            .join(", "),
         },
+        ...(formData.targetGroupOther
+          ? [{ label: "กลุ่มเป้าหมายอื่นๆ", value: formData.targetGroupOther }]
+          : []),
         {
           label: "ประสบการณ์การเกษตร",
           value: formData.hasAgriExperience
             ? `${formData.agriExperienceYears} ปี`
             : "ไม่มีประสบการณ์",
         },
+        ...(formData.farmName
+          ? [{ label: "ชื่อฟาร์ม", value: formData.farmName }]
+          : []),
+        ...(formData.farmLocation
+          ? [{ label: "ที่ตั้งฟาร์ม", value: formData.farmLocation }]
+          : []),
       ],
     },
     {
       title: "ความพร้อมและความคาดหวัง",
       step: 3,
       items: [
-        { label: "ทักษะดิจิทัล", value: formData.digitalSkillLevel },
+        {
+          label: "ทักษะดิจิทัล",
+          value:
+            digitalSkillMap[formData.digitalSkillLevel as string] ||
+            formData.digitalSkillLevel,
+        },
         {
           label: "ความพร้อมด้านเวลา",
           value: formData.canCommitTime ? "พร้อมเข้าร่วม 100%" : "ไม่แน่ใจ",
         },
         {
           label: "ความคาดหวัง",
-          value: (formData.expectations as unknown as string[])?.join(", "),
+          value: (formData.expectations as unknown as string[])
+            ?.map((id) => expectationMap[id] || id)
+            .join(", "),
           fullWidth: true,
         },
       ],
     },
   ];
+
+  type SectionItem = { label: string; value: any; fullWidth?: boolean };
+  const typedSections: { title: string; step: number; items: SectionItem[] }[] =
+    sections as any;
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -93,8 +160,11 @@ const ReviewSummary = () => {
         background: {
           education: formData.education,
           targetGroup: formData.targetGroup,
+          targetGroupOther: formData.targetGroupOther || undefined,
           hasAgriExperience: formData.hasAgriExperience,
           agriExperienceYears: formData.agriExperienceYears,
+          farmName: formData.farmName || undefined,
+          farmLocation: formData.farmLocation || undefined,
         },
         readiness: {
           digitalSkillLevel: formData.digitalSkillLevel,
@@ -145,7 +215,7 @@ const ReviewSummary = () => {
       </div>
 
       <div className="space-y-6">
-        {sections.map((section, idx) => (
+        {typedSections.map((section, idx) => (
           <Card key={idx} className="overflow-hidden border-gray-200">
             <CardHeader className="bg-gray-50 py-3 flex flex-row items-center justify-between">
               <CardTitle className="text-lg font-bold text-gray-700 font-noto-thai">

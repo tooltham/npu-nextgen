@@ -12,9 +12,16 @@ export const envSchema = z.object({
   ADMIN_PASSWORD: z.string().min(8),
 
   // Email
-  RESEND_API_KEY: z.string().startsWith("re_"),
+  RESEND_API_KEY: z.string().startsWith("re_").optional(),
   ADMIN_NOTIFY_EMAIL: z.string().email(),
   RESEND_FROM: z.string().optional(),
+
+  // SMTP (Google Workspace)
+  SMTP_HOST: z.string().default("smtp.gmail.com"),
+  SMTP_PORT: z.string().default("465"),
+  SMTP_SECURE: z.string().default("true"),
+  SMTP_USER: z.string().email().optional(),
+  SMTP_PASS: z.string().optional(),
 
   // Rate Limiting (Optional in dev/test)
   UPSTASH_REDIS_REST_URL: z.string().url().optional(),

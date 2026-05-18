@@ -11,10 +11,22 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
-  const limit = Math.max(1, parseInt(searchParams.get("limit") || "20"));
+  const limit = Math.max(1, parseInt(searchParams.get("limit") || "10"));
   const status = searchParams.get("status");
+  const search = searchParams.get("search");
 
-  const where = status ? { status: status as any } : {};
+  const where: any = {};
+  if (status) {
+    where.status = status;
+  }
+  if (search) {
+    where.OR = [
+      { firstNameTh: { contains: search, mode: "insensitive" } },
+      { lastNameTh: { contains: search, mode: "insensitive" } },
+      { email: { contains: search, mode: "insensitive" } },
+      { phone: { contains: search, mode: "insensitive" } },
+    ];
+  }
 
   const [applications, total] = await Promise.all([
     prisma.application.findMany({
@@ -44,33 +56,4 @@ export async function GET(request: Request) {
       totalPages: Math.ceil(total / limit),
     },
   });
-}
-
-export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } },
-) {
-  const session = await auth();
-
-  if (!session || (session.user as any).role !== "ADMIN") {
-    return new NextResponse("Unauthorized", { status: 401 });
-  }
-
-  const { id } = params;
-  const body = await request.json();
-  const { status } = body;
-
-  try {
-    const updated = await prisma.application.update({
-      where: { id },
-      data: { status },
-    });
-
-    return NextResponse.json({ success: true, status: updated.status });
-  } catch (error) {
-    return NextResponse.json(
-      { success: false, error: "Failed to update status" },
-      { status: 500 },
-    );
-  }
 }

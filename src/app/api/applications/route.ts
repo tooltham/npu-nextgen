@@ -73,7 +73,7 @@ export async function POST(req: Request) {
           userAgent: req.headers.get("user-agent"),
           consent: {
             create: {
-              granted: consent.granted,
+              granted: Boolean(consent.granted),
               consentText: consent.consentText,
               consentVersion: consent.consentVersion,
               ipAddress: req.headers.get("x-forwarded-for") || "unknown",

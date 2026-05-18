@@ -10,7 +10,7 @@ export const personalInfoSchema = z.object({
   firstNameEn: z
     .string()
     .min(1, "First name (English) is required")
-    .regex(/^[a-zA-Z\s]+$/, "Latin characters only"),
+    .regex(/^[a-zA-Z\s.]+$/, "Latin characters and dots only"),
   lastNameEn: z
     .string()
     .min(1, "Last name (English) is required")
@@ -56,9 +56,7 @@ export const applicationSchema = z.object({
   background: backgroundSchema,
   readiness: readinessSchema,
   consent: z.object({
-    granted: z.literal(true, {
-      errorMap: () => ({ message: "PDPA consent is required" }),
-    }),
+    granted: z.literal(true, { error: "PDPA consent is required" }),
     consentVersion: z.string(),
     consentText: z.string(),
   }),

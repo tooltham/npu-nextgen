@@ -49,6 +49,8 @@ model Application {
   userAgent             String?
 
   consent               Consent?
+  isAcceptanceEmailSent Boolean   @default(false)
+  logs                  ApplicationLog[]
 }
 
 model Consent {
@@ -78,6 +80,16 @@ model ExportLog {
   ipAddress   String
 }
 
+model ApplicationLog {
+  id              String      @id @default(cuid())
+  applicationId   String
+  application     Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  adminEmail      String
+  action          String      // "STATUS_CHANGE" or "INTERVIEW_NOTE"
+  details         String      @db.Text
+  createdAt       DateTime    @default(now())
+}
+
 enum Education {
   HIGH_SCHOOL_OR_VOC
   DIPLOMA
@@ -97,5 +109,6 @@ enum AppStatus {
   PENDING
   REVIEWED
   ACCEPTED
+  WAITLISTED
   REJECTED
 }
