@@ -58,7 +58,7 @@ NPU NextGen is designed to bridge the gap between traditional farming and modern
 │  │  /apply     ← Form      │  │   GET  /api/admin/apps   │    │
 │  │  /apply/success         │  │   GET  /api/admin/export │    │
 │  │  /admin     ← Dashboard │  │   POST /api/auth/[...]   │    │
-│  └─────────────────────────┘  └──────────┬───────────────┘    │
+│  └─────────────────────────┘  └─────────┬────────────────┘    │
 └─────────────────────────────────────────┼─────────────────────┘
                                           │ Prisma Client
 ┌─────────────────────────────────────────▼──────────────────────┐
