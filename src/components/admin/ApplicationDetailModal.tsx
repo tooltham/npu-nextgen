@@ -128,6 +128,7 @@ export function ApplicationDetailModal({
     if (isOpen) {
       setActiveTab("info");
       setConfirmDialog({ show: false, status: null });
+      setIsEditing(false);
       fetchData();
     }
   }, [isOpen, applicationId]);
