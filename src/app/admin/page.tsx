@@ -30,7 +30,8 @@ export default async function AdminDashboardPage() {
               Admin Dashboard
             </h1>
             <p className="text-gray-500 mt-1">
-              ระบบจัดการผู้สมัครโครงการ NPU NextGen
+              สวัสดี, {session.user?.email} — ระบบจัดการผู้สมัครโครงการ NPU
+              NextGen
             </p>
           </div>
           <div className="flex items-center gap-3">
