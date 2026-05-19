@@ -9,6 +9,7 @@ import StepBackground from "@/components/apply/StepBackground";
 import StepReadiness from "@/components/apply/StepReadiness";
 import ReviewSummary from "@/components/apply/ReviewSummary";
 import Link from "next/link";
+import { Sprout } from "lucide-react";
 
 const ApplicationForm = () => {
   const { currentStep } = useFormContext();
@@ -39,8 +40,9 @@ const ApplicationForm = () => {
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
           <Link
             href="/"
-            className="text-lg font-bold tracking-tighter hover:opacity-70 transition-opacity"
+            className="flex items-center gap-2 text-lg font-bold tracking-tighter hover:opacity-70 transition-opacity"
           >
+            <Sprout className="h-4 w-4 text-[#1B5E20]" />
             NPU NextGen
           </Link>
           <div className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40">
