@@ -4,7 +4,15 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StatusBadge, ApplicationStatus } from "./StatusBadge";
-import { Search, ChevronLeft, ChevronRight, Loader2, Eye } from "lucide-react";
+import {
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  Eye,
+  Trash2,
+  AlertCircle,
+} from "lucide-react";
 import { ApplicationDetailModal } from "./ApplicationDetailModal";
 
 type AppRow = {
@@ -26,6 +34,33 @@ export function ApplicationTable() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Delete state
+  const [deleteDialog, setDeleteDialog] = useState<{
+    show: boolean;
+    id: string | null;
+  }>({ show: false, id: null });
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async (id: string) => {
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/applications/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setDeleteDialog({ show: false, id: null });
+        fetchData(); // Refresh table
+      } else {
+        alert("ลบข้อมูลไม่สำเร็จ");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("เกิดข้อผิดพลาดในการลบ");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(search), 500);
@@ -125,18 +160,31 @@ export function ApplicationTable() {
                     <StatusBadge status={app.status as ApplicationStatus} />
                   </td>
                   <td className="px-5 py-4">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="border-[#1B5E20] text-[#1B5E20] hover:bg-[#1B5E20] hover:text-white transition-all duration-300 shadow-sm flex items-center gap-1.5 font-noto-thai"
-                      onClick={() => {
-                        setSelectedAppId(app.id);
-                        setIsModalOpen(true);
-                      }}
-                    >
-                      <Eye className="w-4 h-4" />
-                      ดูข้อมูล
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-[#1B5E20] text-[#1B5E20] hover:bg-[#1B5E20] hover:text-white transition-all duration-300 shadow-sm flex items-center gap-1.5 font-noto-thai"
+                        onClick={() => {
+                          setSelectedAppId(app.id);
+                          setIsModalOpen(true);
+                        }}
+                      >
+                        <Eye className="w-4 h-4" />
+                        ดูข้อมูล
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm flex items-center gap-1.5 font-noto-thai"
+                        onClick={() =>
+                          setDeleteDialog({ show: true, id: app.id })
+                        }
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        ลบ
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -170,6 +218,45 @@ export function ApplicationTable() {
           </Button>
         </div>
       </div>
+      {/* Delete Confirmation Dialog Overlay */}
+      {deleteDialog.show && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 font-noto-thai">
+          <div className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-[440px] min-h-[255px] flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-4 text-red-600">
+                <AlertCircle className="w-6 h-6" />
+                <h3 className="text-lg font-bold">ยืนยันการลบข้อมูล</h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-6">
+                คุณต้องการลบใบสมัครนี้ใช่หรือไม่?
+                การดำเนินการนี้ไม่สามารถย้อนกลับได้
+                และข้อมูลทั้งหมดรวมถึงประวัติการดำเนินการจะถูกลบอย่างถาวร
+              </p>
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setDeleteDialog({ show: false, id: null })}
+                disabled={deleting}
+              >
+                ยกเลิก
+              </Button>
+              <Button
+                className="bg-red-600 hover:bg-red-700 text-white"
+                onClick={() => handleDelete(deleteDialog.id!)}
+                disabled={deleting}
+              >
+                {deleting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  "ยืนยันลบ"
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <ApplicationDetailModal
         applicationId={selectedAppId || ""}
         isOpen={isModalOpen}

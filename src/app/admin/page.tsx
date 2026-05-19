@@ -1,6 +1,7 @@
 import { ApplicationTable } from "@/components/admin/ApplicationTable";
 import { StatsCards } from "@/components/admin/StatsCards";
 import { ExportButtons } from "@/components/admin/ExportButtons";
+import { LogoutButton } from "@/components/admin/LogoutButton";
 import prisma from "@/lib/db";
 import { auth } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
@@ -32,7 +33,10 @@ export default async function AdminDashboardPage() {
               ระบบจัดการผู้สมัครโครงการ NPU NextGen
             </p>
           </div>
-          <ExportButtons />
+          <div className="flex items-center gap-3">
+            <ExportButtons />
+            <LogoutButton />
+          </div>
         </div>
 
         <StatsCards stats={{ total, pending, accepted, rejected }} />

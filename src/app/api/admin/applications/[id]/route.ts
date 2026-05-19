@@ -112,3 +112,38 @@ export async function PUT(
     );
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const session = await auth();
+
+  if (!session || (session.user as any).role !== "ADMIN") {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  const { id } = await params;
+
+  try {
+    await prisma.$transaction([
+      prisma.applicationLog.deleteMany({ where: { applicationId: id } }),
+      prisma.consent.deleteMany({ where: { applicationId: id } }),
+      prisma.application.delete({ where: { id } }),
+    ]);
+
+    return NextResponse.json({
+      success: true,
+      message: "Application deleted successfully",
+    });
+  } catch (error: any) {
+    console.error("DELETE application error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: error.message || "Failed to delete application",
+      },
+      { status: 500 },
+    );
+  }
+}
