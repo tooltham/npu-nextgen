@@ -27,7 +27,7 @@ export default function HeroSection() {
 
       <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
         {/* Badge */}
-        <div className="mb-8 inline-flex items-center gap-2 rounded-full bg-[#1B5E20]/10 px-4 py-2 text-sm font-semibold text-[#1B5E20] border border-[#1B5E20]/10">
+        <div className="mb-8 mt-12 inline-flex items-center gap-2 rounded-full bg-[#1B5E20]/10 px-4 py-2 text-sm font-semibold text-[#1B5E20] border border-[#1B5E20]/10">
           <Sprout className="h-4 w-4" />
           Non-Degree Certificate Program
         </div>
@@ -65,31 +65,40 @@ export default function HeroSection() {
         </div>
 
         {/* Stats Counter */}
-        <div className="mt-20 flex flex-wrap items-center justify-center gap-12 text-center">
-          <div>
-            <p className="text-4xl font-bold text-[#1d1d1f]">3</p>
-            <p className="mt-1 text-sm font-medium text-black/40">
-              โมดูลเข้มข้น
-            </p>
-          </div>
-          <div className="h-10 w-px bg-black/10" />
-          <div>
-            <p className="text-4xl font-bold text-[#1d1d1f]">16-20</p>
-            <p className="mt-1 text-sm font-medium text-black/40">สัปดาห์</p>
-          </div>
-          <div className="h-10 w-px bg-black/10" />
-          <div>
-            <p className="text-4xl font-bold text-[#1d1d1f]">40</p>
-            <p className="mt-1 text-sm font-medium text-black/40">
-              ที่นั่งต่อรุ่น
-            </p>
-          </div>
-          <div className="h-10 w-px bg-black/10" />
-          <div>
-            <p className="text-4xl font-bold text-[#1B5E20]">ฟรี</p>
-            <p className="mt-1 text-sm font-medium text-black/40">
-              ไม่มีค่าใช้จ่าย
-            </p>
+        <div className="mt-24 mx-auto max-w-4xl rounded-[2rem] bg-white/40 backdrop-blur-xl border border-white/60 shadow-2xl shadow-green-900/5 p-8 md:p-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 md:divide-x divide-black/10">
+            <div className="flex flex-col items-center justify-center">
+              <p className="text-4xl md:text-5xl font-black text-[#1d1d1f] tracking-tight mb-2">
+                3
+              </p>
+              <p className="text-sm font-bold text-black/50 uppercase tracking-wide">
+                โมดูลเข้มข้น
+              </p>
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <p className="text-4xl md:text-5xl font-black text-[#1d1d1f] tracking-tight mb-2">
+                16-20
+              </p>
+              <p className="text-sm font-bold text-black/50 uppercase tracking-wide">
+                สัปดาห์
+              </p>
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <p className="text-4xl md:text-5xl font-black text-[#1d1d1f] tracking-tight mb-2">
+                40
+              </p>
+              <p className="text-sm font-bold text-black/50 uppercase tracking-wide">
+                ที่นั่งต่อรุ่น
+              </p>
+            </div>
+            <div className="flex flex-col items-center justify-center">
+              <p className="text-4xl md:text-5xl font-black text-[#1B5E20] tracking-tight mb-2">
+                ฟรี
+              </p>
+              <p className="text-sm font-bold text-[#1B5E20]/70 uppercase tracking-wide">
+                ไม่มีค่าใช้จ่าย
+              </p>
+            </div>
           </div>
         </div>
       </div>
