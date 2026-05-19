@@ -64,34 +64,53 @@ export default function CourseDetails() {
         {modules.map((item, idx) => (
           <div
             key={idx}
-            className="group relative overflow-hidden rounded-[2.5rem] bg-[#f5f5f7] transition-all duration-500 hover:scale-[1.02] hover:shadow-3xl hover:shadow-black/5 flex flex-col"
+            className="group relative overflow-hidden rounded-[2.5rem] bg-black transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-[#1B5E20]/20 flex flex-col h-[480px] cursor-pointer"
+            onClick={() => setSelectedModule(idx)}
           >
-            <div className="h-56 overflow-hidden">
-              <img
-                src={`/img/${item.image}.png`}
-                alt={item.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-              />
-            </div>
-            <div className="p-10 flex flex-col flex-1">
-              <div
-                className={`mb-6 h-10 w-10 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center text-white font-bold shadow-lg shadow-green-900/10`}
-              >
-                {idx + 1}
-              </div>
-              <h3 className="mb-4 text-2xl font-bold text-[#1d1d1f] tracking-tight font-noto-thai">
-                {item.title}
-              </h3>
-              <p className="text-black/60 leading-relaxed font-medium font-noto-thai mb-6 flex-1">
-                {item.desc}
-              </p>
-              <div className="mt-auto">
-                <button
-                  onClick={() => setSelectedModule(idx)}
-                  className="text-sm font-bold text-[#1B5E20] hover:opacity-70 transition-opacity font-noto-thai flex items-center gap-1"
+            {/* Background Image */}
+            <img
+              src={`/img/${item.image}.png`}
+              alt={item.title}
+              className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-700 ease-out"
+            />
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
+
+            {/* Content Floating at Bottom */}
+            <div className="absolute inset-x-0 bottom-0 p-8 flex flex-col transform transition-transform duration-500 ease-out group-hover:-translate-y-4">
+              <div className="flex items-center gap-4 mb-4">
+                <div
+                  className={`h-12 w-12 shrink-0 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center text-white text-lg font-bold shadow-lg border border-white/20`}
                 >
-                  ดูรายละเอียดสมรรถนะ →
-                </button>
+                  {idx + 1}
+                </div>
+                <h3 className="text-3xl font-bold text-white tracking-tight font-noto-thai leading-tight drop-shadow-md">
+                  {item.title}
+                </h3>
+              </div>
+
+              {/* Expandable Content (Visible on Hover) */}
+              <div className="h-0 opacity-0 group-hover:h-auto group-hover:opacity-100 transition-all duration-500 ease-out overflow-hidden">
+                <p className="text-white/80 leading-relaxed font-medium font-noto-thai text-sm mb-6 pt-2 border-t border-white/10 mt-2">
+                  {item.desc}
+                </p>
+
+                <div className="inline-flex items-center text-sm font-bold text-emerald-400 font-noto-thai gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur-md border border-white/10">
+                  <span>ดูรายละเอียดสมรรถนะ</span>
+                  <svg
+                    className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
