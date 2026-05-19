@@ -4,6 +4,8 @@ import EligibilitySection from "@/components/landing/EligibilitySection";
 import OutcomesSection from "@/components/landing/OutcomesSection";
 import PartnersSection from "@/components/landing/PartnersSection";
 import FAQSection from "@/components/landing/FAQSection";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { Sprout } from "lucide-react";
 import Link from "next/link";
 
 export default function LandingPage() {
@@ -15,8 +17,9 @@ export default function LandingPage() {
           <div className="flex items-center gap-8">
             <Link
               href="/"
-              className="text-xl font-semibold tracking-tight hover:opacity-80 transition-opacity"
+              className="flex items-center gap-2 text-xl font-semibold tracking-tight hover:opacity-80 transition-opacity"
             >
+              <Sprout className="h-5 w-5 text-[#1B5E20]" />
               NPU NextGen
             </Link>
             <div className="hidden md:flex items-center gap-6 text-sm font-medium text-black/60">
@@ -51,40 +54,58 @@ export default function LandingPage() {
 
       {/* Content Sections */}
       <div className="space-y-32 py-24">
-        <section id="courses">
-          <CourseDetails />
-        </section>
+        <ScrollReveal>
+          <section id="courses">
+            <CourseDetails />
+          </section>
+        </ScrollReveal>
 
-        <section id="eligibility">
-          <EligibilitySection />
-        </section>
+        <ScrollReveal delay={100}>
+          <section id="eligibility">
+            <EligibilitySection />
+          </section>
+        </ScrollReveal>
 
-        <OutcomesSection />
+        <ScrollReveal delay={100}>
+          <OutcomesSection />
+        </ScrollReveal>
 
-        <section id="partners">
-          <PartnersSection />
-        </section>
+        <ScrollReveal delay={100}>
+          <section id="partners">
+            <PartnersSection />
+          </section>
+        </ScrollReveal>
 
-        <section id="faq">
-          <FAQSection />
-        </section>
+        <ScrollReveal delay={100}>
+          <section id="faq">
+            <FAQSection />
+          </section>
+        </ScrollReveal>
       </div>
 
-      <footer className="bg-[#f5f5f7] py-16 border-t border-black/5">
+      <footer className="bg-gray-900 py-16 border-t border-gray-800">
         <div className="max-w-5xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8 text-center md:text-left">
-          <div className="space-y-2 text-base text-black/60">
-            <p>หน่วยวิจัยอินเตอร์เน็ตของสรรพสิ่งและระบบสมองกลฝังตัว (IoTES)</p>
-            <p>วิทยาลัยเทคโนโลยีอุตสาหกรรมศรีสงคราม</p>
-            <p>มหาวิทยาลัยนครพนม</p>
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 justify-center md:justify-start mb-4">
+              <Sprout className="h-5 w-5 text-emerald-400" />
+              <span className="text-lg font-bold text-white">NPU NextGen</span>
+            </div>
+            <p className="text-gray-400">
+              หน่วยวิจัยอินเตอร์เน็ตของสรรพสิ่งและระบบสมองกลฝังตัว (IoTES)
+            </p>
+            <p className="text-gray-400">
+              วิทยาลัยเทคโนโลยีอุตสาหกรรมศรีสงคราม
+            </p>
+            <p className="text-gray-400">มหาวิทยาลัยนครพนม</p>
           </div>
-          <div className="space-y-2 text-base text-black/60 md:text-right flex flex-col md:items-end justify-center">
+          <div className="space-y-2 text-gray-400 md:text-right flex flex-col md:items-end justify-center">
             <p>129 หมู่ 7 ถ.ศรีสงคราม-ท่าดอกแก้ว</p>
             <p>ต.ศรีสงคราม อ.ศรีสงคราม จ.นครพนม 48150</p>
             <p>Tel: 082 887 6739</p>
             <p>Email: iotes@npu.ac.th</p>
           </div>
         </div>
-        <div className="mt-12 border-t border-black/5 pt-8 text-center text-sm text-black/30">
+        <div className="mt-12 border-t border-gray-800 pt-8 text-center text-sm text-gray-600">
           <p>
             © {new Date().getFullYear()} Internet of Things and Embedded System
             Research Laboratory (IoTES). All rights reserved.

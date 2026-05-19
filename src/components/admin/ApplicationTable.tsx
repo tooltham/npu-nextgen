@@ -147,7 +147,14 @@ export function ApplicationTable() {
                   className="hover:bg-gray-50/50 transition-colors"
                 >
                   <td className="px-5 py-4 font-medium text-gray-900">
-                    {app.firstNameTh} {app.lastNameTh}
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1B5E20]/10 text-[#1B5E20] text-sm font-bold">
+                        {app.firstNameTh?.charAt(0) || "?"}
+                      </div>
+                      <span>
+                        {app.firstNameTh} {app.lastNameTh}
+                      </span>
+                    </div>
                   </td>
                   <td className="px-5 py-4 text-gray-600">
                     <div>{app.email}</div>
