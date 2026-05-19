@@ -25,7 +25,10 @@ export default function RootLayout({
       className={`${prompt.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans overflow-x-hidden">
+      <body
+        className="min-h-full flex flex-col font-sans overflow-x-hidden"
+        suppressHydrationWarning
+      >
         {children}
       </body>
     </html>
