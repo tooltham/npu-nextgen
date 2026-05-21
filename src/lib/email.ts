@@ -91,13 +91,17 @@ export const sendApplicantConfirmation = async (application: any) => {
     }),
   );
   try {
-    const info = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: `"NPU NextGen" <${env.RESEND_FROM_EMAIL || env.SMTP_USER}>`,
       to: application.email,
       subject: `[ยืนยัน] รับใบสมัครของคุณแล้ว — หลักสูตรนักจัดการฟาร์มเกษตรอัจฉริยะ`,
       html: emailHtml,
     });
-    return { id: info.id };
+    if (error) {
+      console.error("Resend error:", error);
+      return { success: false, error: error.message };
+    }
+    return { id: data?.id };
   } catch (error: any) {
     console.error(
       "Failed to send applicant confirmation email via Resend:",
@@ -141,13 +145,17 @@ export const sendAdminNotification = async (application: any) => {
     }),
   );
   try {
-    const info = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: `"NPU System" <${env.RESEND_FROM_EMAIL || env.SMTP_USER}>`,
       to: env.ADMIN_NOTIFY_EMAIL || "apirak@npu.ac.th",
       subject: `[ใบสมัครใหม่] ${application.firstNameTh} ${application.lastNameTh} — NPU NextGen`,
       html: emailHtml,
     });
-    return { id: info.id };
+    if (error) {
+      console.error("Resend error:", error);
+      return { success: false, error: error.message };
+    }
+    return { id: data?.id };
   } catch (error: any) {
     console.error("Failed to send admin notification email via Resend:", error);
     return { success: false, error: error.message };
