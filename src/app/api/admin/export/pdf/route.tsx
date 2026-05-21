@@ -179,7 +179,7 @@ export async function GET(request: Request) {
 
     const buffer = await renderToBuffer(<MyDocument data={applications} />);
 
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename=npu-applications-${new Date().toISOString().split("T")[0]}.pdf`,
