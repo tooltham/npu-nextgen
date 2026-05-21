@@ -99,7 +99,11 @@ export async function POST(req: Request) {
 
     if (error.message === "EMAIL_ALREADY_EXISTS") {
       return NextResponse.json(
-        { success: false, error: "Email already registered" },
+        {
+          success: false,
+          error:
+            "อีเมลนี้ได้ถูกใช้สมัครไปแล้ว กรุณาใช้อีเมลอื่น หรือติดต่อผู้ดูแลระบบ",
+        },
         { status: 400 },
       );
     }
