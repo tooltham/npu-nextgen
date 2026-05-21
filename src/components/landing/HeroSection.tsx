@@ -53,15 +53,6 @@ export default function HeroSection() {
           >
             เริ่มใบสมัครของคุณ
           </Link>
-          <Link
-            href="#courses"
-            className="group flex items-center gap-2 text-xl font-medium text-[#1B5E20]"
-          >
-            เรียนรู้เพิ่มเติม
-            <span className="transition-transform group-hover:translate-x-1">
-              →
-            </span>
-          </Link>
         </div>
 
         {/* Stats Counter */}

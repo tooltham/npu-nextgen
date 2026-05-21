@@ -107,7 +107,6 @@ export default function AdminLoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@npu.ac.th"
                   className="h-11 focus-visible:ring-[#1B5E20]"
                   required
                 />

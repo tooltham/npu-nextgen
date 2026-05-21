@@ -2,7 +2,11 @@ import { envSchema } from "@/schemas/envSchema";
 
 const result = envSchema.safeParse(process.env);
 
-if (!result.success && process.env.NODE_ENV !== "test") {
+if (
+  !result.success &&
+  process.env.NODE_ENV !== "test" &&
+  process.env.SKIP_ENV_VALIDATION !== "true"
+) {
   console.error("❌ Invalid environment variables:", result.error.format());
   throw new Error("Invalid environment variables");
 }
