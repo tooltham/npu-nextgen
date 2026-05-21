@@ -510,6 +510,19 @@ export function ApplicationDetailModal({
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
+                          เลขประจำตัวประชาชน
+                        </p>
+                        <p className="font-medium text-gray-900">
+                          {data.nationalId
+                            ? data.nationalId.replace(
+                                /(\d{1})(\d{4})(\d{5})(\d{2})(\d{1})/,
+                                "$1-$2-$3-$4-$5",
+                              )
+                            : "-"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
                           อีเมล
                         </p>
                         {isEditing ? (

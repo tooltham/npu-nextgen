@@ -6,6 +6,7 @@ import {
   updateApplicationData,
 } from "@/services/applicationService";
 import { AppStatus } from "@prisma/client";
+import { decrypt } from "@/lib/encrypt";
 
 export async function GET(
   request: Request,
@@ -29,6 +30,18 @@ export async function GET(
 
     if (!application) {
       return new NextResponse("Not Found", { status: 404 });
+    }
+
+    // Decrypt sensitive data before sending to admin frontend
+    try {
+      if (application.nationalId) {
+        application.nationalId = decrypt(application.nationalId);
+      }
+    } catch (e) {
+      console.warn(
+        "Failed to decrypt nationalId for application",
+        application.id,
+      );
     }
 
     return NextResponse.json({ data: application });
