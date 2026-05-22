@@ -78,7 +78,7 @@ export default async function AdminSubmissionsPage({
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] p-6 lg:p-10 font-noto-thai">
-      <div className="mx-auto max-w-5xl space-y-8">
+      <div className="mx-auto max-w-[1400px] space-y-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
@@ -108,65 +108,77 @@ export default async function AdminSubmissionsPage({
               <p className="text-gray-500 font-medium">ไม่พบผู้เรียนที่ตรงกับเงื่อนไขการค้นหา</p>
             </div>
           ) : (
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-gray-200">
-                {usersWithSubmissions.map((user) => {
-                  const pendingCount = user.submissions.filter((s) => s.status === "PENDING").length;
-                  const totalSubmissions = user.submissions.length;
+            <div className="rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-gray-50/80 text-gray-600 font-noto-thai border-b border-gray-200">
+                  <tr>
+                    <th className="px-5 py-3.5 font-medium">ชื่อ-สกุล</th>
+                    <th className="px-5 py-3.5 font-medium">อีเมล</th>
+                    <th className="px-5 py-3.5 font-medium">สถานะงาน</th>
+                    <th className="px-5 py-3.5 font-medium">จัดการ</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 font-noto-thai">
+                  {usersWithSubmissions.map((user) => {
+                    const pendingCount = user.submissions.filter((s) => s.status === "PENDING").length;
+                    const totalSubmissions = user.submissions.length;
 
-                  return (
-                    <Link
-                      key={user.id}
-                      href={`/admin/submissions/${user.id}`}
-                      className="block group bg-white"
-                    >
-                      <div className="p-6 hover:bg-indigo-50/50 transition-colors flex items-center justify-between h-full">
-                        <div className="flex items-center gap-4">
-                          {/* Avatar */}
-                          {user.image ? (
-                            <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border border-gray-100">
-                              <Image
-                                src={user.image}
-                                alt={user.name || "User Avatar"}
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                          ) : (
-                            <div className="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 text-indigo-600 font-bold text-lg border border-indigo-100">
-                              {(user.name || user.email || "?").charAt(0).toUpperCase()}
-                            </div>
-                          )}
-
-                          <div>
-                            <h3 className="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
-                              {user.name || "ไม่มีชื่อ"}
-                            </h3>
-                            <p className="text-sm text-gray-500 line-clamp-1">{user.email}</p>
-                            
-                            <div className="flex items-center gap-3 mt-2">
-                              {pendingCount > 0 ? (
-                                <span className="flex items-center gap-1 text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">
-                                  <Clock className="w-3.5 h-3.5" /> รอตรวจ {pendingCount} งาน
-                                </span>
-                              ) : (
-                                <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
-                                  <CheckCircle2 className="w-3.5 h-3.5" /> ตรวจครบแล้ว
-                                </span>
-                              )}
-                              <span className="text-xs text-gray-400">ทั้งหมด {totalSubmissions} งาน</span>
-                            </div>
+                    return (
+                      <tr key={user.id} className="hover:bg-gray-50/50 transition-colors">
+                        <td className="px-5 py-4 font-medium text-gray-900">
+                          <div className="flex items-center gap-3">
+                            {user.image ? (
+                              <div className="relative w-9 h-9 rounded-full overflow-hidden shrink-0 border border-gray-100">
+                                <Image
+                                  src={user.image}
+                                  alt={user.name || "User Avatar"}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                            ) : (
+                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1B5E20]/10 text-[#1B5E20] text-sm font-bold">
+                                {(user.name || user.email || "?").charAt(0).toUpperCase()}
+                              </div>
+                            )}
+                            <span className="line-clamp-1">{user.name || "ไม่มีชื่อ"}</span>
                           </div>
-                        </div>
-
-                        <div className="text-gray-300 group-hover:text-indigo-500 transition-colors ml-4 shrink-0">
-                          <ChevronRight className="w-6 h-6" />
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
+                        </td>
+                        <td className="px-5 py-4 text-gray-600">
+                          <div className="line-clamp-1">{user.email}</div>
+                        </td>
+                        <td className="px-5 py-4">
+                          <div className="flex items-center gap-2">
+                            {pendingCount > 0 ? (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+                                <Clock className="w-3 h-3" /> รอตรวจ {pendingCount}
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                                <CheckCircle2 className="w-3 h-3" /> ตรวจครบแล้ว
+                              </span>
+                            )}
+                            <span className="text-[11px] text-gray-400">ทั้งหมด {totalSubmissions}</span>
+                          </div>
+                        </td>
+                        <td className="px-5 py-4">
+                          <Link href={`/admin/submissions/${user.id}`}>
+                            <button className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 border border-[#1B5E20] text-[#1B5E20] hover:bg-[#1B5E20] hover:text-white shadow-sm h-8 px-3 gap-1.5 font-noto-thai">
+                              <Eye className="w-4 h-4" />
+                              ตรวจงาน
+                            </button>
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+          
+          {usersWithSubmissions.length > 0 && (
+            <div className="pt-2">
               <PaginationControls currentPage={currentPage} totalPages={totalPages} />
             </div>
           )}
