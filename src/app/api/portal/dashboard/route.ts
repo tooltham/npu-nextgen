@@ -100,11 +100,6 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // If all completed, return the last one or null
-    if (!nextLesson && orderedLessons.length > 0) {
-      nextLesson = orderedLessons[orderedLessons.length - 1];
-    }
-
     // 4. Evaluate Course Completion (Requires ALL submissions to be PASS)
     const isCourseCompleted =
       publishedModules.length > 0 &&
