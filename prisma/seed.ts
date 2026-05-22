@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { encrypt } from "../src/lib/encrypt";
 import {
   PrismaClient,
   Education,
@@ -16,6 +17,7 @@ async function main() {
   console.log("Clearing existing data...");
   await prisma.consent.deleteMany();
   await prisma.application.deleteMany();
+  await prisma.courseModule.deleteMany();
 
   const statuses: AppStatus[] = ["PENDING", "REVIEWED", "ACCEPTED", "REJECTED"];
   const educations: Education[] = [
@@ -51,8 +53,9 @@ async function main() {
     const nameIndex = i % names.length;
     const { th, en } = names[nameIndex];
 
-    // Encrypt dummy national ID logic normally goes here, but we'll just put a dummy string
-    const dummyNationalId = Buffer.from(`111111111111${i}`).toString("base64");
+    // Encrypt dummy national ID logic using standard AES-256-GCM
+    const rawId = `111111111111${i % 10}`;
+    const dummyNationalId = encrypt(rawId);
 
     const app = await prisma.application.create({
       data: {
@@ -93,6 +96,98 @@ async function main() {
     );
   }
 
+  console.log("Seeding Course Modules, Lessons, and Quizzes...");
+
+  const m1 = await prisma.courseModule.create({
+    data: {
+      title: "Module 1: เทคโนโลยีฟาร์มอัจฉริยะพื้นฐาน",
+      description:
+        "เรียนรู้แนวคิดและเครื่องมือพื้นฐานสำหรับการทำฟาร์มอัจฉริยะด้วยเทคโนโลยี IoT",
+      order: 1,
+      lessons: {
+        create: [
+          {
+            title: "บทเรียนที่ 1.1: แนะนำ IoT และ Smart Farm",
+            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            documentUrl: "https://example.com/docs/intro-to-smart-farm.pdf",
+            order: 1,
+            quizzes: {
+              create: [
+                {
+                  question: "ข้อใดคือองค์ประกอบหลักของระบบ Smart Farm?",
+                  options: [
+                    "การใช้แรงงานคนมากขึ้น",
+                    "เซ็นเซอร์และการควบคุมอัตโนมัติ",
+                    "การเพาะปลูกแบบดั้งเดิม",
+                    "การพึ่งพาฟ้าฝนเพียงอย่างเดียว",
+                  ],
+                  correctIdx: 1,
+                },
+              ],
+            },
+          },
+          {
+            title: "บทเรียนที่ 1.2: การวิเคราะห์ข้อมูลความชื้นในดิน",
+            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            documentUrl: "https://example.com/docs/soil-moisture-analysis.pdf",
+            order: 2,
+            quizzes: {
+              create: [
+                {
+                  question:
+                    "เซ็นเซอร์ชนิดใดเหมาะสมที่สุดสำหรับใช้วัดปริมาณน้ำในดิน?",
+                  options: [
+                    "DHT11 (เซ็นเซอร์อุณหภูมิ/ความชื้นในอากาศ)",
+                    "Soil Moisture Sensor (เซ็นเซอร์วัดความชื้นดิน)",
+                    "LDR (เซ็นเซอร์แสง)",
+                    "Ultrasonic Sensor (เซ็นเซอร์อัลตราโซนิก)",
+                  ],
+                  correctIdx: 1,
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  });
+
+  const m2 = await prisma.courseModule.create({
+    data: {
+      title: "Module 2: ปัญญาประดิษฐ์ในงานเกษตรกรรม",
+      description:
+        "ทำความเข้าใจและนำโมเดล AI มาประยุกต์ใช้ในการทำนายผลผลิตและตรวจจับโรคพืช",
+      order: 2,
+      lessons: {
+        create: [
+          {
+            title:
+              "บทเรียนที่ 2.1: การวิเคราะห์ภาพถ่ายโรคพืชด้วย Computer Vision",
+            videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            documentUrl: "https://example.com/docs/computer-vision-plants.pdf",
+            order: 1,
+            quizzes: {
+              create: [
+                {
+                  question:
+                    "เทคนิคใดใน AI เหมาะสมที่สุดสำหรับใช้ตรวจโรคพืชจากภาพถ่ายใบไม้?",
+                  options: [
+                    "Linear Regression",
+                    "Computer Vision (Image Classification)",
+                    "Natural Language Processing",
+                    "K-Means Clustering",
+                  ],
+                  correctIdx: 1,
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  });
+
+  console.log("Course Modules seeded successfully!");
   console.log("Seeding complete!");
 }
 

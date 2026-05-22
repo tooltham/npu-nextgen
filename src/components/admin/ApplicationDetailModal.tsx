@@ -26,6 +26,9 @@ import {
   Cpu,
   Edit2,
   CheckCircle,
+  UserPlus,
+  XCircle,
+  Search,
 } from "lucide-react";
 import { StatusBadge, ApplicationStatus } from "./StatusBadge";
 
@@ -184,18 +187,32 @@ export function ApplicationDetailModal({
   const handleUpdateStatus = async (status: ApplicationStatus) => {
     setUpdating(true);
     try {
-      const res = await fetch(`/api/admin/applications/${applicationId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
-      });
+      let res;
+      if (status === "ACCEPTED") {
+        res = await fetch("/api/admin/invite", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ applicationId }),
+        });
+      } else {
+        res = await fetch(`/api/admin/applications/${applicationId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status }),
+        });
+      }
+
       if (res.ok) {
         onStatusUpdated();
         setConfirmDialog({ show: false, status: null });
         fetchData(); // reload logs and new state
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        alert(errorData.error || "เกิดข้อผิดพลาดในการดำเนินการ");
       }
     } catch (err) {
       console.error(err);
+      alert("เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์");
     } finally {
       setUpdating(false);
     }
@@ -287,12 +304,12 @@ export function ApplicationDetailModal({
                         : "กำลังพิจารณา "}
                 </span>
                 ใช่หรือไม่?
-                {confirmDialog.status === "ACCEPTED" &&
-                  !data?.isAcceptanceEmailSent && (
-                    <span className="block mt-2 text-red-600 font-medium">
-                      * ระบบจะทำการส่งอีเมลแจ้งผลไปยังผู้สมัครทันที
-                    </span>
-                  )}
+                {confirmDialog.status === "ACCEPTED" && (
+                  <span className="block mt-2 text-[#1B5E20] font-medium">
+                    * ระบบจะสร้างบัญชีผู้เรียน ลงทะเบียนวิชาเรียน
+                    และส่งอีเมลแจ้งข้อมูลพร้อมรหัสผ่านชั่วคราวให้ผู้เรียนโดยอัตโนมัติ
+                  </span>
+                )}
               </p>
             </div>
             <div className="flex justify-end gap-3">
@@ -514,10 +531,16 @@ export function ApplicationDetailModal({
                         </p>
                         <p className="font-medium text-gray-900">
                           {data.nationalId
-                            ? data.nationalId.replace(
-                                /(\d{1})(\d{4})(\d{5})(\d{2})(\d{1})/,
-                                "$1-$2-$3-$4-$5",
-                              )
+                            ? data.nationalId.includes(":")
+                              ? "(ข้อมูลเข้ารหัส / ไม่สามารถถอดรหัสได้)"
+                              : data.nationalId.replace(/\D/g, "").length === 13
+                                ? data.nationalId
+                                    .replace(/\D/g, "")
+                                    .replace(
+                                      /(\d{1})(\d{4})(\d{5})(\d{2})(\d{1})/,
+                                      "$1-$2-$3-$4-$5",
+                                    )
+                                : data.nationalId
                             : "-"}
                         </p>
                       </div>
@@ -948,43 +971,47 @@ export function ApplicationDetailModal({
               <div className="flex flex-wrap gap-2 justify-center">
                 <Button
                   size="sm"
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-medium shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-medium shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
                   onClick={() =>
                     setConfirmDialog({ show: true, status: "REVIEWED" })
                   }
                   disabled={data.status === "REVIEWED"}
                 >
+                  <Search className="w-4 h-4" />
                   กำลังพิจารณา
                 </Button>
                 <Button
                   size="sm"
-                  className="bg-purple-500 hover:bg-purple-600 text-white font-medium shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-purple-500 hover:bg-purple-600 text-white font-medium shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
                   onClick={() =>
                     setConfirmDialog({ show: true, status: "WAITLISTED" })
                   }
                   disabled={data.status === "WAITLISTED"}
                 >
+                  <Clock className="w-4 h-4" />
                   สำรอง
                 </Button>
                 <Button
                   size="sm"
-                  className="bg-red-500 hover:bg-red-600 text-white font-medium shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-red-500 hover:bg-red-600 text-white font-medium shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
                   onClick={() =>
                     setConfirmDialog({ show: true, status: "REJECTED" })
                   }
                   disabled={data.status === "REJECTED"}
                 >
+                  <XCircle className="w-4 h-4" />
                   ไม่ผ่าน
                 </Button>
                 <Button
                   size="sm"
-                  className="bg-[#1B5E20] hover:bg-[#154a19] text-white font-medium shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="bg-[#1B5E20] hover:bg-[#154a19] text-white font-medium shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5"
                   onClick={() =>
                     setConfirmDialog({ show: true, status: "ACCEPTED" })
                   }
                   disabled={data.status === "ACCEPTED"}
                 >
-                  อนุมัติผ่าน
+                  <UserPlus className="w-4 h-4" />
+                  อนุมัติ & เชิญ
                 </Button>
               </div>
             </div>

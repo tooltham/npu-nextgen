@@ -12,6 +12,7 @@ import {
   Eye,
   Trash2,
   AlertCircle,
+  UserPlus,
 } from "lucide-react";
 import { ApplicationDetailModal } from "./ApplicationDetailModal";
 
@@ -42,6 +43,11 @@ export function ApplicationTable() {
   }>({ show: false, id: null });
   const [deleting, setDeleting] = useState(false);
 
+  const [successDialog, setSuccessDialog] = useState<{
+    show: boolean;
+    message: string;
+  }>({ show: false, message: "" });
+
   const handleDelete = async (id: string) => {
     setDeleting(true);
     try {
@@ -50,13 +56,14 @@ export function ApplicationTable() {
       });
       if (res.ok) {
         setDeleteDialog({ show: false, id: null });
+        setSuccessDialog({ show: true, message: "ลบข้อมูลสำเร็จ" });
         fetchData(); // Refresh table
       } else {
-        alert("ลบข้อมูลไม่สำเร็จ");
+        setSuccessDialog({ show: true, message: "ลบข้อมูลไม่สำเร็จ" });
       }
     } catch (error) {
       console.error("Delete error:", error);
-      alert("เกิดข้อผิดพลาดในการลบ");
+      setSuccessDialog({ show: true, message: "เกิดข้อผิดพลาดในการลบ" });
     } finally {
       setDeleting(false);
     }
@@ -260,6 +267,27 @@ export function ApplicationTable() {
                 )}
               </Button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success/Message Dialog Overlay */}
+      {successDialog.show && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 p-4 font-noto-thai">
+          <div className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-[400px] text-center">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 mb-4">
+              <AlertCircle className="h-6 w-6 text-blue-600" />
+            </div>
+            <h3 className="text-lg font-bold mb-2">แจ้งเตือน</h3>
+            <p className="text-gray-600 text-sm mb-6">
+              {successDialog.message}
+            </p>
+            <Button
+              className="w-full bg-[#1B5E20] hover:bg-[#154a19] text-white"
+              onClick={() => setSuccessDialog({ show: false, message: "" })}
+            >
+              ตกลง
+            </Button>
           </div>
         </div>
       )}

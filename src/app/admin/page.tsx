@@ -5,6 +5,9 @@ import { LogoutButton } from "@/components/admin/LogoutButton";
 import prisma from "@/lib/db";
 import { auth } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import { Presentation, BookOpen, Users } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 
 export default async function AdminDashboardPage() {
   const session = await auth();
@@ -34,7 +37,51 @@ export default async function AdminDashboardPage() {
               NextGen
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/admin/users"
+              className={buttonVariants({
+                size: "sm",
+                variant: "outline",
+                className: "shadow-sm font-noto-thai shrink-0",
+              })}
+            >
+              <Users className="mr-2 h-4 w-4 shrink-0" />
+              จัดการข้อมูลผู้เรียน
+            </Link>
+            <Link
+              href="/admin/courses"
+              className={buttonVariants({
+                size: "sm",
+                variant: "outline",
+                className: "shadow-sm font-noto-thai shrink-0",
+              })}
+            >
+              <BookOpen className="mr-2 h-4 w-4 shrink-0" />
+              จัดการหลักสูตร
+            </Link>
+            <Link
+              href="/admin/submissions"
+              className={buttonVariants({
+                size: "sm",
+                variant: "outline",
+                className: "shadow-sm font-noto-thai shrink-0",
+              })}
+            >
+              <Presentation className="mr-2 h-4 w-4 shrink-0" />
+              ตรวจผลงาน
+            </Link>
+            <Link
+              href="/portal"
+              className={buttonVariants({
+                size: "sm",
+                className:
+                  "bg-[#1B5E20] hover:bg-[#154a19] text-white shadow-sm font-noto-thai px-4 shrink-0",
+              })}
+            >
+              <BookOpen className="mr-2 h-4 w-4 shrink-0" />
+              <span className="whitespace-nowrap">Student Portal</span>
+            </Link>
             <ExportButtons />
             <LogoutButton />
           </div>

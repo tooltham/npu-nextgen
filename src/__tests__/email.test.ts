@@ -13,7 +13,9 @@ vi.mock("resend", () => {
   return {
     Resend: class {
       emails = {
-        send: vi.fn().mockResolvedValue({ id: "email-id" }),
+        send: vi
+          .fn()
+          .mockResolvedValue({ data: { id: "email-id" }, error: null }),
       };
     },
   };

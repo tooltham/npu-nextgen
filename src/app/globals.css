@@ -63,8 +63,9 @@
 
   /* Font Stack */
   --font-sans:
-    var(--font-prompt), -apple-system, BlinkMacSystemFont, "SF Pro Display",
-    "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    "Sukhumvit Set", "San Francisco", system-ui, var(--font-prompt),
+    -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono:
     "SF Mono", "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
     Consolas, "Liberation Mono", "Courier New", monospace;

@@ -86,7 +86,10 @@ export async function POST(req: Request) {
     // 5. Async Email Notification (Non-blocking)
     // We use Promise.allSettled to ensure failure in one doesn't crash the response
     Promise.allSettled([
-      sendApplicantConfirmation(application),
+      sendApplicantConfirmation({
+        ...application,
+        nationalId: personalInfo.nationalId,
+      }),
       sendAdminNotification(application),
     ]).catch((err) => console.error("Email notification failed:", err));
 

@@ -51,6 +51,7 @@ model Application {
   consent               Consent?
   isAcceptanceEmailSent Boolean   @default(false)
   logs                  ApplicationLog[]
+  user                  User?
 }
 
 model Consent {
@@ -71,6 +72,148 @@ model AdminUser {
   createdAt     DateTime  @default(now())
 }
 
+model User {
+  id            String       @id @default(cuid())
+  name          String?
+  email         String       @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?      // Optional: Null สำหรับผู้ใช้ Google SSO
+  role          Role         @default(STUDENT)
+  isActive      Boolean      @default(true)
+  lastLoginAt   DateTime?    // ใช้สำหรับจับเวลาแจ้งเตือนคนหาย (Inactivity)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  accounts      Account[]
+
+  // Student specific relations
+  applicationId String?      @unique
+  application   Application? @relation(fields: [applicationId], references: [id])
+  progress      LessonProgress[]
+  quizAttempts  QuizAttempt[]
+  submissions   Submission[]
+  certificate   Certificate?
+  enrollment    Enrollment?
+
+  // Staff specific relations
+  gradedSubmissions Submission[] @relation("StaffGrades")
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model CourseModule {
+  id          String       @id @default(cuid())
+  title       String       // e.g., "AI & Smart Planning"
+  description String?      @db.Text
+  order       Int
+  status      ModuleStatus @default(DRAFT)  // DRAFT | PUBLISHED
+  thumbnail   String?                        // URL รูปปก module
+  lessons     Lesson[]
+}
+
+model Lesson {
+  id          String         @id @default(cuid())
+  moduleId    String
+  module      CourseModule   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  title       String
+  videoUrl    String?
+  documentUrl String?
+  order       Int
+  type        LessonType     @default(VIDEO)  // VIDEO | TEXT | QUIZ
+  content     String?        @db.Text          // Markdown content สำหรับ type=TEXT
+  isPreview   Boolean        @default(false)   // อนุญาตดูก่อน Enroll
+  dripDays    Int            @default(0)        // ปล่อยบทเรียนหลัง N วันจาก Enrollment
+
+  progress    LessonProgress[]
+  quizzes     Quiz[]
+}
+
+model LessonProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId    String
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  isCompleted Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, lessonId])
+}
+
+model Quiz {
+  id          String   @id @default(cuid())
+  lessonId    String
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  question    String   @db.Text
+  options     Json     // ["A", "B", "C", "D"]
+  correctIdx  Int      // 0, 1, 2, or 3
+
+  attempts    QuizAttempt[]
+}
+
+model QuizAttempt {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId      String
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  selectedIdx Int
+  isCorrect   Boolean
+  attemptedAt DateTime @default(now())
+}
+
+model Submission {
+  id             String    @id @default(cuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleId       String
+  assignmentUrl  String
+  note           String?   @db.Text
+  submittedAt    DateTime  @default(now())
+
+  score          Float?
+  feedback       String?   @db.Text
+  gradedById     String?
+  gradedBy       User?     @relation("StaffGrades", fields: [gradedById], references: [id])
+  gradedAt       DateTime?
+  status         GradeStatus @default(PENDING)
+}
+
+model Certificate {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  certUrl      String   // Path ของไฟล์ PDF บน Production Server
+  issuedAt     DateTime @default(now())
+}
+
+model Enrollment {
+  id          String       @id @default(cuid())
+  userId      String       @unique  // 1 user = 1 enrollment (Single Course)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enrolledAt  DateTime     @default(now())
+  status      EnrollStatus @default(ACTIVE)
+  expiresAt   DateTime?    // optional: หมดอายุการเข้าถึง
+}
+
 model ExportLog {
   id          String    @id @default(cuid())
   adminEmail  String
@@ -88,6 +231,35 @@ model ApplicationLog {
   action          String      // "STATUS_CHANGE" or "INTERVIEW_NOTE"
   details         String      @db.Text
   createdAt       DateTime    @default(now())
+}
+
+enum Role {
+  ADMIN
+  STAFF
+  STUDENT
+}
+
+enum GradeStatus {
+  PENDING
+  PASS
+  FAIL
+}
+
+enum ModuleStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum LessonType {
+  VIDEO
+  TEXT
+  QUIZ
+}
+
+enum EnrollStatus {
+  ACTIVE
+  COMPLETED
+  SUSPENDED
 }
 
 enum Education {

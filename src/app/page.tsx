@@ -40,12 +40,20 @@ export default function LandingPage() {
               </Link>
             </div>
           </div>
-          <Link
-            href="/apply"
-            className="rounded-full bg-[#1B5E20] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#154a19] transition-colors"
-          >
-            สมัครเลย
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/admin/login"
+              className="hidden sm:block text-sm font-medium text-black/60 hover:text-black transition-colors"
+            >
+              เข้าสู่ห้องเรียน
+            </Link>
+            <Link
+              href="/apply"
+              className="rounded-full bg-[#1B5E20] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#154a19] transition-colors"
+            >
+              สมัครเลย
+            </Link>
+          </div>
         </div>
       </nav>
 
