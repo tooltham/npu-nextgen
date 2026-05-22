@@ -322,7 +322,7 @@ export default function ClassroomClient({
               </h2>
             </div>
 
-            <div className="space-y-8 max-h-[calc(100vh-12rem)] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="space-y-8 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2 custom-scrollbar">
               {modules.map((module, mIndex) => {
                 const moduleSubmission = submissions.find(
                   (s) => s.moduleId === module.id,
