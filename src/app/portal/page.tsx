@@ -140,7 +140,23 @@ export default function PortalDashboard() {
               </p>
             </div>
 
-            {data.nextLesson ? (
+            {data.isCourseCompleted ? (
+              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-6 border border-emerald-100 text-center shadow-sm flex flex-col items-center justify-center gap-3">
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md border border-emerald-200 text-3xl mb-2">
+                  🎓
+                </div>
+                <h3 className="font-extrabold text-emerald-900 text-xl">
+                  ขอแสดงความยินดี! คุณเรียนจบหลักสูตรแล้ว
+                </h3>
+                <p className="text-sm text-emerald-700 font-medium mb-2">
+                  โครงงานของคุณผ่านการประเมินครบทุกชิ้นแล้ว
+                  สามารถขอรับใบประกาศนียบัตรได้
+                </p>
+                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg hover:shadow-emerald-600/20 rounded-xl px-8 py-6 font-bold transition-all hover:-translate-y-0.5">
+                  ดาวน์โหลดใบประกาศนียบัตร
+                </Button>
+              </div>
+            ) : data.nextLesson ? (
               <div className="bg-emerald-50/50 rounded-2xl p-5 border border-emerald-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:bg-emerald-50 transition-colors group">
                 <div className="flex gap-4 items-center">
                   <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm border border-emerald-100 shrink-0">
@@ -168,22 +184,6 @@ export default function PortalDashboard() {
                     เรียนต่อเลย
                   </Button>
                 </Link>
-              </div>
-            ) : data.isCourseCompleted ? (
-              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-6 border border-emerald-100 text-center shadow-sm flex flex-col items-center justify-center gap-3">
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md border border-emerald-200 text-3xl mb-2">
-                  🎓
-                </div>
-                <h3 className="font-extrabold text-emerald-900 text-xl">
-                  ขอแสดงความยินดี! คุณเรียนจบหลักสูตรแล้ว
-                </h3>
-                <p className="text-sm text-emerald-700 font-medium mb-2">
-                  โครงงานของคุณผ่านการประเมินครบทุกชิ้นแล้ว
-                  สามารถขอรับใบประกาศนียบัตรได้
-                </p>
-                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg hover:shadow-emerald-600/20 rounded-xl px-8 py-6 font-bold transition-all hover:-translate-y-0.5">
-                  ดาวน์โหลดใบประกาศนียบัตร
-                </Button>
               </div>
             ) : (
               <div className="bg-amber-50 rounded-2xl p-6 border border-amber-100 text-center shadow-sm flex flex-col items-center justify-center gap-3">
@@ -232,6 +232,92 @@ export default function PortalDashboard() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Modules List Section */}
+        <div>
+          <h2 className="text-2xl font-black text-zinc-900 mb-6 flex items-center gap-3">
+            <BookOpen className="w-6 h-6 text-emerald-600" />
+            โมดูลการเรียนรู้ (Course Modules)
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data.modules.map((module) => (
+              <div
+                key={module.id}
+                className={`relative overflow-hidden rounded-3xl border transition-all duration-300 flex flex-col h-full
+                  ${
+                    module.isLocked
+                      ? "bg-zinc-50 border-zinc-200 opacity-80 grayscale-[0.5]"
+                      : "bg-white border-zinc-100 shadow-xl shadow-zinc-200/20 hover:-translate-y-1 hover:shadow-emerald-900/5"
+                  }
+                `}
+              >
+                <div className="p-6 flex-1 flex flex-col">
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div className="flex flex-col">
+                      <span className="text-xs font-black text-zinc-400 tracking-wider mb-1">
+                        MODULE {module.order}
+                      </span>
+                      <h3
+                        className={`text-lg font-extrabold line-clamp-2 ${
+                          module.isLocked ? "text-zinc-500" : "text-zinc-900"
+                        }`}
+                      >
+                        {module.title}
+                      </h3>
+                    </div>
+                    {module.isLocked ? (
+                      <div className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
+                        <Lock className="w-5 h-5 text-zinc-400" />
+                      </div>
+                    ) : module.isCompleted ? (
+                      <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0">
+                        <PlayCircle className="w-5 h-5 text-amber-500" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  <p className="text-sm text-zinc-500 font-medium mb-6 line-clamp-2">
+                    {module.description || "ไม่มีคำอธิบาย"}
+                  </p>
+
+                  <div className="mt-auto pt-4 border-t border-zinc-100 flex items-center justify-between">
+                    <span className="text-xs font-bold text-zinc-500">
+                      {module.lessonCount} บทเรียน
+                    </span>
+                    
+                    {module.isLocked ? (
+                      <Button variant="outline" size="sm" disabled className="rounded-xl px-4 text-xs font-bold bg-zinc-100 border-transparent text-zinc-400">
+                        ล็อค
+                      </Button>
+                    ) : (
+                      <Link href={`/portal/classroom/${module.id}`}>
+                        <Button
+                          variant={module.isCompleted ? "outline" : "default"}
+                          size="sm"
+                          className={`rounded-xl px-4 text-xs font-bold gap-1.5 transition-colors
+                            ${
+                              module.isCompleted 
+                                ? "text-emerald-600 border-emerald-200 hover:bg-emerald-50" 
+                                : "bg-emerald-600 text-white hover:bg-emerald-700"
+                            }
+                          `}
+                        >
+                          {module.isCompleted ? "ทบทวนซ้ำ" : "เข้าเรียน"}
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
