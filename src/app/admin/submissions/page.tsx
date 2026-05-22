@@ -2,7 +2,7 @@ import prisma from "@/lib/db";
 import { auth } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Users, Clock, CheckCircle2, ChevronRight, Inbox } from "lucide-react";
+import { ArrowLeft, Users, Clock, CheckCircle2, ChevronRight, Inbox, Eye } from "lucide-react";
 import Image from "next/image";
 import SubmissionsFilter from "@/components/admin/SubmissionsFilter";
 import PaginationControls from "@/components/admin/PaginationControls";
