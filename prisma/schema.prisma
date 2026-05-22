@@ -13,83 +13,83 @@ datasource db {
 }
 
 model Application {
-  id                    String    @id @default(cuid())
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Step 2: Personal Information
-  email                 String    @unique
-  titleTh               String    // นาย / นาง / นางสาว / อื่นๆ
-  firstNameTh           String
-  lastNameTh            String
-  firstNameEn           String
-  lastNameEn            String
-  nationalId            String    // encrypted at rest (AES-256-GCM)
-  phone                 String
-  lineId                String?
+  email       String  @unique
+  titleTh     String // นาย / นาง / นางสาว / อื่นๆ
+  firstNameTh String
+  lastNameTh  String
+  firstNameEn String
+  lastNameEn  String
+  nationalId  String // encrypted at rest (AES-256-GCM)
+  phone       String
+  lineId      String?
 
   // Step 3: Background & Qualifications
-  education             Education
-  targetGroup           String[]  // multi-select
-  targetGroupOther      String?
-  hasAgriExperience     Boolean
-  agriExperienceYears   Int?
-  farmName              String?
-  farmLocation          String?
+  education           Education
+  targetGroup         String[] // multi-select
+  targetGroupOther    String?
+  hasAgriExperience   Boolean
+  agriExperienceYears Int?
+  farmName            String?
+  farmLocation        String?
 
   // Step 4: Readiness & Expectations
-  digitalSkillLevel     DigitalSkill
-  expectations          String[]  // multi-select
-  expectationsOther     String?
-  canCommitTime         Boolean
+  digitalSkillLevel DigitalSkill
+  expectations      String[] // multi-select
+  expectationsOther String?
+  canCommitTime     Boolean
 
   // Metadata
-  status                AppStatus @default(PENDING)
-  ipAddress             String
-  userAgent             String?
+  status    AppStatus @default(PENDING)
+  ipAddress String
+  userAgent String?
 
   consent               Consent?
-  isAcceptanceEmailSent Boolean   @default(false)
+  isAcceptanceEmailSent Boolean          @default(false)
   logs                  ApplicationLog[]
   user                  User?
 }
 
 model Consent {
-  id              String      @id @default(cuid())
-  applicationId   String      @unique
-  application     Application @relation(fields: [applicationId], references: [id])
-  granted         Boolean
-  consentText     String      // snapshot of PDPA text at time of consent
-  consentVersion  String      // "v1.0"
-  grantedAt       DateTime    @default(now())
-  ipAddress       String
+  id             String      @id @default(cuid())
+  applicationId  String      @unique
+  application    Application @relation(fields: [applicationId], references: [id])
+  granted        Boolean
+  consentText    String // snapshot of PDPA text at time of consent
+  consentVersion String // "v1.0"
+  grantedAt      DateTime    @default(now())
+  ipAddress      String
 }
 
 model AdminUser {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  passwordHash  String
-  createdAt     DateTime  @default(now())
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
 }
 
 model User {
-  id            String       @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String       @unique
+  email         String    @unique
   emailVerified DateTime?
   image         String?
-  passwordHash  String?      // Optional: Null สำหรับผู้ใช้ Google SSO
-  role          Role         @default(STUDENT)
-  isActive      Boolean      @default(true)
-  lastLoginAt   DateTime?    // ใช้สำหรับจับเวลาแจ้งเตือนคนหาย (Inactivity)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  passwordHash  String? // Optional: Null สำหรับผู้ใช้ Google SSO
+  role          Role      @default(STUDENT)
+  isActive      Boolean   @default(true)
+  lastLoginAt   DateTime? // ใช้สำหรับจับเวลาแจ้งเตือนคนหาย (Inactivity)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  accounts      Account[]
+  accounts Account[]
 
   // Student specific relations
-  applicationId String?      @unique
-  application   Application? @relation(fields: [applicationId], references: [id])
+  applicationId String?          @unique
+  application   Application?     @relation(fields: [applicationId], references: [id])
   progress      LessonProgress[]
   quizAttempts  QuizAttempt[]
   submissions   Submission[]
@@ -101,18 +101,18 @@ model User {
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -121,29 +121,30 @@ model Account {
 
 model CourseModule {
   id          String       @id @default(cuid())
-  title       String       // e.g., "AI & Smart Planning"
+  title       String // e.g., "AI & Smart Planning"
   description String?      @db.Text
   order       Int
-  status      ModuleStatus @default(DRAFT)  // DRAFT | PUBLISHED
-  thumbnail   String?                        // URL รูปปก module
+  status      ModuleStatus @default(DRAFT) // DRAFT | PUBLISHED
+  thumbnail   String? // URL รูปปก module
   lessons     Lesson[]
+  submissions Submission[]
 }
 
 model Lesson {
-  id          String         @id @default(cuid())
+  id          String       @id @default(cuid())
   moduleId    String
-  module      CourseModule   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  module      CourseModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   title       String
   videoUrl    String?
   documentUrl String?
   order       Int
-  type        LessonType     @default(VIDEO)  // VIDEO | TEXT | QUIZ
-  content     String?        @db.Text          // Markdown content สำหรับ type=TEXT
-  isPreview   Boolean        @default(false)   // อนุญาตดูก่อน Enroll
-  dripDays    Int            @default(0)        // ปล่อยบทเรียนหลัง N วันจาก Enrollment
+  type        LessonType   @default(VIDEO) // VIDEO | TEXT | QUIZ
+  content     String?      @db.Text // Markdown content สำหรับ type=TEXT
+  isPreview   Boolean      @default(false) // อนุญาตดูก่อน Enroll
+  dripDays    Int          @default(0) // ปล่อยบทเรียนหลัง N วันจาก Enrollment
 
-  progress    LessonProgress[]
-  quizzes     Quiz[]
+  progress LessonProgress[]
+  quizzes  Quiz[]
 }
 
 model LessonProgress {
@@ -159,14 +160,14 @@ model LessonProgress {
 }
 
 model Quiz {
-  id          String   @id @default(cuid())
-  lessonId    String
-  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  question    String   @db.Text
-  options     Json     // ["A", "B", "C", "D"]
-  correctIdx  Int      // 0, 1, 2, or 3
+  id         String @id @default(cuid())
+  lessonId   String
+  lesson     Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  question   String @db.Text
+  options    Json // ["A", "B", "C", "D"]
+  correctIdx Int // 0, 1, 2, or 3
 
-  attempts    QuizAttempt[]
+  attempts QuizAttempt[]
 }
 
 model QuizAttempt {
@@ -181,56 +182,57 @@ model QuizAttempt {
 }
 
 model Submission {
-  id             String    @id @default(cuid())
-  userId         String
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  moduleId       String
-  assignmentUrl  String
-  note           String?   @db.Text
-  submittedAt    DateTime  @default(now())
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleId      String
+  module        CourseModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  assignmentUrl String
+  note          String?      @db.Text
+  submittedAt   DateTime     @default(now())
 
-  score          Float?
-  feedback       String?   @db.Text
-  gradedById     String?
-  gradedBy       User?     @relation("StaffGrades", fields: [gradedById], references: [id])
-  gradedAt       DateTime?
-  status         GradeStatus @default(PENDING)
+  score      Float?
+  feedback   String?     @db.Text
+  gradedById String?
+  gradedBy   User?       @relation("StaffGrades", fields: [gradedById], references: [id])
+  gradedAt   DateTime?
+  status     GradeStatus @default(PENDING)
 }
 
 model Certificate {
-  id           String   @id @default(cuid())
-  userId       String   @unique
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  certUrl      String   // Path ของไฟล์ PDF บน Production Server
-  issuedAt     DateTime @default(now())
+  id       String   @id @default(cuid())
+  userId   String   @unique
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  certUrl  String // Path ของไฟล์ PDF บน Production Server
+  issuedAt DateTime @default(now())
 }
 
 model Enrollment {
-  id          String       @id @default(cuid())
-  userId      String       @unique  // 1 user = 1 enrollment (Single Course)
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  enrolledAt  DateTime     @default(now())
-  status      EnrollStatus @default(ACTIVE)
-  expiresAt   DateTime?    // optional: หมดอายุการเข้าถึง
+  id         String       @id @default(cuid())
+  userId     String       @unique // 1 user = 1 enrollment (Single Course)
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enrolledAt DateTime     @default(now())
+  status     EnrollStatus @default(ACTIVE)
+  expiresAt  DateTime? // optional: หมดอายุการเข้าถึง
 }
 
 model ExportLog {
-  id          String    @id @default(cuid())
-  adminEmail  String
-  format      String    // "csv" | "pdf"
-  rowCount    Int
-  exportedAt  DateTime  @default(now())
-  ipAddress   String
+  id         String   @id @default(cuid())
+  adminEmail String
+  format     String // "csv" | "pdf"
+  rowCount   Int
+  exportedAt DateTime @default(now())
+  ipAddress  String
 }
 
 model ApplicationLog {
-  id              String      @id @default(cuid())
-  applicationId   String
-  application     Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  adminEmail      String
-  action          String      // "STATUS_CHANGE" or "INTERVIEW_NOTE"
-  details         String      @db.Text
-  createdAt       DateTime    @default(now())
+  id            String      @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  adminEmail    String
+  action        String // "STATUS_CHANGE" or "INTERVIEW_NOTE"
+  details       String      @db.Text
+  createdAt     DateTime    @default(now())
 }
 
 enum Role {
