@@ -17,7 +17,7 @@ import Image from "next/image";
 export default async function UserSubmissionsPage({
   params,
 }: {
-  params: { userId: string };
+  params: Promise<{ userId: string }>;
 }) {
   const session = await auth();
 
@@ -25,9 +25,11 @@ export default async function UserSubmissionsPage({
     redirect("/admin/login");
   }
 
+  const { userId } = await params;
+
   // Fetch the specific user and their submissions
   const user = await prisma.user.findUnique({
-    where: { id: params.userId },
+    where: { id: userId },
     include: {
       submissions: {
         include: {
