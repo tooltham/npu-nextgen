@@ -322,79 +322,87 @@ export default function ClassroomClient({
               </h2>
             </div>
 
-            <div className="space-y-8 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="max-h-[calc(100vh-6rem)] overflow-y-auto pr-4 custom-scrollbar">
               {modules.map((module, mIndex) => {
                 const moduleSubmission = submissions.find(
                   (s) => s.moduleId === module.id,
                 );
                 const statusLabel = moduleSubmission
                   ? moduleSubmission.status === "PASS"
-                    ? "✓ ผ่าน"
+                    ? "✓ ผ่านแล้ว"
                     : moduleSubmission.status === "PENDING"
-                      ? "⏳ ตรวจสอบ"
-                      : "💡 แก้ไข"
+                      ? "⏳ รอตรวจ"
+                      : "💡 แก้ไขงาน"
                   : "";
 
                 return (
-                  <div key={module.id} className="space-y-4 relative">
-                    {/* Module Connector Line */}
+                  <div key={module.id} className="relative pb-6 last:pb-2">
+                    {/* Timeline Vertical Line */}
                     {mIndex !== modules.length - 1 && (
-                      <div className="absolute left-3.5 top-10 bottom-[-2.5rem] w-px bg-zinc-100"></div>
+                      <div className="absolute left-[13px] top-8 bottom-0 w-[2px] bg-zinc-100 z-0"></div>
                     )}
 
-                    <div className="flex items-start justify-between px-1 relative z-10 gap-3">
-                      <div className="flex items-start gap-3 flex-1 min-w-0">
-                        <div className="w-7 h-7 shrink-0 rounded-full bg-zinc-100 flex items-center justify-center text-xs font-bold text-zinc-500 border-2 border-white shadow-sm mt-0.5">
-                          {module.order}
-                        </div>
-                        <h3 className="text-sm font-bold text-zinc-900 tracking-wide leading-snug">
+                    {/* Module Header */}
+                    <div className="flex items-start gap-3 relative z-10">
+                      <div className="w-7 h-7 shrink-0 rounded-full bg-white border-[2px] border-zinc-200 flex items-center justify-center text-xs font-bold text-zinc-600 shadow-sm">
+                        {module.order}
+                      </div>
+                      <div className="flex-1 min-w-0 pt-1">
+                        <h3 className="text-sm font-bold text-zinc-900 leading-snug break-words">
                           {module.title}
                         </h3>
                       </div>
                       {statusLabel && (
-                        <span
-                          className={`shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm mt-0.5 ${
-                            moduleSubmission?.status === "PASS"
-                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                              : moduleSubmission?.status === "PENDING"
-                                ? "bg-amber-50 text-amber-700 border border-amber-200"
-                                : "bg-rose-50 text-rose-700 border border-rose-200"
-                          }`}
-                        >
-                          {statusLabel}
-                        </span>
+                        <div className="shrink-0 pt-0.5">
+                          <span
+                            className={`text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm border ${
+                              moduleSubmission?.status === "PASS"
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                : moduleSubmission?.status === "PENDING"
+                                  ? "bg-amber-50 text-amber-700 border-amber-200"
+                                  : "bg-rose-50 text-rose-700 border-rose-200"
+                            }`}
+                          >
+                            {statusLabel}
+                          </span>
+                        </div>
                       )}
                     </div>
 
-                    <div className="space-y-1.5 pl-4 border-l-2 border-transparent">
+                    {/* Lessons List */}
+                    <div className="mt-3 ml-8 space-y-2 relative z-10">
                       {module.lessons.map((lesson, lIndex) => {
                         const isActive = activeLesson?.id === lesson.id;
                         const isCompleted = isLessonCompleted(lesson.id);
                         const isUnlocked = isLessonUnlocked(mIndex, lIndex);
 
                         let itemClass =
-                          "hover:bg-zinc-50 text-zinc-600 cursor-pointer";
+                          "hover:bg-zinc-50 border-transparent bg-transparent";
+                        let titleClass = "text-zinc-600";
                         let icon = <Circle className="w-4 h-4 text-zinc-300" />;
-
-                        if (isCompleted) {
-                          icon = (
-                            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                          );
-                        } else if (isActive) {
-                          icon = (
-                            <PlayCircle className="w-4 h-4 text-emerald-600 fill-emerald-100" />
-                          );
-                        } else if (!isUnlocked) {
-                          icon = <Lock className="w-3.5 h-3.5 text-zinc-300" />;
-                          itemClass =
-                            "text-zinc-400 opacity-60 cursor-not-allowed bg-zinc-50/50";
-                        } else if (!isActive && !isCompleted) {
-                          icon = <Circle className="w-4 h-4 text-zinc-300" />;
-                        }
 
                         if (isActive) {
                           itemClass =
-                            "bg-emerald-50/50 border-emerald-100 text-emerald-900 font-bold shadow-sm ring-1 ring-emerald-500/20";
+                            "bg-emerald-50 border-emerald-200 shadow-sm ring-1 ring-emerald-500/10";
+                          titleClass = "text-emerald-900 font-bold";
+                          icon = (
+                            <PlayCircle className="w-4 h-4 text-emerald-600 fill-emerald-100" />
+                          );
+                          if (isCompleted) {
+                            icon = (
+                              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                            );
+                          }
+                        } else if (isCompleted) {
+                          icon = (
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                          );
+                          titleClass = "text-zinc-700 font-medium";
+                        } else if (!isUnlocked) {
+                          icon = <Lock className="w-3.5 h-3.5 text-zinc-300" />;
+                          itemClass =
+                            "opacity-50 cursor-not-allowed bg-zinc-50/50 border-transparent";
+                          titleClass = "text-zinc-400";
                         }
 
                         return (
@@ -409,11 +417,13 @@ export default function ClassroomClient({
                                 );
                               }
                             }}
-                            className={`w-full text-left p-3 rounded-2xl transition-all duration-300 flex items-start text-sm border border-transparent ${itemClass}`}
+                            className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-300 border ${itemClass}`}
                           >
                             <div className="flex items-start gap-3 w-full min-w-0">
-                              <span className="shrink-0 mt-0.5">{icon}</span>
-                              <span className="leading-relaxed flex-1 min-w-0 break-words">
+                              <span className="shrink-0 mt-[1px]">{icon}</span>
+                              <span
+                                className={`leading-snug flex-1 min-w-0 break-words text-sm ${titleClass}`}
+                              >
                                 {lesson.title}
                               </span>
                             </div>
