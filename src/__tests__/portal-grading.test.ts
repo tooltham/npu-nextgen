@@ -39,6 +39,21 @@ vi.mock("@/lib/db", () => ({
   },
 }));
 
+vi.mock("@/lib/supabase", () => ({
+  supabase: {
+    storage: {
+      from: vi.fn().mockReturnValue({
+        upload: vi.fn().mockResolvedValue({ data: {}, error: null }),
+        getPublicUrl: vi
+          .fn()
+          .mockReturnValue({
+            data: { publicUrl: "https://mock-supabase.com/file.pdf" },
+          }),
+      }),
+    },
+  },
+}));
+
 import { auth } from "@/app/api/auth/[...nextauth]/route";
 import prisma from "@/lib/db";
 import { POST as studentSubmitPOST } from "@/app/api/portal/submission/submit/route";
@@ -68,19 +83,23 @@ describe("LMS Portal Grading & Certificate Integration Tests", () => {
         id: "submission-1",
         userId: "student-1",
         moduleId: "module-1",
-        assignmentUrl: "https://github.com/student/farm-project",
+        assignmentUrl: "https://mock-supabase.com/file.pdf",
         status: "PENDING",
       } as any);
+
+      const formData = new FormData();
+      formData.append("moduleId", "module-1");
+      formData.append("note", "My smart farm notes");
+      const file = new File(["test content"], "test.pdf", {
+        type: "application/pdf",
+      });
+      formData.append("file", file);
 
       const request = new Request(
         "http://localhost:3000/api/portal/submission/submit",
         {
           method: "POST",
-          body: JSON.stringify({
-            moduleId: "module-1",
-            assignmentUrl: "https://github.com/student/farm-project",
-            note: "My smart farm notes",
-          }),
+          body: formData,
         },
       );
 
@@ -115,14 +134,18 @@ describe("LMS Portal Grading & Certificate Integration Tests", () => {
         status: "PENDING",
       } as any);
 
+      const formData = new FormData();
+      formData.append("moduleId", "module-1");
+      const file = new File(["test content 2"], "updated.pdf", {
+        type: "application/pdf",
+      });
+      formData.append("file", file);
+
       const request = new Request(
         "http://localhost:3000/api/portal/submission/submit",
         {
           method: "POST",
-          body: JSON.stringify({
-            moduleId: "module-1",
-            assignmentUrl: "https://github.com/student/farm-project-updated",
-          }),
+          body: formData,
         },
       );
 
@@ -139,14 +162,16 @@ describe("LMS Portal Grading & Certificate Integration Tests", () => {
         user: { id: "staff-1", email: "staff@example.com", role: "STAFF" },
       });
 
+      const formData = new FormData();
+      formData.append("moduleId", "module-1");
+      const file = new File(["test"], "test.pdf", { type: "application/pdf" });
+      formData.append("file", file);
+
       const request = new Request(
         "http://localhost:3000/api/portal/submission/submit",
         {
           method: "POST",
-          body: JSON.stringify({
-            moduleId: "module-1",
-            assignmentUrl: "https://github.com/...",
-          }),
+          body: formData,
         },
       );
 
