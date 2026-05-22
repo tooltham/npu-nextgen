@@ -2,16 +2,8 @@ import prisma from "@/lib/db";
 import { auth } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  CheckCircle2,
-  Clock,
-  XCircle,
-  ExternalLink,
-  Inbox,
-} from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
-import GradingForm from "@/components/admin/GradingForm";
+import { ArrowLeft, Users, Clock, CheckCircle2, ChevronRight } from "lucide-react";
+import Image from "next/image";
 
 export default async function AdminSubmissionsPage() {
   const session = await auth();
@@ -20,14 +12,28 @@ export default async function AdminSubmissionsPage() {
     redirect("/admin/login");
   }
 
-  // Fetch all submissions, joined with User and Module
-  const submissions = await prisma.submission.findMany({
-    include: {
-      user: { select: { name: true, email: true } },
-      module: { select: { title: true } },
-      gradedBy: { select: { name: true, email: true } },
+  // Fetch users who have at least one submission
+  const usersWithSubmissions = await prisma.user.findMany({
+    where: {
+      submissions: {
+        some: {},
+      },
     },
-    orderBy: { submittedAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      submissions: {
+        select: {
+          id: true,
+          status: true,
+        },
+      },
+    },
+    orderBy: {
+      name: "asc",
+    },
   });
 
   return (
@@ -48,122 +54,78 @@ export default async function AdminSubmissionsPage() {
               </h1>
             </div>
             <p className="text-gray-500">
-              ตรวจสอบและให้คะแนนผลงานของผู้เรียน (เกณฑ์ผ่าน 70%)
+              เลือกรายชื่อนักศึกษาเพื่อดูและประเมินผลงาน (แยกตามรายบุคคล)
             </p>
           </div>
         </div>
 
-        {/* Submissions List */}
+        {/* Users List */}
         <div className="space-y-4">
-          {submissions.length === 0 ? (
+          {usersWithSubmissions.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-gray-200">
-              <Inbox className="w-12 h-12 text-gray-300 mb-4" />
-              <p className="text-gray-500 font-medium">
-                ยังไม่มีผลงานที่ถูกส่งมา
-              </p>
+              <Users className="w-12 h-12 text-gray-300 mb-4" />
+              <p className="text-gray-500 font-medium">ยังไม่มีผู้เรียนส่งผลงานเข้ามา</p>
             </div>
           ) : (
-            submissions.map((submission) => {
-              const isPass = submission.status === "PASS";
-              const isPending = submission.status === "PENDING";
-              const isFail = submission.status === "FAIL";
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {usersWithSubmissions.map((user) => {
+                const pendingCount = user.submissions.filter((s) => s.status === "PENDING").length;
+                const completedCount = user.submissions.filter((s) => s.status !== "PENDING").length;
+                const totalSubmissions = user.submissions.length;
 
-              return (
-                <div
-                  key={submission.id}
-                  className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-start gap-6"
-                >
-                  {/* Status Icon */}
-                  <div
-                    className={`w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center shadow-sm ${
-                      isPass
-                        ? "bg-emerald-100 text-emerald-600"
-                        : isPending
-                          ? "bg-amber-100 text-amber-600"
-                          : "bg-rose-100 text-rose-600"
-                    }`}
+                return (
+                  <Link
+                    key={user.id}
+                    href={`/admin/submissions/${user.id}`}
+                    className="block group"
                   >
-                    {isPass ? (
-                      <CheckCircle2 className="w-6 h-6" />
-                    ) : isPending ? (
-                      <Clock className="w-6 h-6" />
-                    ) : (
-                      <XCircle className="w-6 h-6" />
-                    )}
-                  </div>
-
-                  {/* Details */}
-                  <div className="flex-1 space-y-3">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span
-                        className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md border ${
-                          isPass
-                            ? "bg-emerald-50 border-emerald-200 text-emerald-700"
-                            : isPending
-                              ? "bg-amber-50 border-amber-200 text-amber-700"
-                              : "bg-rose-50 border-rose-200 text-rose-700"
-                        }`}
-                      >
-                        {submission.status}
-                      </span>
-                      <span className="text-sm text-gray-500 font-medium">
-                        ส่งเมื่อ{" "}
-                        {new Date(submission.submittedAt).toLocaleString(
-                          "th-TH",
+                    <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-indigo-300 hover:shadow-md transition-all flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        {/* Avatar */}
+                        {user.image ? (
+                          <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 border border-gray-100">
+                            <Image
+                              src={user.image}
+                              alt={user.name || "User Avatar"}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 text-indigo-600 font-bold text-lg border border-indigo-100">
+                            {(user.name || user.email || "?").charAt(0).toUpperCase()}
+                          </div>
                         )}
-                      </span>
-                    </div>
 
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900">
-                        {submission.module?.title || "Unknown Module"}
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        โดย: {submission.user?.name || submission.user?.email}
-                      </p>
-                    </div>
-
-                    <a
-                      href={submission.assignmentUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 hover:underline text-sm font-bold bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 w-fit"
-                    >
-                      เปิดไฟล์ผลงาน <ExternalLink className="w-4 h-4" />
-                    </a>
-
-                    {submission.note && (
-                      <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 text-sm">
-                        <span className="font-bold text-gray-500 block mb-1 text-xs">
-                          บันทึกจากผู้เรียน:
-                        </span>
-                        <p className="text-gray-700">{submission.note}</p>
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+                            {user.name || "ไม่มีชื่อ"}
+                          </h3>
+                          <p className="text-sm text-gray-500 line-clamp-1">{user.email}</p>
+                          
+                          <div className="flex items-center gap-3 mt-2">
+                            {pendingCount > 0 ? (
+                              <span className="flex items-center gap-1 text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">
+                                <Clock className="w-3.5 h-3.5" /> รอตรวจ {pendingCount} งาน
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
+                                <CheckCircle2 className="w-3.5 h-3.5" /> ตรวจครบแล้ว
+                              </span>
+                            )}
+                            <span className="text-xs text-gray-400">ทั้งหมด {totalSubmissions} งาน</span>
+                          </div>
+                        </div>
                       </div>
-                    )}
-                  </div>
 
-                  {/* Grading Panel */}
-                  <div className="w-full md:w-[320px] shrink-0 bg-gray-50 p-5 rounded-xl border border-gray-100">
-                    <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2 text-sm">
-                      ส่วนของการประเมินผล
-                    </h4>
-
-                    <GradingForm
-                      submissionId={submission.id}
-                      initialScore={submission.score}
-                      initialFeedback={submission.feedback || ""}
-                    />
-
-                    {submission.gradedBy && (
-                      <p className="text-xs text-gray-400 mt-4 text-center">
-                        ประเมินล่าสุดโดย{" "}
-                        {submission.gradedBy.name || submission.gradedBy.email}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              );
-            })
+                      <div className="text-gray-300 group-hover:text-indigo-500 transition-colors">
+                        <ChevronRight className="w-6 h-6" />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>
