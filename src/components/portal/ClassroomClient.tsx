@@ -336,24 +336,24 @@ export default function ClassroomClient({
                   : "";
 
                 return (
-                  <div key={module.id} className="space-y-3 relative">
+                  <div key={module.id} className="space-y-4 relative">
                     {/* Module Connector Line */}
                     {mIndex !== modules.length - 1 && (
-                      <div className="absolute left-3.5 top-10 bottom-[-2rem] w-px bg-zinc-100"></div>
+                      <div className="absolute left-3.5 top-10 bottom-[-2.5rem] w-px bg-zinc-100"></div>
                     )}
 
-                    <div className="flex items-center justify-between px-1 relative z-10">
-                      <div className="flex items-center gap-3">
-                        <div className="w-7 h-7 rounded-full bg-zinc-100 flex items-center justify-center text-xs font-bold text-zinc-500 border-2 border-white shadow-sm">
+                    <div className="flex items-start justify-between px-1 relative z-10 gap-3">
+                      <div className="flex items-start gap-3 flex-1 min-w-0">
+                        <div className="w-7 h-7 shrink-0 rounded-full bg-zinc-100 flex items-center justify-center text-xs font-bold text-zinc-500 border-2 border-white shadow-sm mt-0.5">
                           {module.order}
                         </div>
-                        <h3 className="text-sm font-bold text-zinc-900 tracking-wide">
+                        <h3 className="text-sm font-bold text-zinc-900 tracking-wide leading-snug">
                           {module.title}
                         </h3>
                       </div>
                       {statusLabel && (
                         <span
-                          className={`text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm ${
+                          className={`shrink-0 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm mt-0.5 ${
                             moduleSubmission?.status === "PASS"
                               ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                               : moduleSubmission?.status === "PENDING"
@@ -409,11 +409,11 @@ export default function ClassroomClient({
                                 );
                               }
                             }}
-                            className={`w-full text-left p-3 rounded-2xl transition-all duration-300 flex items-start justify-between text-sm md:text-sm border border-transparent ${itemClass}`}
+                            className={`w-full text-left p-3 rounded-2xl transition-all duration-300 flex items-start text-sm border border-transparent ${itemClass}`}
                           >
-                            <div className="flex items-start gap-3 w-full">
+                            <div className="flex items-start gap-3 w-full min-w-0">
                               <span className="shrink-0 mt-0.5">{icon}</span>
-                              <span className="whitespace-normal break-words leading-relaxed flex-1">
+                              <span className="leading-relaxed flex-1 min-w-0 break-words">
                                 {lesson.title}
                               </span>
                             </div>
