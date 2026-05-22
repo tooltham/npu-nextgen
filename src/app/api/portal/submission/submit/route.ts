@@ -62,35 +62,55 @@ export async function POST(request: Request) {
       );
     }
 
-    // Convert File to ArrayBuffer, then to Buffer for Supabase
+    // Convert File to ArrayBuffer, then to Buffer for Supabase or local FS
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Upload to Supabase Storage
     const fileExt = file.name.split(".").pop();
     const fileName = `${user.id}/${moduleId}-${uuidv4()}.${fileExt}`;
 
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from("assignments")
-      .upload(fileName, buffer, {
-        contentType: file.type,
-        upsert: true,
-      });
+    let assignmentUrl = "";
 
-    if (uploadError) {
-      console.error("Supabase Upload Error:", uploadError);
-      return NextResponse.json(
-        { success: false, error: "Failed to upload file to storage server." },
-        { status: 500 },
-      );
+    const useSupabase = 
+      process.env.NEXT_PUBLIC_SUPABASE_URL && 
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (useSupabase) {
+      // Upload to Supabase Storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("assignments")
+        .upload(fileName, buffer, {
+          contentType: file.type,
+          upsert: true,
+        });
+
+      if (uploadError) {
+        console.error("Supabase Upload Error:", uploadError);
+        return NextResponse.json(
+          { success: false, error: "Failed to upload file to storage server." },
+          { status: 500 },
+        );
+      }
+
+      // Get Public URL
+      const { data: publicUrlData } = supabase.storage
+        .from("assignments")
+        .getPublicUrl(fileName);
+
+      assignmentUrl = publicUrlData.publicUrl;
+    } else {
+      // Local File System Fallback
+      const fs = await import("fs/promises");
+      const path = await import("path");
+      
+      const uploadDir = path.join(process.cwd(), "public", "uploads", "assignments", user.id);
+      await fs.mkdir(uploadDir, { recursive: true });
+      
+      const filePath = path.join(uploadDir, `${moduleId}-${uuidv4()}.${fileExt}`);
+      await fs.writeFile(filePath, buffer);
+      
+      assignmentUrl = `/uploads/assignments/${user.id}/${path.basename(filePath)}`;
     }
-
-    // Get Public URL
-    const { data: publicUrlData } = supabase.storage
-      .from("assignments")
-      .getPublicUrl(fileName);
-
-    const assignmentUrl = publicUrlData.publicUrl;
 
     // Check for existing submission
     const existingSubmission = await prisma.submission.findFirst({
