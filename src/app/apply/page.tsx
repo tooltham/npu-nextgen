@@ -58,7 +58,7 @@ const ApplicationForm = () => {
 
         <div
           key={currentStep}
-          className="animate-in fade-in slide-in-from-right-4 duration-500 ease-out"
+          className="animate-in fade-in slide-in-from-right-4 duration-500 ease-out bg-white rounded-3xl border border-black/5 shadow-[0_8px_32px_rgba(0,0,0,0.04)] p-8 md:p-12"
         >
           {renderStep()}
         </div>

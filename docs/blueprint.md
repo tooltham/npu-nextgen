@@ -547,7 +547,7 @@ npu-nextgen/
 - [ ] Setup NextAuth.js + admin user seed
 - [ ] Fail-fast env validation (`lib/env.ts`)
 - [ ] Zod schemas (applicationSchema.ts)
-- [ ] Pre-commit hooks: `~/.ecc/init-project.sh`
+- [ ] Pre-commit hooks: `~/.gemini/ecc-project/ecc/init-project.sh`
 
 ### Phase 2 — Landing Page + Core Form (Sprint 2, ~2 weeks)
 

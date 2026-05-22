@@ -2,6 +2,7 @@ import { Resend } from "resend";
 import { render } from "@react-email/render";
 import { ApplicantConfirmationEmail } from "@/emails/ApplicantConfirmation";
 import { AdminNotificationEmail } from "@/emails/AdminNotification";
+import { StudentWelcomeEmail } from "@/emails/StudentWelcome";
 import * as React from "react";
 import { env } from "./env";
 
@@ -176,6 +177,76 @@ export const sendApprovalEmail = async (application: any) => {
     return { success: true, messageId: info.messageId };
   } catch (error: any) {
     console.error("Failed to send approval email:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const sendStudentWelcomeEmail = async (
+  application: any,
+  tempPassword: string,
+) => {
+  const resend = getResend();
+  const siteUrl =
+    env.NEXT_PUBLIC_SITE_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "http://localhost:3000";
+  const loginUrl = `${siteUrl}/login`;
+
+  if (!resend) {
+    const transporter = getTransporter();
+    if (!transporter)
+      return { success: false, error: "Email service not configured" };
+
+    const emailHtml = await render(
+      React.createElement(StudentWelcomeEmail, {
+        name: `${application.firstNameTh} ${application.lastNameTh}`,
+        email: application.email,
+        password: tempPassword,
+        course:
+          env.NEXT_PUBLIC_COURSE_NAME ||
+          "นักจัดการฟาร์มเกษตรแบบผสมผสานอัจฉริยะ",
+        loginUrl,
+      }),
+    );
+    try {
+      const info = await transporter.sendMail({
+        from: `"NPU NextGen" <${env.SMTP_USER}>`,
+        to: application.email,
+        subject: `[ยินดีด้วย] คุณได้รับสิทธิ์เข้าเรียนโครงการ NPU NextGen`,
+        html: emailHtml,
+      });
+      return { id: info.messageId };
+    } catch (error: any) {
+      console.error("Failed to send student welcome email:", error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Resend path
+  const emailHtml = await render(
+    React.createElement(StudentWelcomeEmail, {
+      name: `${application.firstNameTh} ${application.lastNameTh}`,
+      email: application.email,
+      password: tempPassword,
+      course:
+        env.NEXT_PUBLIC_COURSE_NAME || "นักจัดการฟาร์มเกษตรแบบผสมผสานอัจฉริยะ",
+      loginUrl,
+    }),
+  );
+  try {
+    const { data, error } = await resend.emails.send({
+      from: `"NPU NextGen" <${env.RESEND_FROM_EMAIL || env.SMTP_USER}>`,
+      to: application.email,
+      subject: `[ยินดีด้วย] คุณได้รับสิทธิ์เข้าเรียนโครงการ NPU NextGen`,
+      html: emailHtml,
+    });
+    if (error) {
+      console.error("Resend error:", error);
+      return { success: false, error: error.message };
+    }
+    return { id: data?.id };
+  } catch (error: any) {
+    console.error("Failed to send student welcome email via Resend:", error);
     return { success: false, error: error.message };
   }
 };

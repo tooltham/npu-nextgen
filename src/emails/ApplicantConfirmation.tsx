@@ -5,7 +5,6 @@ import {
   Text,
   Heading,
   Section,
-  Link,
   Hr,
   Preview,
   Tailwind,

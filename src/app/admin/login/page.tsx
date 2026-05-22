@@ -54,7 +54,7 @@ export default function AdminLoginPage() {
             NPU NextGen
           </h1>
           <p className="text-lg text-white/70 leading-relaxed">
-            ระบบจัดการผู้สมัครโครงการ
+            แพลตฟอร์มการเรียนรู้และจัดการโครงการ
             <br />
             นักจัดการฟาร์มเกษตรอัจฉริยะ
           </p>
@@ -84,7 +84,7 @@ export default function AdminLoginPage() {
           <div className="rounded-2xl bg-white p-8 shadow-lg border border-gray-100">
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-                เข้าสู่ระบบผู้ดูแล
+                เข้าสู่ระบบ NPU NextGen
               </h2>
               <p className="mt-2 text-sm text-gray-500">
                 กรุณากรอกอีเมลและรหัสผ่านเพื่อดำเนินการต่อ
