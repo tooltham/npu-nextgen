@@ -28,6 +28,7 @@ export async function PATCH(
 
     const numScore = Number(score);
     const status = numScore >= 70 ? "PASS" : "FAIL";
+    const graderId = (session.user as any).id;
 
     const updatedSubmission = await prisma.submission.update({
       where: { id: submissionId },
@@ -35,7 +36,7 @@ export async function PATCH(
         score: numScore,
         feedback: feedback || null,
         status: status,
-        gradedById: (session.user as any).id,
+        gradedById: graderId === "dev-admin-id" ? null : graderId,
         gradedAt: new Date(),
       },
     });
