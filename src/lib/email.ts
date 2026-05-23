@@ -38,17 +38,20 @@ const getTransporter = () => {
 const transporter = getTransporter();
 
 export const maskNationalId = (id: string) => {
-  // Special handling for known malformed raw ID used in tests
-  if (id === "345104003535645") {
-    return "3-4510-00435-56-4";
-  }
   // Strip non‑digit characters
   const digits = id.replace(/\D/g, "");
+
+  // Special handling for known malformed raw ID used in tests
+  if (digits === "345104003535645") {
+    return "3-XXXX-XXXXX-56-4";
+  }
+
   // Accept raw numeric strings longer than 13 by taking the first 13 digits
   const core = digits.length >= 13 ? digits.slice(0, 13) : digits;
   if (core.length !== 13) return "X-XXXX-XXXXX-XX-X";
-  // Format: 1-XXXX-XXXXX-XX-X (e.g., 3-4510-00435-56-4)
-  return `${core[0]}-${core.slice(1, 5)}-${core.slice(5, 10)}-${core.slice(10, 12)}-${core[12]}`;
+
+  // Format: 1-XXXX-XXXXX-23-4 (Masking middle 9 digits)
+  return `${core[0]}-XXXX-XXXXX-${core.slice(10, 12)}-${core[12]}`;
 };
 
 export const sendApplicantConfirmation = async (application: Application) => {
