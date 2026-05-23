@@ -3,29 +3,37 @@ import { validateThaiId } from "@/lib/id-validator";
 
 // Step 2 Schema
 export const personalInfoSchema = z.object({
-  email: z.string().email("รูปแบบอีเมลไม่ถูกต้อง"),
-  titleTh: z.string().min(1, "กรุณาเลือกคำนำหน้านาม"),
-  firstNameTh: z.string().min(1, "กรุณากรอกชื่อจริง (ภาษาไทย)"),
-  lastNameTh: z.string().min(1, "กรุณากรอกนามสกุล (ภาษาไทย)"),
+  email: z.string({ message: "กรุณากรอกอีเมล" }).email("รูปแบบอีเมลไม่ถูกต้อง"),
+  titleTh: z
+    .string({ message: "กรุณาเลือกคำนำหน้านาม" })
+    .min(1, "กรุณาเลือกคำนำหน้านาม"),
+  firstNameTh: z
+    .string({ message: "กรุณากรอกชื่อจริง (ภาษาไทย)" })
+    .min(1, "กรุณากรอกชื่อจริง (ภาษาไทย)"),
+  lastNameTh: z
+    .string({ message: "กรุณากรอกนามสกุล (ภาษาไทย)" })
+    .min(1, "กรุณากรอกนามสกุล (ภาษาไทย)"),
   firstNameEn: z
-    .string()
+    .string({ message: "กรุณากรอกชื่อจริง (ภาษาอังกฤษ)" })
     .min(1, "กรุณากรอกชื่อจริง (ภาษาอังกฤษ)")
     .regex(/^[a-zA-Z\s.]+$/, "กรุณากรอกเฉพาะอักษรภาษาอังกฤษและจุดเท่านั้น"),
   lastNameEn: z
-    .string()
+    .string({ message: "กรุณากรอกนามสกุล (ภาษาอังกฤษ)" })
     .min(1, "กรุณากรอกนามสกุล (ภาษาอังกฤษ)")
     .regex(/^[a-zA-Z\s]+$/, "กรุณากรอกเฉพาะอักษรภาษาอังกฤษเท่านั้น"),
   nationalId: z
-    .string()
+    .string({ message: "กรุณากรอกเลขประจำตัวประชาชน" })
     .refine(validateThaiId, "เลขประจำตัวประชาชนไม่ถูกต้องตามหลักเกณฑ์"),
   phone: z
-    .string()
+    .string({ message: "กรุณากรอกเบอร์โทรศัพท์" })
     .regex(
       /^0\d{9}$/,
       "เบอร์โทรศัพท์ต้องมีความยาว 10 หลัก และเริ่มต้นด้วยเลข 0",
     ),
   lineId: z.string().optional(),
-  address: z.string().min(5, "กรุณากรอกที่อยู่ให้ครบถ้วน"),
+  address: z
+    .string({ message: "กรุณากรอกที่อยู่ให้ครบถ้วน" })
+    .min(5, "กรุณากรอกที่อยู่ให้ครบถ้วน"),
 });
 
 // Step 3 Schema
@@ -37,10 +45,14 @@ export const backgroundSchema = z.object({
     },
   ),
   targetGroup: z
-    .array(z.string())
+    .array(z.string(), {
+      message: "กรุณาเลือกกลุ่มเป้าหมายอย่างน้อย 1 กลุ่ม",
+    })
     .min(1, "กรุณาเลือกกลุ่มเป้าหมายอย่างน้อย 1 กลุ่ม"),
   targetGroupOther: z.string().optional(),
-  hasAgriExperience: z.boolean(),
+  hasAgriExperience: z.boolean({
+    message: "กรุณาระบุว่ามีประสบการณ์การทำเกษตรหรือไม่",
+  }),
   agriExperienceYears: z.number().min(1).optional(),
   farmName: z.string().optional(),
   farmLocation: z.string().optional(),
@@ -55,11 +67,15 @@ export const readinessSchema = z.object({
     },
   ),
   expectations: z
-    .array(z.string())
+    .array(z.string(), {
+      message: "กรุณาเลือกความคาดหวังอย่างน้อย 1 ข้อ",
+    })
     .min(1, "กรุณาเลือกความคาดหวังอย่างน้อย 1 ข้อ"),
   expectationsOther: z.string().optional(),
   canCommitTime: z
-    .boolean()
+    .boolean({
+      message: "กรุณายืนยันความพร้อมเรื่องเวลาเข้าร่วมโครงการ",
+    })
     .refine(
       (val) => val === true,
       "คุณต้องยืนยันว่าสามารถสละเวลาเข้าร่วมโครงการได้",

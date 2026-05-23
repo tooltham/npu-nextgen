@@ -60,4 +60,34 @@ describe("validateWithSchema (pure validation utility)", () => {
       }),
     ).not.toThrow();
   });
+
+  it("6. should translate expected array/boolean errors to Thai automatically", () => {
+    const complexSchema = z.object({
+      targetGroup: z.array(z.string()),
+      hasAgriExperience: z.boolean(),
+      expectations: z.array(z.string()),
+      canCommitTime: z.boolean(),
+    });
+
+    const result = validateWithSchema(complexSchema, {
+      targetGroup: undefined,
+      hasAgriExperience: undefined,
+      expectations: undefined,
+      canCommitTime: undefined,
+    });
+
+    expect(result.valid).toBe(false);
+    expect(result.errors.targetGroup).toBe(
+      "กรุณาเลือกกลุ่มเป้าหมายอย่างน้อย 1 กลุ่ม",
+    );
+    expect(result.errors.hasAgriExperience).toBe(
+      "กรุณาระบุว่ามีประสบการณ์การทำเกษตรหรือไม่",
+    );
+    expect(result.errors.expectations).toBe(
+      "กรุณาเลือกความคาดหวังอย่างน้อย 1 ข้อ",
+    );
+    expect(result.errors.canCommitTime).toBe(
+      "กรุณายืนยันความพร้อมเรื่องเวลาเข้าร่วมโครงการ",
+    );
+  });
 });

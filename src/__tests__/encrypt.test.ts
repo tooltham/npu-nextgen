@@ -35,7 +35,8 @@ describe("Encryption Utility", () => {
 
   it("should fail to decrypt with wrong key (simulated by corrupted data)", () => {
     const encrypted = encrypt("test");
-    const corrupted = encrypted.replace(/.$/, "0"); // Flip last char
+    const lastChar = encrypted.slice(-1);
+    const corrupted = encrypted.slice(0, -1) + (lastChar === "0" ? "1" : "0");
     expect(() => decrypt(corrupted)).toThrow();
   });
 });

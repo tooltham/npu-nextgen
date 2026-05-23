@@ -26,7 +26,24 @@ const StepPersonalInfo = () => {
   const { validate, errors } = useStepValidation(personalInfoSchema);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFormData({ [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const newFormData = { ...formData, [name]: value };
+    updateFormData({ [name]: value });
+
+    if (Object.keys(errors).length > 0) {
+      validate({
+        email: newFormData.email,
+        titleTh: newFormData.titleTh,
+        firstNameTh: newFormData.firstNameTh,
+        lastNameTh: newFormData.lastNameTh,
+        firstNameEn: newFormData.firstNameEn,
+        lastNameEn: newFormData.lastNameEn,
+        nationalId: newFormData.nationalId,
+        phone: newFormData.phone,
+        lineId: newFormData.lineId,
+        address: newFormData.address,
+      });
+    }
   };
 
   const handleNext = () => {
@@ -63,6 +80,7 @@ const StepPersonalInfo = () => {
           </Label>
           <Select
             onValueChange={(val) => {
+              const newFormData = { ...formData, titleTh: val ?? undefined };
               updateFormData({ titleTh: val ?? undefined });
               const prefixMap: Record<string, string> = {
                 นาย: "Mr. ",
@@ -75,6 +93,22 @@ const StepPersonalInfo = () => {
                 (!formData.firstNameEn || formData.firstNameEn === "")
               ) {
                 updateFormData({ firstNameEn: prefix });
+                newFormData.firstNameEn = prefix;
+              }
+
+              if (Object.keys(errors).length > 0) {
+                validate({
+                  email: newFormData.email,
+                  titleTh: newFormData.titleTh,
+                  firstNameTh: newFormData.firstNameTh,
+                  lastNameTh: newFormData.lastNameTh,
+                  firstNameEn: newFormData.firstNameEn,
+                  lastNameEn: newFormData.lastNameEn,
+                  nationalId: newFormData.nationalId,
+                  phone: newFormData.phone,
+                  lineId: newFormData.lineId,
+                  address: newFormData.address,
+                });
               }
             }}
             value={formData.titleTh ?? ""}
@@ -236,9 +270,24 @@ const StepPersonalInfo = () => {
             id="address"
             name="address"
             value={formData.address || ""}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              updateFormData({ address: e.target.value })
-            }
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+              const newFormData = { ...formData, address: e.target.value };
+              updateFormData({ address: e.target.value });
+              if (Object.keys(errors).length > 0) {
+                validate({
+                  email: newFormData.email,
+                  titleTh: newFormData.titleTh,
+                  firstNameTh: newFormData.firstNameTh,
+                  lastNameTh: newFormData.lastNameTh,
+                  firstNameEn: newFormData.firstNameEn,
+                  lastNameEn: newFormData.lastNameEn,
+                  nationalId: newFormData.nationalId,
+                  phone: newFormData.phone,
+                  lineId: newFormData.lineId,
+                  address: newFormData.address,
+                });
+              }
+            }}
             placeholder="บ้านเลขที่ หมู่ที่ ซอย ถนน ตำบล อำเภอ จังหวัด รหัสไปรษณีย์"
             className={`min-h-[100px] ${errors.address ? "border-red-400 ring-1 ring-red-400" : ""}`}
           />
