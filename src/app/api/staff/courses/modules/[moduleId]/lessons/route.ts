@@ -12,6 +12,8 @@ const createLessonSchema = z.object({
   content: z.string().optional().nullable(),
   isPreview: z.boolean().default(false),
   dripDays: z.number().int().min(0).default(0),
+  theoryHours: z.number().min(0).default(0),
+  practicalHours: z.number().min(0).default(0),
 });
 
 type Params = { params: Promise<{ moduleId: string }> };

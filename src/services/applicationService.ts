@@ -1,6 +1,6 @@
 import prisma from "@/lib/db";
 import { AppStatus, Application } from "@prisma/client";
-import { sendApprovalEmail } from "@/lib/email";
+import { sendApprovalEmail, sendRejectionEmail } from "@/lib/email";
 
 export async function changeApplicationStatus(
   applicationId: string,
@@ -8,7 +8,8 @@ export async function changeApplicationStatus(
   adminEmail: string,
   noteDetails: string,
 ) {
-  let shouldSendEmail = false;
+  let shouldSendApprovalEmail = false;
+  let shouldSendRejectionEmail = false;
   let updatedApp: Application | undefined;
 
   await prisma.$transaction(async (tx) => {
@@ -32,8 +33,10 @@ export async function changeApplicationStatus(
     let newEmailSentFlag = application.isAcceptanceEmailSent;
 
     if (newStatus === "ACCEPTED" && !application.isAcceptanceEmailSent) {
-      shouldSendEmail = true;
+      shouldSendApprovalEmail = true;
       newEmailSentFlag = true;
+    } else if (newStatus === "REJECTED") {
+      shouldSendRejectionEmail = true;
     }
 
     // 4. Update Application
@@ -67,15 +70,25 @@ export async function changeApplicationStatus(
   });
 
   // 6. Send Email Notification
-  if (shouldSendEmail && updatedApp) {
-    try {
-      await sendApprovalEmail(updatedApp);
-    } catch (error) {
-      console.error(
-        "Failed to send approval email, but status was updated",
-        error,
-      );
-      // We don't throw here because the DB transaction already succeeded
+  if (updatedApp) {
+    if (shouldSendApprovalEmail) {
+      try {
+        await sendApprovalEmail(updatedApp);
+      } catch (error) {
+        console.error(
+          "Failed to send approval email, but status was updated",
+          error,
+        );
+      }
+    } else if (shouldSendRejectionEmail) {
+      try {
+        await sendRejectionEmail(updatedApp);
+      } catch (error) {
+        console.error(
+          "Failed to send rejection email, but status was updated",
+          error,
+        );
+      }
     }
   }
 
