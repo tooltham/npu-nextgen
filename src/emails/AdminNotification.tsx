@@ -8,6 +8,8 @@ import {
   Link,
   Preview,
   Tailwind,
+  Head,
+  Hr,
 } from "@react-email/components";
 import * as React from "react";
 
@@ -20,34 +22,51 @@ export const AdminNotificationEmail = ({
   applicantName,
   applicationId,
 }: AdminNotificationEmailProps) => {
-  const adminUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/admin?id=${applicationId}`;
+  const adminUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/admin?id=${applicationId}`;
 
   return (
     <Html>
       <Preview>มีใบสมัครใหม่เข้ามาในระบบ - {applicantName}</Preview>
       <Tailwind>
-        <Body className="bg-gray-50 font-sans">
-          <Container className="mx-auto py-10 px-6 bg-white border border-gray-100 rounded-lg shadow-sm">
-            <Heading className="text-gray-900 text-xl font-bold mb-6">
-              แจ้งเตือนใบสมัครใหม่
+        <Head />
+        <Body className="bg-slate-50 font-sans">
+          <Container className="mx-auto py-10 px-6 max-w-2xl bg-white rounded-2xl shadow-sm border border-slate-100 my-8">
+            <Heading className="text-slate-900 text-2xl font-bold mb-6 tracking-tight">
+              แจ้งเตือนใบสมัครใหม่โครงการ NPU NextGen
             </Heading>
-            <Text className="text-gray-700 mb-4">
-              มีผู้สมัครใหม่ส่งข้อมูลเข้ามาในระบบ:
+
+            <Text className="text-slate-700 text-base mb-4 leading-relaxed">
+              ระบบได้รับข้อมูลใบสมัครเข้าร่วมโครงการ Smart Integrated Farm
+              Manager Application System ส่งเข้ามาใหม่จากผู้สมัครในระบบ
+              มีรายละเอียดเบื้องต้นดังนี้:
             </Text>
-            <Section className="bg-gray-50 p-4 rounded-lg mb-6">
-              <Text className="m-0 text-gray-900">
-                <strong>ชื่อผู้สมัคร:</strong> {applicantName}
+
+            <Section className="bg-slate-50 p-5 rounded-2xl mb-8 border border-slate-100">
+              <Text className="text-slate-600 text-sm mb-2 m-0">
+                <strong>ชื่อ-นามสกุล ผู้สมัคร:</strong> {applicantName}
               </Text>
-              <Text className="m-0 text-gray-900">
-                <strong>ID:</strong> {applicationId}
+              <Text className="text-slate-600 text-sm m-0">
+                <strong>หมายเลขใบสมัคร (Application ID):</strong>{" "}
+                {applicationId}
               </Text>
             </Section>
-            <Link
-              href={adminUrl}
-              className="bg-[#1B5E20] text-white px-6 py-3 rounded-lg font-bold text-center block"
-            >
-              ดูรายละเอียดใบสมัคร
-            </Link>
+
+            <Section className="text-center mb-8">
+              <Link
+                href={adminUrl}
+                className="bg-slate-900 text-white font-medium text-sm px-6 py-3.5 rounded-full shadow-sm transition-all text-center inline-block"
+              >
+                ดูรายละเอียดใบสมัครในระบบ
+              </Link>
+            </Section>
+
+            <Hr className="border-slate-200 my-8" />
+
+            <Text className="text-slate-500 text-xs italic leading-relaxed">
+              อีเมลแจ้งเตือนฉบับนี้ส่งโดยระบบอัตโนมัติของ NPU NextGen IoTES
+              Research Lab มหาวิทยาลัยนครพนม
+              เพื่อแจ้งให้ผู้รับผิดชอบระบบรับทราบข้อมูลใบสมัครเข้ามาใหม่
+            </Text>
           </Container>
         </Body>
       </Tailwind>
