@@ -12,6 +12,8 @@ const updateLessonSchema = z.object({
   content: z.string().optional().nullable(),
   isPreview: z.boolean().optional(),
   dripDays: z.number().int().min(0).optional(),
+  theoryHours: z.number().min(0).optional(),
+  practicalHours: z.number().min(0).optional(),
 });
 
 type Params = { params: Promise<{ moduleId: string; lessonId: string }> };

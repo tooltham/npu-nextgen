@@ -21,7 +21,11 @@ vi.mock("resend", () => {
   };
 });
 
-import { sendApplicantConfirmation, sendAdminNotification } from "../lib/email";
+import {
+  sendApplicantConfirmation,
+  sendAdminNotification,
+  sendRejectionEmail,
+} from "../lib/email";
 
 describe("Email Service", () => {
   const mockApplication = {
@@ -39,6 +43,11 @@ describe("Email Service", () => {
 
   it("should call resend to send admin notification", async () => {
     const result = await sendAdminNotification(mockApplication);
+    expect(result).toHaveProperty("id", "email-id");
+  });
+
+  it("should call resend to send applicant rejection notification", async () => {
+    const result = await sendRejectionEmail(mockApplication);
     expect(result).toHaveProperty("id", "email-id");
   });
 });

@@ -24,6 +24,8 @@ export async function PUT(
       dripDays,
       order,
       moduleId,
+      theoryHours,
+      practicalHours,
     } = data;
 
     const updatedLesson = await prisma.lesson.update({
@@ -38,6 +40,12 @@ export async function PUT(
         ...(dripDays !== undefined && { dripDays }),
         ...(order !== undefined && { order }),
         ...(moduleId !== undefined && { moduleId }),
+        ...(theoryHours !== undefined && {
+          theoryHours: Number(theoryHours) || 0,
+        }),
+        ...(practicalHours !== undefined && {
+          practicalHours: Number(practicalHours) || 0,
+        }),
       },
     });
 

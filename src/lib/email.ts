@@ -4,6 +4,7 @@ import { ApplicantConfirmationEmail } from "@/emails/ApplicantConfirmation";
 import { AdminNotificationEmail } from "@/emails/AdminNotification";
 import { StudentWelcomeEmail } from "@/emails/StudentWelcome";
 import { PasswordResetEmail } from "@/emails/PasswordReset";
+import { RejectionEmail } from "@/emails/RejectionEmail";
 import * as React from "react";
 import { env } from "./env";
 import { Application } from "@prisma/client";
@@ -191,6 +192,69 @@ export const sendApprovalEmail = async (application: Application) => {
     return { success: true, messageId: info.messageId };
   } catch (error: unknown) {
     console.error("Failed to send approval email:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+};
+
+export const sendRejectionEmail = async (application: Application) => {
+  const resend = getResend();
+  const course =
+    env.NEXT_PUBLIC_COURSE_NAME || "นักจัดการฟาร์มเกษตรแบบผสมผสานอัจฉริยะ";
+
+  if (!resend) {
+    const transporter = getTransporter();
+    if (!transporter)
+      return { success: false, error: "Email service not configured" };
+
+    const emailHtml = await render(
+      React.createElement(RejectionEmail, {
+        name: `${application.firstNameTh} ${application.lastNameTh}`,
+        course,
+      }),
+    );
+
+    try {
+      const info = await transporter.sendMail({
+        from: `"NPU NextGen" <${env.SMTP_USER}>`,
+        to: application.email,
+        subject: `[แจ้งผลการพิจารณา] ใบสมัครโครงการ NPU NextGen — ${course}`,
+        html: emailHtml,
+      });
+      return { id: info.messageId };
+    } catch (error: unknown) {
+      console.error("Failed to send rejection email via transporter:", error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+  }
+
+  // Resend Path
+  const emailHtml = await render(
+    React.createElement(RejectionEmail, {
+      name: `${application.firstNameTh} ${application.lastNameTh}`,
+      course,
+    }),
+  );
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: `"NPU NextGen" <${env.RESEND_FROM_EMAIL || env.SMTP_USER}>`,
+      to: application.email,
+      subject: `[แจ้งผลการพิจารณา] ใบสมัครโครงการ NPU NextGen — ${course}`,
+      html: emailHtml,
+    });
+    if (error) {
+      console.error("Resend error:", error);
+      return { success: false, error: error.message };
+    }
+    return { id: data?.id };
+  } catch (error: unknown) {
+    console.error("Failed to send rejection email via Resend:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

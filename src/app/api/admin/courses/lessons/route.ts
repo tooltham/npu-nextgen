@@ -19,6 +19,8 @@ export async function POST(req: NextRequest) {
       content,
       isPreview,
       dripDays,
+      theoryHours,
+      practicalHours,
     } = data;
 
     if (!moduleId || !title) {
@@ -46,6 +48,8 @@ export async function POST(req: NextRequest) {
         content: content || null,
         isPreview: isPreview || false,
         dripDays: dripDays || 0,
+        theoryHours: Number(theoryHours) || 0,
+        practicalHours: Number(practicalHours) || 0,
       },
     });
 

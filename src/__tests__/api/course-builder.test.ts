@@ -115,6 +115,40 @@ describe("Course Builder API (Lessons)", () => {
     expect(body.data.title).toBe("New Lesson");
   });
 
+  it("should create lesson with theory and practical hours", async () => {
+    prismaMock.courseModule.findUnique.mockResolvedValue({ id: "mod1" });
+    prismaMock.lesson.create.mockResolvedValue({
+      id: "les1",
+      moduleId: "mod1",
+      title: "New Lesson",
+      order: 0,
+      theoryHours: 1.5,
+      practicalHours: 4.5,
+    });
+
+    const req = new Request(
+      "http://localhost/api/staff/courses/modules/mod1/lessons",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          title: "New Lesson",
+          order: 0,
+          type: "VIDEO",
+          theoryHours: 1.5,
+          practicalHours: 4.5,
+        }),
+      },
+    );
+    const res = await createLesson(req, {
+      params: Promise.resolve({ moduleId: "mod1" }),
+    });
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.success).toBe(true);
+    expect(body.data.theoryHours).toBe(1.5);
+    expect(body.data.practicalHours).toBe(4.5);
+  });
+
   it("should return 404 if module not found when creating lesson", async () => {
     prismaMock.courseModule.findUnique.mockResolvedValue(null);
 

@@ -30,6 +30,8 @@ export function LessonEditorModal({
   const [content, setContent] = useState("");
   const [isPreview, setIsPreview] = useState(false);
   const [dripDays, setDripDays] = useState(0);
+  const [theoryHours, setTheoryHours] = useState(0);
+  const [practicalHours, setPracticalHours] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -41,6 +43,8 @@ export function LessonEditorModal({
       setContent(lesson.content || "");
       setIsPreview(lesson.isPreview);
       setDripDays(lesson.dripDays);
+      setTheoryHours((lesson as any).theoryHours || 0);
+      setPracticalHours((lesson as any).practicalHours || 0);
     } else {
       setTitle("");
       setType("VIDEO");
@@ -49,6 +53,8 @@ export function LessonEditorModal({
       setContent("");
       setIsPreview(false);
       setDripDays(0);
+      setTheoryHours(0);
+      setPracticalHours(0);
     }
   }, [lesson, isOpen]);
 
@@ -74,6 +80,8 @@ export function LessonEditorModal({
         content: content || null,
         isPreview,
         dripDays,
+        theoryHours,
+        practicalHours,
       };
 
       const res = await fetch(url, {
@@ -217,6 +225,47 @@ export function LessonEditorModal({
               />
               <p className="text-xs text-gray-500 mt-1">
                 ปล่อยเนื้อหาหลังจากลงทะเบียนเรียนแล้วกี่วัน (0 = ดูได้ทันที)
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 border-t pt-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                ชั่วโมงทฤษฎี (ชั่วโมง)
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="0.5"
+                value={theoryHours}
+                onChange={(e) =>
+                  setTheoryHours(parseFloat(e.target.value) || 0)
+                }
+                className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B5E20]"
+                placeholder="เช่น 1.5"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                จำนวนชั่วโมงทฤษฎีสำหรับบทเรียนนี้
+              </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                ชั่วโมงปฏิบัติ (ชั่วโมง)
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="0.5"
+                value={practicalHours}
+                onChange={(e) =>
+                  setPracticalHours(parseFloat(e.target.value) || 0)
+                }
+                className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B5E20]"
+                placeholder="เช่น 8.0"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                จำนวนชั่วโมงปฏิบัติสำหรับบทเรียนนี้
               </p>
             </div>
           </div>
