@@ -26,39 +26,57 @@ export const ApplicantConfirmationEmail = ({
 }: ApplicantConfirmationEmailProps) => {
   return (
     <Html>
-      <Preview>ยืนยันการรับใบสมัคร - {course}</Preview>
+      <Preview>ยืนยันการรับใบสมัครโครงการ NPU NextGen — {course}</Preview>
       <Tailwind>
         <Body className="bg-slate-50 font-sans">
           <Container className="mx-auto py-10 px-6 max-w-2xl bg-white rounded-2xl shadow-sm border border-slate-100 my-8">
             <Heading className="text-slate-900 text-2xl font-bold mb-6 tracking-tight">
-              สวัสดีคุณ {name}
+              ยืนยันการรับใบสมัครโครงการ NPU NextGen
             </Heading>
-            <Text className="text-slate-700 text-base mb-4 leading-relaxed">
-              มหาวิทยาลัยนครพนมได้รับใบสมัครของคุณเรียบร้อยแล้ว สำหรับหลักสูตร:
+
+            <Text className="text-slate-700 text-base mb-4">
+              เรียน คุณ <strong>{name}</strong>,
             </Text>
-            <Section className="bg-emerald-50/50 p-6 rounded-2xl mb-8 border border-emerald-100/50 text-center">
-              <Text className="text-emerald-800 font-bold text-lg m-0">
+
+            <Text className="text-slate-700 text-base mb-6 leading-relaxed">
+              คณะทำงานโครงการ Smart Integrated Farm Manager Application System
+              มหาวิทยาลัยนครพนม
+              ได้รับข้อมูลใบสมัครเข้าร่วมโครงการของคุณเรียบร้อยแล้ว
+              สำหรับหลักสูตร:
+            </Text>
+
+            <Section className="bg-slate-50 p-6 rounded-2xl mb-8 border border-slate-100 text-center">
+              <Text className="text-slate-800 font-bold text-lg m-0">
                 {course}
               </Text>
             </Section>
-            <Text className="text-slate-700 text-base mb-2">
-              <strong>หมายเลขใบสมัคร:</strong> {applicationId}
+
+            <Text className="text-slate-900 font-semibold text-base mb-3">
+              ข้อมูลรายละเอียดการสมัครของคุณในระบบ:
             </Text>
-            <Text className="text-slate-700 text-base mb-6">
-              <strong>เลขประจำตัวประชาชน:</strong> {nationalId}
-            </Text>
+
+            <Section className="bg-slate-50 p-5 rounded-2xl mb-8 border border-slate-100">
+              <Text className="text-slate-600 text-sm mb-2 m-0">
+                <strong>หมายเลขใบสมัคร:</strong> {applicationId}
+              </Text>
+              <Text className="text-slate-600 text-sm m-0">
+                <strong>เลขประจำตัวประชาชน (National ID):</strong> {nationalId}
+              </Text>
+            </Section>
+
             <Hr className="border-slate-200 my-8" />
+
             <Text className="text-slate-500 text-xs italic leading-relaxed">
-              ผู้ประสานงานการรับสมัครจะดำเนินการติดต่อทางหมายเลขโทรศัพท์
+              ผู้ประสานงานการรับสมัครจะดำเนินการติดต่อกลับทางหมายเลขโทรศัพท์
               หรืออีเมลที่คุณให้ไว้ภายใน 7 วันทำการ
-              หากมีข้อมูลเพิ่มเติมที่จำเป็นต้องใช้ในการพิจารณาใบสมัครของคุณ
-              สามารถติดต่อได้ที่{" "}
-              <strong>คุณปริศนา แสงสุวรรณ โทร. 062-464-9642</strong>{" "}
-              ในวันและเวลาราชการ
+              หากมีข้อมูลเพิ่มเติมหรือเอกสารที่จำเป็นสำหรับการพิจารณาใบสมัครของคุณ
+              สามารถติดต่อสอบถามรายละเอียดได้ที่ คุณปริศนา แสงสุวรรณ โทร.
+              062-464-9642 ในวันและเวลาราชการ
               <br />
-              <br />
-              *ข้อมูลของคุณได้รับการคุ้มครองตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล
-              (PDPA) และจะถูกใช้เพื่อการพิจารณาคัดเลือกเท่านั้น
+              <br />*
+              ข้อมูลส่วนบุคคลของคุณได้รับการคุ้มครองอย่างเข้มงวดตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล
+              (PDPA)
+              และจะถูกนำมาใช้เพื่อวัตถุประสงค์ในการพิจารณาคัดเลือกเข้าร่วมโครงการนี้เท่านั้น
             </Text>
           </Container>
         </Body>
