@@ -290,12 +290,16 @@ export default function ClassroomClient({
                     (s) => s.moduleId === activeLesson.moduleId,
                   ) || null
                 }
-                onSuccess={(newSubmission) => {
+                onSuccess={(newSubmission: any) => {
+                  const formattedSubmission = {
+                    ...newSubmission,
+                    moduleId: activeLesson.moduleId,
+                  };
                   setSubmissions((prev) => {
                     const filtered = prev.filter(
-                      (s) => s.moduleId !== newSubmission.moduleId,
+                      (s) => s.moduleId !== formattedSubmission.moduleId,
                     );
-                    return [...filtered, newSubmission];
+                    return [...filtered, formattedSubmission];
                   });
                 }}
               />

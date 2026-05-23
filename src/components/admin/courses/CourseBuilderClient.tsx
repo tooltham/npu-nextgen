@@ -16,6 +16,7 @@ import {
   HelpCircle,
   Eye,
   AlertCircle,
+  BookOpen,
 } from "lucide-react";
 import { CourseModule, Lesson } from "@prisma/client";
 import { LessonEditorModal } from "./LessonEditorModal";

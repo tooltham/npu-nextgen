@@ -42,6 +42,7 @@ interface DashboardData {
     isLocked: boolean;
     isCompleted: boolean;
   }[];
+  isCourseCompleted: boolean;
   hoursData: {
     theoryCompleted: number;
     theoryTotal: number;

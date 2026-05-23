@@ -98,21 +98,22 @@ export default async function ClassroomPage({
     };
 
     const isLessonFullyCompleted = (lesson: Record<string, unknown>) => {
-      if (!isLessonCompleted(lesson.id)) return false;
-      if (lesson.quizzes && lesson.quizzes.length > 0) {
-        return lesson.quizzes.every((q: Record<string, unknown>) =>
-          isQuizPassed(q.id),
-        );
+      const lessonId = lesson.id as string;
+      if (!isLessonCompleted(lessonId)) return false;
+      const quizzes = lesson.quizzes as Record<string, unknown>[] | undefined;
+      if (quizzes && quizzes.length > 0) {
+        return quizzes.every((q) => isQuizPassed(q.id as string));
       }
       return true;
     };
 
     const isModuleFullyCompleted = (module: Record<string, unknown>) => {
-      const allLessonsDone = module.lessons.every(
-        (l: Record<string, unknown>) => isLessonFullyCompleted(l),
-      );
+      const lessons = module.lessons as Record<string, unknown>[];
+      const allLessonsDone = lessons.every((l) => isLessonFullyCompleted(l));
       if (!allLessonsDone) return false;
-      const submission = submissions.find((s) => s.moduleId === module.id);
+      const submission = submissions.find(
+        (s) => s.moduleId === (module.id as string),
+      );
       if (!submission) return false;
       return true;
     };
@@ -122,14 +123,26 @@ export default async function ClassroomPage({
     }
   }
 
+  // Format currentModule to safely cast options JsonValue into string[] for ClassroomClient
+  const formattedModule = {
+    ...currentModule,
+    lessons: currentModule.lessons.map((lesson) => ({
+      ...lesson,
+      quizzes: lesson.quizzes.map((quiz) => ({
+        ...quiz,
+        options: Array.isArray(quiz.options) ? (quiz.options as string[]) : [],
+      })),
+    })),
+  };
+
   return (
     <div className="flex flex-col w-full pt-6">
       {/* Main Student Portal View - Passing only the current module wrapped in array */}
       <ClassroomClient
-        modules={[currentModule]}
+        modules={[formattedModule]}
         initialProgress={progress}
         initialQuizAttempts={attempts}
-        initialSubmissions={submissions as Record<string, unknown>}
+        initialSubmissions={submissions as any}
       />
     </div>
   );
