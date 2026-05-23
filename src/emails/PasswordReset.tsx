@@ -25,9 +25,9 @@ export const PasswordResetEmail = ({
 }: PasswordResetEmailProps) => {
   return (
     <Html>
-      <Head />
-      <Preview>รีเซ็ตรหัสผ่านบัญชี NPU NextGen ของคุณ</Preview>
       <Tailwind>
+        <Head />
+        <Preview>รีเซ็ตรหัสผ่านบัญชี NPU NextGen ของคุณ</Preview>
         <Body className="bg-slate-50 font-sans">
           <Container className="mx-auto py-10 px-6 max-w-2xl bg-white rounded-2xl shadow-sm border border-slate-100 my-8">
             <Heading className="text-slate-900 text-2xl font-bold mb-6 tracking-tight">

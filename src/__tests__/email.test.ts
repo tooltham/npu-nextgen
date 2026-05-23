@@ -25,6 +25,8 @@ import {
   sendApplicantConfirmation,
   sendAdminNotification,
   sendRejectionEmail,
+  sendPasswordResetEmail,
+  sendStudentWelcomeEmail,
 } from "../lib/email";
 
 describe("Email Service", () => {
@@ -48,6 +50,23 @@ describe("Email Service", () => {
 
   it("should call resend to send applicant rejection notification", async () => {
     const result = await sendRejectionEmail(mockApplication);
+    expect(result).toHaveProperty("id", "email-id");
+  });
+
+  it("should call resend to send password reset email", async () => {
+    const result = await sendPasswordResetEmail(
+      "applicant@example.com",
+      "สมชาย",
+      "token-123",
+    );
+    expect(result).toHaveProperty("id", "email-id");
+  });
+
+  it("should call resend to send student welcome email", async () => {
+    const result = await sendStudentWelcomeEmail(
+      mockApplication,
+      "temp-pass-123",
+    );
     expect(result).toHaveProperty("id", "email-id");
   });
 });
