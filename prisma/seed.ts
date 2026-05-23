@@ -68,6 +68,7 @@ async function main() {
         nationalId: dummyNationalId,
         phone: `081234567${i % 10}`,
         lineId: `line_id_${i}`,
+        address: `บ้านเลขที่ ${i + 1}/${i + 10} หมู่ที่ ${i % 10 || 1} ถนนทดสอบ ตำบลจำลอง อำเภอเมือง จังหวัดนครพนม 48000`,
         education: educations[i % educations.length],
         targetGroup: ["เกษตรกร", "นักศึกษา"],
         hasAgriExperience: i % 2 === 0,

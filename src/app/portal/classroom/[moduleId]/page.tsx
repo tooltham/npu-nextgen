@@ -97,17 +97,19 @@ export default async function ClassroomPage({
       return progress.some((p) => p.lessonId === lessonId && p.isCompleted);
     };
 
-    const isLessonFullyCompleted = (lesson: any) => {
+    const isLessonFullyCompleted = (lesson: Record<string, unknown>) => {
       if (!isLessonCompleted(lesson.id)) return false;
       if (lesson.quizzes && lesson.quizzes.length > 0) {
-        return lesson.quizzes.every((q: any) => isQuizPassed(q.id));
+        return lesson.quizzes.every((q: Record<string, unknown>) =>
+          isQuizPassed(q.id),
+        );
       }
       return true;
     };
 
-    const isModuleFullyCompleted = (module: any) => {
-      const allLessonsDone = module.lessons.every((l: any) =>
-        isLessonFullyCompleted(l),
+    const isModuleFullyCompleted = (module: Record<string, unknown>) => {
+      const allLessonsDone = module.lessons.every(
+        (l: Record<string, unknown>) => isLessonFullyCompleted(l),
       );
       if (!allLessonsDone) return false;
       const submission = submissions.find((s) => s.moduleId === module.id);
@@ -121,49 +123,14 @@ export default async function ClassroomPage({
   }
 
   return (
-    <main className="min-h-screen bg-zinc-50/50 flex flex-col">
-      {/* Navigation Header */}
-      <header className="border-b border-zinc-100 bg-white/80 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center border border-green-100 shadow-sm">
-                <Sprout className="w-4 h-4 text-[#1B5E20]" />
-              </div>
-              <span className="font-extrabold text-zinc-900 tracking-tight text-lg">
-                NPU NextGen{" "}
-                <span className="font-medium text-zinc-400">Classroom</span>
-              </span>
-            </div>
-
-            <div className="w-px h-6 bg-zinc-200 hidden md:block"></div>
-
-            <Link href="/portal">
-              <Button
-                variant="ghost"
-                className="text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 rounded-full pl-3 pr-4 h-9 flex items-center gap-1.5 transition-all"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span className="font-medium text-sm">กลับไปหน้าโมดูล</span>
-              </Button>
-            </Link>
-          </div>
-          <div className="flex items-center gap-3 text-sm font-semibold text-zinc-700">
-            <span>สวัสดี, {user.name || user.email.split("@")[0]}</span>
-            <span className="px-2.5 py-0.5 rounded bg-zinc-100 text-zinc-500 text-xs font-bold uppercase tracking-wider">
-              {user.role}
-            </span>
-          </div>
-        </div>
-      </header>
-
+    <div className="flex flex-col w-full pt-6">
       {/* Main Student Portal View - Passing only the current module wrapped in array */}
       <ClassroomClient
         modules={[currentModule]}
         initialProgress={progress}
         initialQuizAttempts={attempts}
-        initialSubmissions={submissions as any}
+        initialSubmissions={submissions as Record<string, unknown>}
       />
-    </main>
+    </div>
   );
 }

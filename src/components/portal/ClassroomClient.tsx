@@ -17,7 +17,7 @@ interface Quiz {
   id: string;
   lessonId: string;
   question: string;
-  options: any;
+  options: string[];
   correctIdx: number;
 }
 
@@ -101,17 +101,17 @@ export default function ClassroomClient({
     return quizAttempts.some((a) => a.quizId === quizId && a.isCorrect);
   };
 
-  const isLessonFullyCompleted = (lesson: any) => {
+  const isLessonFullyCompleted = (lesson: Lesson) => {
     if (!isLessonCompleted(lesson.id)) return false; // video not marked as done
     if (lesson.quizzes && lesson.quizzes.length > 0) {
-      const allPassed = lesson.quizzes.every((q: any) => isQuizPassed(q.id));
+      const allPassed = lesson.quizzes.every((q: Quiz) => isQuizPassed(q.id));
       if (!allPassed) return false;
     }
     return true;
   };
 
-  const isModuleFullyCompleted = (module: any) => {
-    const allLessonsDone = module.lessons.every((l: any) =>
+  const isModuleFullyCompleted = (module: CourseModule) => {
+    const allLessonsDone = module.lessons.every((l: Lesson) =>
       isLessonFullyCompleted(l),
     );
     if (!allLessonsDone) return false;
@@ -187,7 +187,7 @@ export default function ClassroomClient({
               {/* Video Player Box with Cinematic Glow */}
               <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-emerald-600 to-teal-500 rounded-[2rem] blur opacity-20 group-hover:opacity-30 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative aspect-video rounded-3xl overflow-hidden bg-zinc-950 shadow-xl border border-zinc-800/50">
+                <div className="relative aspect-video rounded-2xl overflow-hidden bg-zinc-950 shadow-xl border border-zinc-800/50">
                   {activeLesson.videoUrl ? (
                     <iframe
                       className="w-full h-full"
@@ -208,7 +208,7 @@ export default function ClassroomClient({
               </div>
 
               {/* Lesson Metadata */}
-              <div className="p-6 md:p-8 rounded-3xl border border-zinc-100 bg-white shadow-sm space-y-6">
+              <div className="p-6 md:p-8 rounded-2xl border border-zinc-100 bg-white shadow-sm space-y-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                   <div className="space-y-3 flex-1">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100">
@@ -301,7 +301,7 @@ export default function ClassroomClient({
               />
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center py-20 text-zinc-400 bg-white rounded-3xl border border-zinc-100">
+            <div className="flex flex-col items-center justify-center py-20 text-zinc-400 bg-white rounded-2xl border border-zinc-100">
               <span className="text-5xl mb-4">🎓</span>
               <p className="text-base font-bold text-zinc-700">
                 ไม่มีวิชาเรียนที่เปิดรับเข้าเรียนในขณะนี้
@@ -312,7 +312,7 @@ export default function ClassroomClient({
 
         {/* Right Column: Course Outline Sidebar (4 cols on large screens) */}
         <div className="lg:col-span-4 relative">
-          <div className="sticky top-24 p-6 rounded-3xl border border-zinc-100 bg-white/80 backdrop-blur-xl shadow-xl shadow-zinc-200/20">
+          <div className="sticky top-24 p-6 rounded-2xl border border-zinc-100 bg-white/80 backdrop-blur-xl shadow-xl shadow-zinc-200/20">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center shadow-sm">
                 <FileText className="w-4 h-4 text-white" />

@@ -16,9 +16,12 @@ vi.mock("@/lib/db", () => ({
         applicationLog: { create: vi.fn() },
       };
       // Link tx methods to the outer mock so we can assert them
-      tx.application.findUnique = prisma.application.findUnique as any;
-      tx.application.update = prisma.application.update as any;
-      tx.applicationLog.create = prisma.applicationLog.create as any;
+      tx.application.findUnique = prisma.application
+        .findUnique as unknown as typeof tx.application.findUnique;
+      tx.application.update = prisma.application
+        .update as unknown as typeof tx.application.update;
+      tx.applicationLog.create = prisma.applicationLog
+        .create as unknown as typeof tx.applicationLog.create;
       return await cb(tx);
     }),
   },
@@ -51,7 +54,7 @@ describe("ApplicationService - changeApplicationStatus", () => {
       id: "app123",
       status: "PENDING",
       isAcceptanceEmailSent: false,
-    } as any;
+    } as unknown as import("@prisma/client").Application;
     vi.mocked(prisma.application.findUnique).mockResolvedValue(mockApp);
     vi.mocked(prisma.application.update).mockResolvedValue({
       ...mockApp,
@@ -83,7 +86,7 @@ describe("ApplicationService - changeApplicationStatus", () => {
       status: "REVIEWED",
       isAcceptanceEmailSent: false,
       email: "user@example.com",
-    } as any;
+    } as unknown as import("@prisma/client").Application;
     vi.mocked(prisma.application.findUnique).mockResolvedValue(mockApp);
     vi.mocked(prisma.application.update).mockResolvedValue({
       ...mockApp,
@@ -114,7 +117,7 @@ describe("ApplicationService - changeApplicationStatus", () => {
       id: "app123",
       status: "WAITLISTED",
       isAcceptanceEmailSent: true,
-    } as any;
+    } as unknown as import("@prisma/client").Application;
     vi.mocked(prisma.application.findUnique).mockResolvedValue(mockApp);
     vi.mocked(prisma.application.update).mockResolvedValue({
       ...mockApp,
@@ -136,7 +139,7 @@ describe("ApplicationService - changeApplicationStatus", () => {
       id: "app123",
       status: "REJECTED",
       isAcceptanceEmailSent: false,
-    } as any;
+    } as unknown as import("@prisma/client").Application;
     vi.mocked(prisma.application.findUnique).mockResolvedValue(mockApp);
 
     await expect(

@@ -68,6 +68,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             name: user.name || user.email.split("@")[0],
             email: user.email,
             role: user.role,
+            mustChangePassword: user.mustChangePassword,
           };
         } catch (error) {
           console.error("Auth authorize error:", error);
@@ -103,7 +104,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               data: { lastLoginAt: new Date() },
             });
             // Assign db role to next-auth user object so JWT callback picks it up
-            (user as any).role = existingUser.role;
+            (user as { role?: string }).role = existingUser.role;
             return true;
           }
 
@@ -118,7 +119,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 lastLoginAt: new Date(),
               },
             });
-            (user as any).role = newUser.role;
+            (user as { role?: string }).role = newUser.role;
             return true;
           }
 

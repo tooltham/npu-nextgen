@@ -22,6 +22,7 @@ export const personalInfoSchema = z.object({
     .string()
     .regex(/^0\d{9}$/, "Phone must be 10 digits and start with 0"),
   lineId: z.string().optional(),
+  address: z.string().min(5, "กรุณากรอกที่อยู่ให้ครบถ้วน"),
 });
 
 // Step 3 Schema

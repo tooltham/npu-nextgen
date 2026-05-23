@@ -73,6 +73,7 @@ export async function POST(request: Request) {
           role: "STUDENT",
           applicationId: application.id,
           isActive: true,
+          mustChangePassword: true,
           enrollment: {
             create: {
               status: "ACTIVE",
@@ -120,10 +121,15 @@ export async function POST(request: Request) {
         role: result.role,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Invite error:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Internal server error" },
+      {
+        success: false,
+        error:
+          (error instanceof Error ? error.message : String(error)) ||
+          "Internal server error",
+      },
       { status: 500 },
     );
   }

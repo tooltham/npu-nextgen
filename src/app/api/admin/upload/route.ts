@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
-    if (!session || (session.user as any).role !== "ADMIN") {
+    if (!session || (session.user as { role?: string }).role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

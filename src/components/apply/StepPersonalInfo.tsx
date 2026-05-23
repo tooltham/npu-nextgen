@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useStepValidation } from "@/hooks/useStepValidation";
 import { personalInfoSchema } from "@/schemas/applicationSchema";
 
@@ -39,6 +40,7 @@ const StepPersonalInfo = () => {
       nationalId: formData.nationalId,
       phone: formData.phone,
       lineId: formData.lineId,
+      address: formData.address,
     });
     if (isValid) nextStep();
   };
@@ -224,6 +226,23 @@ const StepPersonalInfo = () => {
             }
           />
           <FieldError message={errors.lineId} />
+        </div>
+
+        <div className="space-y-1 md:col-span-2">
+          <Label htmlFor="address" className="font-noto-thai">
+            ที่อยู่ (สำหรับจัดส่งเอกสาร) <span className="text-red-500">*</span>
+          </Label>
+          <Textarea
+            id="address"
+            name="address"
+            value={formData.address || ""}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              updateFormData({ address: e.target.value })
+            }
+            placeholder="บ้านเลขที่ หมู่ที่ ซอย ถนน ตำบล อำเภอ จังหวัด รหัสไปรษณีย์"
+            className={`min-h-[100px] ${errors.address ? "border-red-400 ring-1 ring-red-400" : ""}`}
+          />
+          <FieldError message={errors.address} />
         </div>
       </div>
 

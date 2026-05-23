@@ -7,7 +7,7 @@ interface Quiz {
   id: string;
   lessonId: string;
   question: string;
-  options: any; // Json array
+  options: unknown; // Json array
   correctIdx: number;
 }
 
@@ -61,8 +61,8 @@ export default function QuizWidget({
       setIsCorrect(res.data.isCorrect);
       setIsSubmitted(true);
       if (onSuccess) onSuccess();
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setIsLoading(false);
     }

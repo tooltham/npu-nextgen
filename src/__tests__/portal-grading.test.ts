@@ -44,11 +44,9 @@ vi.mock("@/lib/supabase", () => ({
     storage: {
       from: vi.fn().mockReturnValue({
         upload: vi.fn().mockResolvedValue({ data: {}, error: null }),
-        getPublicUrl: vi
-          .fn()
-          .mockReturnValue({
-            data: { publicUrl: "https://mock-supabase.com/file.pdf" },
-          }),
+        getPublicUrl: vi.fn().mockReturnValue({
+          data: { publicUrl: "https://mock-supabase.com/file.pdf" },
+        }),
       }),
     },
   },
@@ -66,7 +64,7 @@ describe("LMS Portal Grading & Certificate Integration Tests", () => {
 
   describe("POST /api/portal/submission/submit (Student submission)", () => {
     it("should successfully create new submission for authorized student", async () => {
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: {
           id: "student-1",
           email: "student@example.com",
@@ -77,7 +75,7 @@ describe("LMS Portal Grading & Certificate Integration Tests", () => {
 
       vi.mocked(prisma.courseModule.findUnique).mockResolvedValue({
         id: "module-1",
-      } as any);
+      } as Record<string, unknown>);
       vi.mocked(prisma.submission.findFirst).mockResolvedValue(null);
       vi.mocked(prisma.submission.create).mockResolvedValue({
         id: "submission-1",
@@ -85,7 +83,7 @@ describe("LMS Portal Grading & Certificate Integration Tests", () => {
         moduleId: "module-1",
         assignmentUrl: "https://mock-supabase.com/file.pdf",
         status: "PENDING",
-      } as any);
+      } as Record<string, unknown>);
 
       const formData = new FormData();
       formData.append("moduleId", "module-1");
@@ -113,7 +111,7 @@ describe("LMS Portal Grading & Certificate Integration Tests", () => {
     });
 
     it("should update and reset status to PENDING for existing submission", async () => {
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: {
           id: "student-1",
           email: "student@example.com",
@@ -124,15 +122,15 @@ describe("LMS Portal Grading & Certificate Integration Tests", () => {
 
       vi.mocked(prisma.courseModule.findUnique).mockResolvedValue({
         id: "module-1",
-      } as any);
+      } as Record<string, unknown>);
       vi.mocked(prisma.submission.findFirst).mockResolvedValue({
         id: "submission-existing",
         status: "FAIL",
-      } as any);
+      } as Record<string, unknown>);
       vi.mocked(prisma.submission.update).mockResolvedValue({
         id: "submission-existing",
         status: "PENDING",
-      } as any);
+      } as Record<string, unknown>);
 
       const formData = new FormData();
       formData.append("moduleId", "module-1");
@@ -158,7 +156,7 @@ describe("LMS Portal Grading & Certificate Integration Tests", () => {
     });
 
     it("should block non-student from submitting", async () => {
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: { id: "staff-1", email: "staff@example.com", role: "STAFF" },
       });
 
@@ -182,7 +180,7 @@ describe("LMS Portal Grading & Certificate Integration Tests", () => {
 
   describe("POST /api/staff/grading/submit (Staff grading)", () => {
     it("should successfully grade submission and NOT issue cert if modules not complete", async () => {
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: { id: "staff-1", email: "staff@example.com", role: "STAFF" },
       });
 
@@ -190,7 +188,7 @@ describe("LMS Portal Grading & Certificate Integration Tests", () => {
         id: "submission-1",
         userId: "student-1",
         status: "PASS",
-      } as any);
+      } as Record<string, unknown>);
 
       vi.mocked(prisma.courseModule.count).mockResolvedValue(3);
       vi.mocked(prisma.submission.count).mockResolvedValue(2); // Passed 2 out of 3
@@ -217,7 +215,7 @@ describe("LMS Portal Grading & Certificate Integration Tests", () => {
     });
 
     it("should issue certificate when student completes all course modules with PASS status", async () => {
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: { id: "staff-1", email: "staff@example.com", role: "STAFF" },
       });
 
@@ -225,12 +223,14 @@ describe("LMS Portal Grading & Certificate Integration Tests", () => {
         id: "submission-final",
         userId: "student-1",
         status: "PASS",
-      } as any);
+      } as Record<string, unknown>);
 
       vi.mocked(prisma.courseModule.count).mockResolvedValue(3);
       vi.mocked(prisma.submission.count).mockResolvedValue(3); // Complete!
       vi.mocked(prisma.certificate.findUnique).mockResolvedValue(null);
-      vi.mocked(prisma.certificate.create).mockResolvedValue({} as any);
+      vi.mocked(prisma.certificate.create).mockResolvedValue(
+        {} as Record<string, unknown>,
+      );
 
       const request = new Request(
         "http://localhost:3000/api/staff/grading/submit",
@@ -261,7 +261,7 @@ describe("LMS Portal Grading & Certificate Integration Tests", () => {
     });
 
     it("should reject student trying to grade submissions", async () => {
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: {
           id: "student-1",
           email: "student@example.com",

@@ -6,7 +6,7 @@ import Papa from "papaparse";
 export async function GET(request: Request) {
   const session = await auth();
 
-  if (!session || (session.user as any).role !== "ADMIN") {
+  if (!session || (session.user as { role?: string }).role !== "ADMIN") {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
@@ -27,6 +27,7 @@ export async function GET(request: Request) {
       LastName: app.lastNameTh,
       Email: app.email,
       Phone: app.phone,
+      Address: app.address,
       Education: app.education,
       TargetGroup: app.targetGroup.join(", "),
       AgriExperience: app.hasAgriExperience ? "YES" : "NO",

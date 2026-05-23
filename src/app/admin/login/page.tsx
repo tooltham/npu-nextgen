@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +12,7 @@ import { Sprout, Loader2 } from "lucide-react";
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -113,17 +115,40 @@ export default function AdminLoginPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium">
-                  รหัสผ่าน
-                </Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" className="text-sm font-medium">
+                    รหัสผ่าน
+                  </Label>
+                  <Link
+                    href="/forgot-password"
+                    className="text-sm font-bold text-[#1B5E20] hover:underline"
+                  >
+                    ลืมรหัสผ่าน?
+                  </Link>
+                </div>
                 <Input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="h-11 focus-visible:ring-[#1B5E20]"
                   required
                 />
+                <div className="flex items-center gap-2 mt-2">
+                  <input
+                    type="checkbox"
+                    id="show-password"
+                    checked={showPassword}
+                    onChange={(e) => setShowPassword(e.target.checked)}
+                    className="rounded border-zinc-300 text-[#1B5E20] focus:ring-[#1B5E20]"
+                  />
+                  <label
+                    htmlFor="show-password"
+                    className="text-sm font-medium text-zinc-600 cursor-pointer"
+                  >
+                    แสดงรหัสผ่าน
+                  </label>
+                </div>
               </div>
 
               <Button

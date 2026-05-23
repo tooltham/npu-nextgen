@@ -47,7 +47,7 @@ describe("Security Core & RBAC Tests", () => {
   describe("Server-Side Auth Guards (auth-guards.ts)", () => {
     it("should block unauthenticated sessions with 401 Unauthorized", async () => {
       // Mock no session
-      vi.mocked(auth as any).mockResolvedValue(null);
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue(null);
 
       const adminGuard = await verifyAdmin();
       expect(adminGuard.success).toBe(false);
@@ -60,7 +60,7 @@ describe("Security Core & RBAC Tests", () => {
 
     it("should block student from accessing admin route with 403 Forbidden", async () => {
       // Mock student session
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: {
           id: "student-1",
           email: "student@example.com",
@@ -80,7 +80,7 @@ describe("Security Core & RBAC Tests", () => {
 
     it("should allow admin to access admin route", async () => {
       // Mock admin session
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: {
           id: "admin-1",
           email: "admin@npu.ac.th",
@@ -99,7 +99,7 @@ describe("Security Core & RBAC Tests", () => {
 
     it("should allow staff to access staff route, but block student", async () => {
       // Mock staff session
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: {
           id: "staff-1",
           email: "staff@npu.ac.th",
@@ -115,7 +115,7 @@ describe("Security Core & RBAC Tests", () => {
       }
 
       // Mock student session
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: {
           id: "student-1",
           email: "student@example.com",
@@ -130,7 +130,7 @@ describe("Security Core & RBAC Tests", () => {
 
     it("should allow student and admin to access student route, but block staff", async () => {
       // Mock student session
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: {
           id: "student-1",
           email: "student@example.com",
@@ -143,7 +143,7 @@ describe("Security Core & RBAC Tests", () => {
       expect(studentGuard.success).toBe(true);
 
       // Mock staff session
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: {
           id: "staff-1",
           email: "staff@npu.ac.th",
@@ -176,7 +176,9 @@ describe("Security Core & RBAC Tests", () => {
       ];
 
       vi.mocked(prisma.adminUser.findMany).mockResolvedValue(mockLegacyAdmins);
-      vi.mocked(prisma.user.upsert).mockResolvedValue({} as any);
+      vi.mocked(prisma.user.upsert).mockResolvedValue(
+        {} as Record<string, unknown>,
+      );
 
       const result = await migrateAdminUsers();
 

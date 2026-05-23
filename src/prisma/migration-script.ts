@@ -42,8 +42,8 @@ export async function migrateAdminUsers(): Promise<{
           },
         });
         migratedCount++;
-      } catch (err: any) {
-        const errMsg = `Failed to migrate ${admin.email}: ${err?.message || err}`;
+      } catch (err: unknown) {
+        const errMsg = `Failed to migrate ${admin.email}: ${err instanceof Error ? err.message : String(err)}`;
         console.error(errMsg);
         errors.push(errMsg);
       }
@@ -55,8 +55,8 @@ export async function migrateAdminUsers(): Promise<{
       migratedCount,
       errors,
     };
-  } catch (err: any) {
-    const criticalError = `Critical migration failure: ${err?.message || err}`;
+  } catch (err: unknown) {
+    const criticalError = `Critical migration failure: ${err instanceof Error ? err.message : String(err)}`;
     console.error(criticalError);
     return {
       success: false,

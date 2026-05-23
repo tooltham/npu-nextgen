@@ -109,8 +109,11 @@ export default function GradingDashboardClient({
       );
 
       setSelectedSubmission(null);
-    } catch (err: any) {
-      showToast(err.message || "เกิดข้อผิดพลาดในการบันทึกคะแนน", "info");
+    } catch (err: unknown) {
+      showToast(
+        err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการบันทึกคะแนน",
+        "info",
+      );
     } finally {
       setIsSubmitting(false);
     }

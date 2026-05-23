@@ -1,9 +1,10 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useEffect } from "react";
 import { CourseModule } from "@prisma/client";
 import { Button } from "@/components/ui/button";
-import { Loader2, X } from "lucide-react";
+import { Loader2, X, Save } from "lucide-react";
 
 interface Props {
   isOpen: boolean;
@@ -116,7 +117,9 @@ export function ModuleEditorModal({
             </label>
             <select
               value={status}
-              onChange={(e) => setStatus(e.target.value as any)}
+              onChange={(e) =>
+                setStatus(e.target.value as "DRAFT" | "PUBLISHED")
+              }
               className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B5E20]"
             >
               <option value="DRAFT">DRAFT (ซ่อนไว้ก่อน)</option>
@@ -136,11 +139,13 @@ export function ModuleEditorModal({
             <Button
               type="submit"
               disabled={isLoading}
-              className="bg-[#1B5E20] hover:bg-[#154a19] text-white"
+              className="bg-[#1B5E20] hover:bg-[#154a19] text-white rounded-full font-bold px-6"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              ) : null}
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
               บันทึก
             </Button>
           </div>

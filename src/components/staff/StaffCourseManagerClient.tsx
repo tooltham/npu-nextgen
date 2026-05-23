@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   Plus,
   GripVertical,
-  Edit2,
   Trash2,
   Link as LinkIcon,
   AlertCircle,
@@ -27,7 +26,7 @@ export default function StaffCourseManagerClient({
   initialModules,
 }: {
   initialModules: Module[];
-  currentUser: any;
+  currentUser: unknown;
 }) {
   const [modules, setModules] = useState<Module[]>(initialModules);
   const [isCreating, setIsCreating] = useState(false);

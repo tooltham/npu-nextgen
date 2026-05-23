@@ -35,7 +35,7 @@ export default function ApplicationSuccessPage() {
                     ตรวจสอบอีเมลยืนยัน
                   </h3>
                   <p className="text-sm text-gray-500 mt-1">
-                    หากไม่พบในกล่องขาเข้า โปรดตรวจสอบในเมนู "อีเมลขยะ"
+                    หากไม่พบในกล่องขาเข้า โปรดตรวจสอบในเมนู &quot;อีเมลขยะ&quot;
                     (Junk/Spam)
                   </p>
                 </div>

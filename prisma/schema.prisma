@@ -27,6 +27,7 @@ model Application {
   nationalId  String // encrypted at rest (AES-256-GCM)
   phone       String
   lineId      String?
+  address     String  @db.Text
 
   // Step 3: Background & Qualifications
   education           Education
@@ -81,6 +82,7 @@ model User {
   passwordHash  String? // Optional: Null สำหรับผู้ใช้ Google SSO
   role          Role      @default(STUDENT)
   isActive      Boolean   @default(true)
+  mustChangePassword Boolean @default(false)
   lastLoginAt   DateTime? // ใช้สำหรับจับเวลาแจ้งเตือนคนหาย (Inactivity)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -285,4 +287,14 @@ enum AppStatus {
   ACCEPTED
   WAITLISTED
   REJECTED
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
 }

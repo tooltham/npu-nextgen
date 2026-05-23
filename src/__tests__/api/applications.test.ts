@@ -51,6 +51,7 @@ describe("POST /api/applications API", () => {
         lastNameEn: "Jaidee",
         nationalId: "1101700207030", // Valid checksum
         phone: "0812345678",
+        address: "123 Test St. Bangkok 10110",
       },
       background: {
         education: "BACHELOR",

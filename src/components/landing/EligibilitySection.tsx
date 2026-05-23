@@ -18,7 +18,7 @@ export default function EligibilitySection() {
             คุณสมบัติผู้สมัคร
           </h2>
           <p className="mt-6 text-center text-black/40 font-medium text-lg italic">
-            "เรามองหาผู้ที่พร้อมจะเปลี่ยนผ่านสู่โลกเกษตรดิจิทัล"
+            &quot;เรามองหาผู้ที่พร้อมจะเปลี่ยนผ่านสู่โลกเกษตรดิจิทัล&quot;
           </p>
 
           <div className="mt-20 grid gap-8 md:grid-cols-1 max-w-2xl mx-auto">

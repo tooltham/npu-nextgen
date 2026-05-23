@@ -1,9 +1,10 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useEffect } from "react";
 import { Lesson } from "@prisma/client";
 import { Button } from "@/components/ui/button";
-import { Loader2, X } from "lucide-react";
+import { Loader2, X, Save } from "lucide-react";
 import { RichTextEditor } from "./RichTextEditor";
 import { FileUpload } from "./FileUpload";
 
@@ -34,7 +35,7 @@ export function LessonEditorModal({
   useEffect(() => {
     if (lesson) {
       setTitle(lesson.title);
-      setType(lesson.type as any);
+      setType(lesson.type as "VIDEO" | "TEXT" | "QUIZ");
       setVideoUrl(lesson.videoUrl || "");
       setDocumentUrl(lesson.documentUrl || "");
       setContent(lesson.content || "");
@@ -133,7 +134,9 @@ export function LessonEditorModal({
             </label>
             <select
               value={type}
-              onChange={(e) => setType(e.target.value as any)}
+              onChange={(e) =>
+                setType(e.target.value as "VIDEO" | "TEXT" | "QUIZ")
+              }
               className="w-full border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B5E20]"
               disabled={!!lesson} // Cannot change type after creation easily
             >
@@ -170,7 +173,7 @@ export function LessonEditorModal({
           {type === "QUIZ" && (
             <div className="bg-purple-50 p-3 rounded-md text-sm text-purple-700 border border-purple-100">
               💡 บันทึกบทเรียนนี้ก่อน แล้วไปสร้าง/แก้ไขคำถามในเมนู
-              "จัดการแบบทดสอบ"
+              &quot;จัดการแบบทดสอบ&quot;
             </div>
           )}
 
@@ -230,11 +233,13 @@ export function LessonEditorModal({
             <Button
               type="submit"
               disabled={isLoading}
-              className="bg-[#1B5E20] hover:bg-[#154a19] text-white"
+              className="bg-[#1B5E20] hover:bg-[#154a19] text-white rounded-full font-bold px-6"
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              ) : null}
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
               บันทึก
             </Button>
           </div>

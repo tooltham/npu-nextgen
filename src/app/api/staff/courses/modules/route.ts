@@ -37,9 +37,9 @@ export async function POST(request: Request) {
     );
   }
 
-  const module = await prisma.courseModule.create({
+  const newModule = await prisma.courseModule.create({
     data: parsed.data,
   });
 
-  return NextResponse.json({ success: true, data: module });
+  return NextResponse.json({ success: true, data: newModule });
 }

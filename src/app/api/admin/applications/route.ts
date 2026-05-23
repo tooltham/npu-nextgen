@@ -5,7 +5,7 @@ import { auth } from "@/app/api/auth/[...nextauth]/route";
 export async function GET(request: Request) {
   const session = await auth();
 
-  if (!session || (session.user as any).role !== "ADMIN") {
+  if (!session || (session.user as { role?: string }).role !== "ADMIN") {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
@@ -15,7 +15,7 @@ export async function GET(request: Request) {
   const status = searchParams.get("status");
   const search = searchParams.get("search");
 
-  const where: any = {};
+  const where: Record<string, unknown> = {};
   if (status) {
     where.status = status;
   }

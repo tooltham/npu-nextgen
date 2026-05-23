@@ -116,7 +116,7 @@ const statusMap: Record<string, string> = {
 };
 
 // 4. PDF Document Component
-const MyDocument = ({ data }: { data: any[] }) => (
+const MyDocument = ({ data }: { data: Record<string, unknown>[] }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <Text style={styles.title}>รายงานรายชื่อผู้สมัคร NPU NextGen</Text>
@@ -168,16 +168,27 @@ const MyDocument = ({ data }: { data: any[] }) => (
 export async function GET(request: Request) {
   const session = await auth();
 
-  if (!session || (session.user as any).role !== "ADMIN") {
+  if (!session || (session.user as { role?: string }).role !== "ADMIN") {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
+  let applications;
   try {
-    const applications = await prisma.application.findMany({
+    applications = await prisma.application.findMany({
       orderBy: { createdAt: "desc" },
     });
+  } catch (error) {
+    console.error("PDF Export failed:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch applications for PDF" },
+      { status: 500 },
+    );
+  }
 
-    const buffer = await renderToBuffer(<MyDocument data={applications} />);
+  const document = <MyDocument data={applications} />;
+
+  try {
+    const buffer = await renderToBuffer(document);
 
     return new NextResponse(new Uint8Array(buffer), {
       headers: {
@@ -186,9 +197,9 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error("PDF Export failed:", error);
+    console.error("PDF Render failed:", error);
     return NextResponse.json(
-      { error: "Failed to export PDF" },
+      { error: "Failed to render PDF" },
       { status: 500 },
     );
   }

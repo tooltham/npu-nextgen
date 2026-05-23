@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { AppStatus } from "@prisma/client";
+import { AppStatus, Application } from "@prisma/client";
 import { sendApprovalEmail } from "@/lib/email";
 
 export async function changeApplicationStatus(
@@ -9,7 +9,7 @@ export async function changeApplicationStatus(
   noteDetails: string,
 ) {
   let shouldSendEmail = false;
-  let updatedApp: any;
+  let updatedApp: Application | undefined;
 
   await prisma.$transaction(async (tx) => {
     // 1. Fetch current application
@@ -84,19 +84,20 @@ export async function changeApplicationStatus(
 
 export async function updateApplicationData(
   applicationId: string,
-  data: any,
+  data: Partial<Application>,
   adminEmail: string,
 ) {
   const {
-    id,
-    nationalId,
-    status,
-    logs,
-    createdAt,
-    updatedAt,
-    isAcceptanceEmailSent,
+    id: _id,
+    nationalId: _nationalId,
+    status: _status,
+    createdAt: _createdAt,
+    updatedAt: _updatedAt,
+    isAcceptanceEmailSent: _isAcceptanceEmailSent,
+    logs: _logs,
+    consent: _consent,
     ...editableData
-  } = data;
+  } = data as Record<string, unknown>;
 
   return await prisma.$transaction(async (tx) => {
     // 1. Fetch current application
@@ -110,8 +111,8 @@ export async function updateApplicationData(
 
     // Check if any data actually changed
     const hasChanged = Object.keys(editableData).some((key) => {
-      const oldVal = (application as any)[key] ?? "";
-      const newVal = (editableData as any)[key] ?? "";
+      const oldVal = (application as Record<string, unknown>)[key] ?? "";
+      const newVal = (editableData as Record<string, unknown>)[key] ?? "";
       return oldVal !== newVal;
     });
 

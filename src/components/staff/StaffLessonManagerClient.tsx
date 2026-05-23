@@ -338,7 +338,7 @@ export default function StaffLessonManagerClient({
                     {editFormData.type === "QUIZ" && (
                       <div className="bg-zinc-50 p-4 rounded-xl border border-zinc-200 text-sm text-zinc-600">
                         <p>
-                          จัดการแบบทดสอบในส่วน <b>"จัดการคำถาม"</b>{" "}
+                          จัดการแบบทดสอบในส่วน <b>&quot;จัดการคำถาม&quot;</b>{" "}
                           หลังจากบันทึกการตั้งค่านี้แล้ว
                         </p>
                       </div>
