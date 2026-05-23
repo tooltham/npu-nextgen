@@ -6,7 +6,7 @@ import StaffCourseManagerClient from "@/components/staff/StaffCourseManagerClien
 export const metadata = {
   title: "จัดการหลักสูตร | NPU NextGen",
   description:
-    "Course Builder - Smart Integrated Farm Manager Application System",
+    "จัดการหลักสูตร - Smart Integrated Farm Manager Application System",
 };
 
 export default async function CoursesPage() {

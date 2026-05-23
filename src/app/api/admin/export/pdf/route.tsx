@@ -11,6 +11,7 @@ import {
   renderToBuffer,
 } from "@react-pdf/renderer";
 import path from "path";
+import { decrypt } from "@/lib/encrypt";
 
 // 1. Register Thai Font (Load from local file)
 const fontPath = path.join(
@@ -62,11 +63,12 @@ const styles = StyleSheet.create({
     borderColor: "#e5e7eb",
     borderLeftWidth: 0,
     borderTopWidth: 0,
-    padding: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 2,
     textAlign: "center",
   },
   tableColName: {
-    width: "30%",
+    width: "22%",
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#e5e7eb",
@@ -74,8 +76,18 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     padding: 5,
   },
+  tableColNationalId: {
+    width: "25%",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+    padding: 5,
+    textAlign: "center",
+  },
   tableColEmail: {
-    width: "30%",
+    width: "25%",
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#e5e7eb",
@@ -84,7 +96,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   tableColPhone: {
-    width: "15%",
+    width: "18%",
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#e5e7eb",
@@ -93,30 +105,11 @@ const styles = StyleSheet.create({
     padding: 5,
     textAlign: "center",
   },
-  tableColStatus: {
-    width: "15%",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-    padding: 5,
-    textAlign: "center",
-  },
-  textHeader: { color: "#ffffff", fontWeight: "bold" },
+  textHeader: { color: "#ffffff", fontWeight: "bold", textAlign: "center" },
 });
 
-// 3. Status Map for Thai labels
-const statusMap: Record<string, string> = {
-  PENDING: "รอดำเนินการ",
-  REVIEWED: "กำลังพิจารณา",
-  ACCEPTED: "อนุมัติผ่าน",
-  REJECTED: "ไม่ผ่าน",
-  WAITLISTED: "ตัวสำรอง",
-};
-
 // 4. PDF Document Component
-const MyDocument = ({ data }: { data: Record<string, unknown>[] }) => (
+const MyDocument = ({ data }: { data: any[] }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <Text style={styles.title}>รายงานรายชื่อผู้สมัคร NPU NextGen</Text>
@@ -124,19 +117,19 @@ const MyDocument = ({ data }: { data: Record<string, unknown>[] }) => (
         {/* Table Header */}
         <View style={[styles.tableRow, styles.tableHeader]}>
           <View style={styles.tableColIndex}>
-            <Text style={styles.textHeader}>ลำดับ</Text>
+            <Text style={styles.textHeader}>ลำดับ </Text>
           </View>
           <View style={styles.tableColName}>
-            <Text style={styles.textHeader}>ชื่อ-สกุล</Text>
+            <Text style={styles.textHeader}>ชื่อ สกุล</Text>
+          </View>
+          <View style={styles.tableColNationalId}>
+            <Text style={styles.textHeader}>เลขบัตรประจำตัวประชาชน</Text>
           </View>
           <View style={styles.tableColEmail}>
-            <Text style={styles.textHeader}>อีเมล</Text>
+            <Text style={styles.textHeader}>อีเมล์</Text>
           </View>
           <View style={styles.tableColPhone}>
-            <Text style={styles.textHeader}>เบอร์โทร</Text>
-          </View>
-          <View style={styles.tableColStatus}>
-            <Text style={styles.textHeader}>สถานะ</Text>
+            <Text style={styles.textHeader}>โทรศัพท์</Text>
           </View>
         </View>
         {/* Table Body */}
@@ -148,14 +141,14 @@ const MyDocument = ({ data }: { data: Record<string, unknown>[] }) => (
             <View style={styles.tableColName}>
               <Text>{`${app.titleTh}${app.firstNameTh} ${app.lastNameTh}`}</Text>
             </View>
+            <View style={styles.tableColNationalId}>
+              <Text>{app.nationalId}</Text>
+            </View>
             <View style={styles.tableColEmail}>
               <Text>{app.email}</Text>
             </View>
             <View style={styles.tableColPhone}>
               <Text>{app.phone}</Text>
-            </View>
-            <View style={styles.tableColStatus}>
-              <Text>{statusMap[app.status] || app.status}</Text>
             </View>
           </View>
         ))}
@@ -172,6 +165,9 @@ export async function GET(request: Request) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const isInline = searchParams.get("inline") === "true";
+
   let applications;
   try {
     applications = await prisma.application.findMany({
@@ -185,15 +181,33 @@ export async function GET(request: Request) {
     );
   }
 
-  const document = <MyDocument data={applications} />;
+  // Decrypt national ID for export
+  const formattedData = applications.map((app) => {
+    let decryptedNationalId = "-";
+    if (app.nationalId) {
+      try {
+        decryptedNationalId = decrypt(app.nationalId);
+      } catch (err) {
+        console.error("Failed to decrypt nationalId for application", app.id);
+      }
+    }
+    return {
+      ...app,
+      nationalId: decryptedNationalId,
+    };
+  });
+
+  const document = <MyDocument data={formattedData} />;
 
   try {
     const buffer = await renderToBuffer(document);
 
+    const disposition = isInline ? "inline" : "attachment";
+
     return new NextResponse(new Uint8Array(buffer), {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename=npu-applications-${new Date().toISOString().split("T")[0]}.pdf`,
+        "Content-Disposition": `${disposition}; filename=npu-applications-${new Date().toISOString().split("T")[0]}.pdf`,
       },
     });
   } catch (error) {

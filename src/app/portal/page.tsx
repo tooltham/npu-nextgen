@@ -17,6 +17,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import StudyHoursChart from "@/components/portal/charts/StudyHoursChart";
+import ProjectScoresChart from "@/components/portal/charts/ProjectScoresChart";
 
 interface DashboardData {
   userName: string;
@@ -39,6 +41,18 @@ interface DashboardData {
     lessonCount: number;
     isLocked: boolean;
     isCompleted: boolean;
+  }[];
+  hoursData: {
+    theoryCompleted: number;
+    theoryTotal: number;
+    practicalCompleted: number;
+    practicalTotal: number;
+  };
+  projectScores: {
+    module: string;
+    score: number;
+    threshold: number;
+    fullMark: number;
   }[];
 }
 
@@ -247,6 +261,18 @@ export default function PortalDashboard() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Learning Analytics Section */}
+        <div>
+          <h2 className="text-2xl font-black text-zinc-900 mb-6 flex items-center gap-3">
+            <Target className="w-6 h-6 text-indigo-600" />
+            สรุปผลการเรียน (My Learning Analytics)
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <StudyHoursChart data={data.hoursData} />
+            <ProjectScoresChart data={data.projectScores} />
           </div>
         </div>
 

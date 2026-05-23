@@ -93,16 +93,61 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    // 3. Find the next lesson to resume
+    // 3. Calculate Hours and Scores
+    let theoryTotal = 0;
+    let practicalTotal = 0;
+    let theoryCompleted = 0;
+    let practicalCompleted = 0;
+
+    publishedModules.forEach((mod) => {
+      mod.lessons.forEach((lesson) => {
+        const tHours = (lesson as any).theoryHours || 0;
+        const pHours = (lesson as any).practicalHours || 0;
+        theoryTotal += tHours;
+        practicalTotal += pHours;
+
+        if (completedLessonIds.has(lesson.id)) {
+          theoryCompleted += tHours;
+          practicalCompleted += pHours;
+        }
+      });
+    });
+
+    // Fallback if DB not seeded yet
+    if (theoryTotal === 0 && practicalTotal === 0) {
+      theoryTotal = 45;
+      practicalTotal = 240;
+      theoryCompleted =
+        totalLessons > 0 ? Math.round((completedCount / totalLessons) * 45) : 0;
+      practicalCompleted =
+        totalLessons > 0
+          ? Math.round((completedCount / totalLessons) * 240)
+          : 0;
+    }
+
+    const projectScores = publishedModules.map((mod) => {
+      const sub = submissions.find((s) => s.moduleId === mod.id);
+      return {
+        module:
+          mod.title.length > 15
+            ? mod.title.substring(0, 15) + "..."
+            : mod.title,
+        score: sub?.score || 0,
+        threshold: 70,
+        fullMark: 100,
+      };
+    });
+
+    // 4. Find the next lesson to resume
     let nextLesson = null;
     for (const lesson of orderedLessons) {
-      if (!completedLessonIds.has(lesson.id)) {
+      if (!completedLessonIds.has((lesson as any).id)) {
         nextLesson = lesson;
         break;
       }
     }
 
-    // 4. Evaluate Course Completion (Requires ALL submissions to be PASS)
+    // 5. Evaluate Course Completion (Requires ALL submissions to be PASS)
     const isCourseCompleted =
       publishedModules.length > 0 &&
       publishedModules.every((mod) => {
@@ -120,13 +165,20 @@ export async function GET(req: NextRequest) {
       progressPercentage,
       modules: modulesData,
       isCourseCompleted,
+      hoursData: {
+        theoryCompleted,
+        theoryTotal,
+        practicalCompleted,
+        practicalTotal,
+      },
+      projectScores,
       nextLesson: nextLesson
         ? {
-            id: nextLesson.id,
-            moduleId: nextLesson.moduleId,
-            title: nextLesson.title,
-            moduleTitle: nextLesson.moduleTitle,
-            type: nextLesson.type,
+            id: (nextLesson as any).id,
+            moduleId: (nextLesson as any).moduleId,
+            title: (nextLesson as any).title,
+            moduleTitle: (nextLesson as any).moduleTitle,
+            type: (nextLesson as any).type,
           }
         : null,
     });

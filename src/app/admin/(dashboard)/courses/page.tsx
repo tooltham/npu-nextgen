@@ -28,7 +28,7 @@ export default async function AdminCoursesPage() {
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 flex items-center gap-3 mb-2">
             <BookOpen className="h-8 w-8 text-[#1B5E20]" />
-            Course Builder
+            จัดการหลักสูตร
           </h1>
           <p className="text-gray-500 mt-1">
             จัดการโครงสร้างหลักสูตร, โมดูล, บทเรียน และแบบทดสอบ
