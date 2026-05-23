@@ -37,28 +37,14 @@ export function ExportButtons() {
     }
   };
 
-  const handlePreviewPDF = async () => {
-    setIsLoadingPreview(true);
-    try {
-      const response = await fetch("/api/admin/export/pdf?inline=true");
-      if (!response.ok) throw new Error("Failed to load PDF preview");
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      setPdfPreviewUrl(url);
-      setPreviewDialog({ show: true, type: "PDF" });
-    } catch (error) {
-      console.error("Preview PDF failed", error);
-    } finally {
-      setIsLoadingPreview(false);
-    }
+  const handlePreviewPDF = () => {
+    setPdfPreviewUrl("/api/admin/export/pdf?inline=true");
+    setPreviewDialog({ show: true, type: "PDF" });
   };
 
   const closePreviewDialog = () => {
     setPreviewDialog({ show: false, type: null });
-    if (pdfPreviewUrl) {
-      URL.revokeObjectURL(pdfPreviewUrl);
-      setPdfPreviewUrl(null);
-    }
+    setPdfPreviewUrl(null);
   };
 
   const handleExportCSV = async () => {
@@ -125,17 +111,30 @@ export function ExportButtons() {
             className={`bg-white rounded-2xl p-7 shadow-2xl w-full max-w-5xl border border-zinc-100 flex flex-col justify-between animate-in fade-in zoom-in-95 duration-200 ${previewDialog.type === "PDF" ? "h-[90vh]" : "max-h-[90vh]"}`}
           >
             <div className="flex flex-col h-full overflow-hidden">
-              <h3 className="text-2xl font-extrabold text-zinc-900 mb-1 shrink-0 flex items-center gap-3">
-                {previewDialog.type === "CSV" ? (
-                  <div className="p-2 bg-emerald-50 rounded-xl text-[#1B5E20]">
-                    <Download className="w-6 h-6" />
-                  </div>
-                ) : (
-                  <div className="p-2 bg-emerald-50 rounded-xl text-[#1B5E20]">
-                    <FileText className="w-6 h-6" />
-                  </div>
+              <h3 className="text-2xl font-extrabold text-zinc-900 mb-1 shrink-0 flex items-center justify-between">
+                <span className="flex items-center gap-3">
+                  {previewDialog.type === "CSV" ? (
+                    <div className="p-2 bg-emerald-50 rounded-xl text-[#1B5E20]">
+                      <Download className="w-6 h-6" />
+                    </div>
+                  ) : (
+                    <div className="p-2 bg-emerald-50 rounded-xl text-[#1B5E20]">
+                      <FileText className="w-6 h-6" />
+                    </div>
+                  )}
+                  ตัวอย่างข้อมูลก่อนส่งออก ({previewDialog.type})
+                </span>
+
+                {previewDialog.type === "PDF" && pdfPreviewUrl && (
+                  <a
+                    href={pdfPreviewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#1B5E20] hover:bg-green-50 rounded-full border border-green-200 transition-colors shrink-0"
+                  >
+                    เปิดในหน้าต่างใหม่ ↗
+                  </a>
                 )}
-                ตัวอย่างข้อมูลก่อนส่งออก ({previewDialog.type})
               </h3>
               <p className="text-sm text-zinc-500 mb-4 shrink-0">
                 คุณสามารถตรวจสอบข้อมูลเบื้องต้นก่อนกดส่งออกได้
