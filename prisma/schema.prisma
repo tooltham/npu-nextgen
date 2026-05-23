@@ -140,10 +140,12 @@ model Lesson {
   videoUrl    String?
   documentUrl String?
   order       Int
-  type        LessonType   @default(VIDEO) // VIDEO | TEXT | QUIZ
-  content     String?      @db.Text // Markdown content สำหรับ type=TEXT
-  isPreview   Boolean      @default(false) // อนุญาตดูก่อน Enroll
-  dripDays    Int          @default(0) // ปล่อยบทเรียนหลัง N วันจาก Enrollment
+  type          LessonType   @default(VIDEO) // VIDEO | TEXT | QUIZ
+  content       String?      @db.Text // Markdown content สำหรับ type=TEXT
+  isPreview     Boolean      @default(false) // อนุญาตดูก่อน Enroll
+  dripDays      Int          @default(0) // ปล่อยบทเรียนหลัง N วันจาก Enrollment
+  theoryHours   Float        @default(0) // ชั่วโมงทฤษฎี
+  practicalHours Float       @default(0) // ชั่วโมงปฏิบัติ
 
   progress LessonProgress[]
   quizzes  Quiz[]

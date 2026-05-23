@@ -13,6 +13,8 @@ import {
   Users,
   BookOpen,
   ClipboardList,
+  FileText,
+  LineChart,
 } from "lucide-react";
 import ForcePasswordModal from "@/components/portal/ForcePasswordModal";
 
@@ -42,56 +44,40 @@ export default function AdminNavbar({ user }: { user: any }) {
   const initials = name.substring(0, 2).toUpperCase();
 
   const navLinks = [
-    { name: "หน้าหลัก (Dashboard)", href: "/admin", icon: LayoutDashboard },
-    { name: "จัดการผู้เรียน", href: "/admin/users", icon: Users },
-    { name: "จัดการหลักสูตร", href: "/admin/courses", icon: BookOpen },
+    { name: "แดชบอร์ดข้อมูล", href: "/admin", icon: LayoutDashboard },
     {
-      name: "ตรวจงาน (Submissions)",
+      name: "วิเคราะห์การเรียน",
+      href: "/admin/learning-analytics",
+      icon: LineChart,
+    },
+    { name: "รายการใบสมัคร", href: "/admin/applications", icon: FileText },
+    { name: "จัดการผู้เรียน", href: "/admin/users", icon: Users },
+    {
+      name: "ระบบตรวจงาน",
       href: "/admin/submissions",
       icon: ClipboardList,
     },
+    { name: "จัดการหลักสูตร", href: "/admin/courses", icon: BookOpen },
   ];
 
   return (
     <>
       <nav className="sticky top-0 z-40 w-full bg-white/70 backdrop-blur-xl border-b border-zinc-200/50 shadow-sm transition-all font-noto-thai">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo / Brand */}
-            <Link
-              href="/admin"
-              className="flex items-center gap-3 group shrink-0"
-            >
-              <div className="w-8 h-8 rounded-xl bg-[#1B5E20] flex items-center justify-center text-white shadow-md group-hover:bg-[#154a19] transition-colors">
-                <Sprout className="w-4 h-4" />
-              </div>
-              <span className="font-black text-lg tracking-tight text-[#1B5E20] hidden sm:block">
-                NPU NextGen Admin
-              </span>
-            </Link>
-
-            {/* Center Navigation - Desktop */}
-            <div className="hidden md:flex items-center space-x-1 lg:space-x-2 mx-4 overflow-x-auto">
-              {navLinks.map((link) => {
-                const isActive = pathname === link.href;
-                const Icon = link.icon;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`px-3 lg:px-5 py-2 rounded-full text-xs lg:text-sm font-bold transition-all whitespace-nowrap ${
-                      isActive
-                        ? "bg-emerald-50 text-emerald-700"
-                        : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900"
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <Icon className="w-4 h-4" />
-                      {link.name}
-                    </span>
-                  </Link>
-                );
-              })}
+            {/* Logo / Brand (Mobile Only) */}
+            <div className="flex items-center">
+              <Link
+                href="/admin"
+                className="flex items-center gap-3 group shrink-0 md:hidden"
+              >
+                <div className="w-8 h-8 rounded-xl bg-[#1B5E20] flex items-center justify-center text-white shadow-md group-hover:bg-[#154a19] transition-colors">
+                  <Sprout className="w-4 h-4" />
+                </div>
+                <span className="font-black text-lg tracking-tight text-[#1B5E20]">
+                  NPU Admin
+                </span>
+              </Link>
             </div>
 
             {/* User Menu */}

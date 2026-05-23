@@ -1,19 +1,65 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Download, FileText, Loader2 } from "lucide-react";
+import { Download, FileText, Loader2, Search } from "lucide-react";
 import { useState } from "react";
+import Papa from "papaparse";
 
 export function ExportButtons() {
   const [isExportingCsv, setIsExportingCsv] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
-  const [confirmDialog, setConfirmDialog] = useState<{
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+  const [previewDialog, setPreviewDialog] = useState<{
     show: boolean;
     type: "CSV" | "PDF" | null;
+    csvData?: any[];
   }>({
     show: false,
     type: null,
   });
+
+  const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null);
+
+  const handlePreviewCSV = async () => {
+    setIsLoadingPreview(true);
+    try {
+      const response = await fetch("/api/admin/export");
+      const csvText = await response.text();
+      const result = Papa.parse(csvText, {
+        header: true,
+        skipEmptyLines: true,
+      });
+      setPreviewDialog({ show: true, type: "CSV", csvData: result.data });
+    } catch (error) {
+      console.error("Preview failed", error);
+    } finally {
+      setIsLoadingPreview(false);
+    }
+  };
+
+  const handlePreviewPDF = async () => {
+    setIsLoadingPreview(true);
+    try {
+      const response = await fetch("/api/admin/export/pdf?inline=true");
+      if (!response.ok) throw new Error("Failed to load PDF preview");
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setPdfPreviewUrl(url);
+      setPreviewDialog({ show: true, type: "PDF" });
+    } catch (error) {
+      console.error("Preview PDF failed", error);
+    } finally {
+      setIsLoadingPreview(false);
+    }
+  };
+
+  const closePreviewDialog = () => {
+    setPreviewDialog({ show: false, type: null });
+    if (pdfPreviewUrl) {
+      URL.revokeObjectURL(pdfPreviewUrl);
+      setPdfPreviewUrl(null);
+    }
+  };
 
   const handleExportCSV = async () => {
     setIsExportingCsv(true);
@@ -43,70 +89,134 @@ export function ExportButtons() {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setConfirmDialog({ show: true, type: "CSV" })}
-          disabled={isExportingCsv}
+          onClick={handlePreviewCSV}
+          disabled={isExportingCsv || isLoadingPreview}
           className="font-noto-thai bg-white hover:bg-gray-50 text-gray-700 rounded-full font-bold px-4"
         >
-          {isExportingCsv ? (
+          {isLoadingPreview && !previewDialog.show ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : isExportingCsv ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (
-            <Download className="mr-2 h-4 w-4" />
+            <Search className="mr-2 h-4 w-4 text-[#1B5E20]" />
           )}
-          CSV
+          ดูตัวอย่าง CSV
         </Button>
         <Button
           variant="default"
           size="sm"
-          onClick={() => setConfirmDialog({ show: true, type: "PDF" })}
+          onClick={handlePreviewPDF}
           disabled={isExportingPdf}
           className="font-noto-thai bg-[#1B5E20] hover:bg-[#154a19] text-white rounded-full font-bold px-4"
         >
           {isExportingPdf ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (
-            <FileText className="mr-2 h-4 w-4" />
+            <Search className="mr-2 h-4 w-4" />
           )}
-          PDF Report
+          ดูตัวอย่าง PDF
         </Button>
       </div>
 
-      {/* Custom Confirm Dialog Overlay */}
-      {confirmDialog.show && (
+      {/* Custom Preview Dialog Overlay */}
+      {previewDialog.show && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 font-noto-thai">
-          <div className="bg-white rounded-2xl p-7 shadow-2xl w-full max-w-md border border-zinc-100 flex flex-col justify-between animate-in fade-in zoom-in-95 duration-200">
-            <div>
-              <div className="flex items-center gap-3 mb-4 text-[#1B5E20] bg-emerald-50 w-fit p-2 rounded-xl">
-                {confirmDialog.type === "CSV" ? (
-                  <Download className="w-6 h-6" />
+          <div
+            className={`bg-white rounded-2xl p-7 shadow-2xl w-full max-w-5xl border border-zinc-100 flex flex-col justify-between animate-in fade-in zoom-in-95 duration-200 ${previewDialog.type === "PDF" ? "h-[90vh]" : "max-h-[90vh]"}`}
+          >
+            <div className="flex flex-col h-full overflow-hidden">
+              <h3 className="text-2xl font-extrabold text-zinc-900 mb-1 shrink-0 flex items-center gap-3">
+                {previewDialog.type === "CSV" ? (
+                  <div className="p-2 bg-emerald-50 rounded-xl text-[#1B5E20]">
+                    <Download className="w-6 h-6" />
+                  </div>
                 ) : (
-                  <FileText className="w-6 h-6" />
+                  <div className="p-2 bg-emerald-50 rounded-xl text-[#1B5E20]">
+                    <FileText className="w-6 h-6" />
+                  </div>
                 )}
-              </div>
-              <h3 className="text-xl font-extrabold text-zinc-900 mb-2">
-                ยืนยันการส่งออกข้อมูล
+                ตัวอย่างข้อมูลก่อนส่งออก ({previewDialog.type})
               </h3>
-              <p className="text-sm text-zinc-500 mb-6">
-                คุณต้องการส่งออกข้อมูลรายงานสรุปในรูปแบบ {confirmDialog.type}{" "}
-                ใช่หรือไม่?
+              <p className="text-sm text-zinc-500 mb-4 shrink-0">
+                คุณสามารถตรวจสอบข้อมูลเบื้องต้นก่อนกดส่งออกได้
               </p>
+
+              {/* CSV Preview Content */}
+              {previewDialog.type === "CSV" && previewDialog.csvData && (
+                <div className="mb-4 border rounded-xl overflow-hidden flex flex-col flex-1 min-h-0 bg-white">
+                  <div className="overflow-auto flex-1">
+                    <table className="w-full text-xs text-left border-collapse">
+                      <thead className="bg-zinc-50 text-zinc-700 sticky top-0 shadow-sm z-10">
+                        <tr>
+                          {Object.keys(previewDialog.csvData[0] || {}).map(
+                            (header) => (
+                              <th
+                                key={header}
+                                className="px-3 py-2.5 font-bold whitespace-nowrap border-b border-zinc-200"
+                              >
+                                {header}
+                              </th>
+                            ),
+                          )}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-zinc-100">
+                        {previewDialog.csvData.slice(0, 10).map((row, i) => (
+                          <tr
+                            key={i}
+                            className="hover:bg-emerald-50/30 transition-colors"
+                          >
+                            {Object.values(row).map((val: any, j) => (
+                              <td
+                                key={j}
+                                className="px-3 py-2 whitespace-nowrap truncate max-w-[200px] text-zinc-600"
+                              >
+                                {val}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="bg-zinc-50 p-2.5 text-center text-xs font-medium text-zinc-500 border-t border-zinc-200 shrink-0">
+                    แสดงตัวอย่าง 10 รายการแรก จากทั้งหมด{" "}
+                    {previewDialog.csvData.length} รายการ
+                  </div>
+                </div>
+              )}
+
+              {/* PDF Preview Content */}
+              {previewDialog.type === "PDF" && pdfPreviewUrl && (
+                <div className="mb-4 border border-zinc-200 rounded-xl overflow-hidden flex-1 min-h-0 w-full bg-zinc-100/50">
+                  <iframe
+                    src={`${pdfPreviewUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+                    className="w-full h-full block border-0"
+                  />
+                </div>
+              )}
             </div>
-            <div className="flex gap-3 justify-end mt-4">
+
+            {/* Actions */}
+            <div className="flex gap-3 justify-end mt-2 shrink-0 pt-4 border-t border-zinc-100">
               <button
-                onClick={() => setConfirmDialog({ show: false, type: null })}
+                onClick={closePreviewDialog}
                 className="px-5 py-2.5 rounded-full text-sm font-bold text-zinc-600 bg-zinc-100 hover:bg-zinc-200 transition-colors"
+                disabled={isExportingCsv || isExportingPdf}
               >
                 ยกเลิก
               </button>
               <button
                 onClick={() => {
-                  if (confirmDialog.type === "CSV") handleExportCSV();
-                  else if (confirmDialog.type === "PDF") handleExportPDF();
-                  setConfirmDialog({ show: false, type: null });
+                  if (previewDialog.type === "CSV") handleExportCSV();
+                  else if (previewDialog.type === "PDF") handleExportPDF();
+                  closePreviewDialog();
                 }}
-                className="px-5 py-2.5 rounded-full text-sm font-bold text-white bg-[#1B5E20] hover:bg-[#154a19] transition-colors flex items-center gap-2"
+                className="px-6 py-2.5 rounded-full text-sm font-bold text-white bg-[#1B5E20] hover:bg-[#154a19] transition-colors flex items-center gap-2 shadow-sm"
+                disabled={isExportingCsv || isExportingPdf}
               >
                 <Download className="w-4 h-4" />
-                ยืนยันการส่งออก
+                ยืนยันการส่งออกไฟล์
               </button>
             </div>
           </div>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { auth } from "@/app/api/auth/[...nextauth]/route";
 import Papa from "papaparse";
+import { decrypt } from "@/lib/encrypt";
 
 export async function GET(request: Request) {
   const session = await auth();
@@ -18,24 +19,45 @@ export async function GET(request: Request) {
       },
     });
 
-    const csvData = applications.map((app) => ({
-      ID: app.id,
-      CreatedAt: app.createdAt.toISOString(),
-      Status: app.status,
-      Title: app.titleTh,
-      FirstName: app.firstNameTh,
-      LastName: app.lastNameTh,
-      Email: app.email,
-      Phone: app.phone,
-      Address: app.address,
-      Education: app.education,
-      TargetGroup: app.targetGroup.join(", "),
-      AgriExperience: app.hasAgriExperience ? "YES" : "NO",
-      AgriYears: app.agriExperienceYears || 0,
-      DigitalSkill: app.digitalSkillLevel,
-      ConsentVersion: app.consent?.consentVersion || "-",
-      ConsentDate: app.consent?.grantedAt.toISOString() || "-",
-    }));
+    const csvData = applications.map((app) => {
+      let decryptedNationalId = "-";
+      if (app.nationalId) {
+        try {
+          decryptedNationalId = decrypt(app.nationalId);
+        } catch (err) {
+          console.error("Failed to decrypt nationalId for application", app.id);
+        }
+      }
+
+      return {
+        ID: app.id,
+        CreatedAt: app.createdAt.toISOString(),
+        Status: app.status,
+        TitleTh: app.titleTh,
+        FirstNameTh: app.firstNameTh,
+        LastNameTh: app.lastNameTh,
+        FirstNameEn: app.firstNameEn || "-",
+        LastNameEn: app.lastNameEn || "-",
+        NationalId: decryptedNationalId,
+        Email: app.email,
+        Phone: app.phone,
+        LineId: app.lineId || "-",
+        Address: app.address,
+        Education: app.education,
+        TargetGroup: app.targetGroup.join(", "),
+        TargetGroupOther: app.targetGroupOther || "-",
+        AgriExperience: app.hasAgriExperience ? "YES" : "NO",
+        AgriYears: app.agriExperienceYears || 0,
+        FarmName: app.farmName || "-",
+        FarmLocation: app.farmLocation || "-",
+        DigitalSkill: app.digitalSkillLevel,
+        Expectations: app.expectations.join(", "),
+        ExpectationsOther: app.expectationsOther || "-",
+        CanCommitTime: app.canCommitTime ? "YES" : "NO",
+        ConsentVersion: app.consent?.consentVersion || "-",
+        ConsentDate: app.consent?.grantedAt.toISOString() || "-",
+      };
+    });
 
     const csv = Papa.unparse(csvData);
 
