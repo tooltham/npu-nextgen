@@ -70,9 +70,9 @@ export default function PortalDashboard() {
   if (!data) return null;
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-6 lg:p-10 font-noto-thai">
-      <div className="max-w-5xl mx-auto space-y-10">
-        {/* Welcome Banner (Hero) */}
+    <div className="min-h-screen bg-[#F8FAFC] p-6 lg:p-10 pb-24 font-noto-thai">
+      <div className="max-w-[1280px] mx-auto space-y-10">
+        {/* Modern Header Section */}
         <div className="relative overflow-hidden bg-zinc-900 rounded-[2rem] p-8 md:p-12 shadow-2xl shadow-emerald-900/10 flex flex-col md:flex-row items-center justify-between gap-8">
           {/* Decorative Gradients */}
           <div className="absolute -top-24 -left-24 w-64 h-64 bg-emerald-500 rounded-full mix-blend-screen filter blur-[80px] opacity-40"></div>
@@ -109,7 +109,7 @@ export default function PortalDashboard() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Progress Card (Spans 2 columns) */}
-          <div className="md:col-span-2 bg-white rounded-3xl p-8 shadow-xl shadow-zinc-200/20 border border-zinc-100 flex flex-col justify-between">
+          <div className="md:col-span-2 bg-white rounded-2xl p-8 shadow-xl shadow-zinc-200/20 border border-zinc-100 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-xl font-extrabold text-zinc-900 flex items-center gap-3">
@@ -186,6 +186,19 @@ export default function PortalDashboard() {
                   </Button>
                 </Link>
               </div>
+            ) : data.totalModules === 0 ? (
+              <div className="bg-zinc-100 rounded-2xl p-6 border border-zinc-200 text-center shadow-sm flex flex-col items-center justify-center gap-3">
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-zinc-200 text-2xl">
+                  📚
+                </div>
+                <h3 className="font-extrabold text-zinc-700 text-lg">
+                  ยังไม่มีหลักสูตร/บทเรียน
+                </h3>
+                <p className="text-sm text-zinc-500 font-medium max-w-sm">
+                  ขณะนี้ยังไม่มีบทเรียนเปิดสอนในระบบ
+                  กรุณารอการอัปเดตจากผู้ดูแลระบบ
+                </p>
+              </div>
             ) : (
               <div className="bg-amber-50 rounded-2xl p-6 border border-amber-100 text-center shadow-sm flex flex-col items-center justify-center gap-3">
                 <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-amber-200 text-2xl">
@@ -195,15 +208,16 @@ export default function PortalDashboard() {
                   รอผลการประเมินโครงงาน
                 </h3>
                 <p className="text-sm text-amber-700 font-medium max-w-sm">
-                  คุณได้เรียนจบทุกบทเรียนแล้ว แต่ยังมีโครงงานบางชิ้นที่ "รอตรวจ"
-                  หรือ "ไม่ผ่านเกณฑ์" กรุณาตรวจสอบสถานะในแต่ละโมดูล
+                  คุณได้เรียนจบทุกบทเรียนแล้ว แต่ยังมีโครงงานบางชิ้นที่
+                  &quot;รอตรวจ&quot; หรือ &quot;ไม่ผ่านเกณฑ์&quot;
+                  กรุณาตรวจสอบสถานะในแต่ละโมดูล
                 </p>
               </div>
             )}
           </div>
 
           {/* Quick Stats Card */}
-          <div className="bg-white rounded-3xl p-8 shadow-xl shadow-zinc-200/20 border border-zinc-100 flex flex-col justify-between group">
+          <div className="bg-white rounded-2xl p-8 shadow-xl shadow-zinc-200/20 border border-zinc-100 flex flex-col justify-between group">
             <div>
               <h2 className="text-xl font-extrabold text-zinc-900 mb-8 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100 shadow-sm">
@@ -242,12 +256,12 @@ export default function PortalDashboard() {
             <BookOpen className="w-6 h-6 text-emerald-600" />
             โมดูลการเรียนรู้ (Course Modules)
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.modules.map((module) => (
               <div
                 key={module.id}
-                className={`relative overflow-hidden rounded-3xl border transition-all duration-300 flex flex-col h-full
+                className={`relative overflow-hidden rounded-2xl border transition-all duration-300 flex flex-col h-full
                   ${
                     module.isLocked
                       ? "bg-zinc-50 border-zinc-200 opacity-80 grayscale-[0.5]"
@@ -283,7 +297,7 @@ export default function PortalDashboard() {
                       </div>
                     )}
                   </div>
-                  
+
                   <p className="text-sm text-zinc-500 font-medium mb-6 line-clamp-2">
                     {module.description || "ไม่มีคำอธิบาย"}
                   </p>
@@ -292,9 +306,14 @@ export default function PortalDashboard() {
                     <span className="text-xs font-bold text-zinc-500">
                       {module.lessonCount} บทเรียน
                     </span>
-                    
+
                     {module.isLocked ? (
-                      <Button variant="outline" size="sm" disabled className="rounded-xl px-4 text-xs font-bold bg-zinc-100 border-transparent text-zinc-400">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled
+                        className="rounded-xl px-4 text-xs font-bold bg-zinc-100 border-transparent text-zinc-400"
+                      >
                         ล็อค
                       </Button>
                     ) : (
@@ -304,8 +323,8 @@ export default function PortalDashboard() {
                           size="sm"
                           className={`rounded-xl px-4 text-xs font-bold gap-1.5 transition-colors
                             ${
-                              module.isCompleted 
-                                ? "text-emerald-600 border-emerald-200 hover:bg-emerald-50" 
+                              module.isCompleted
+                                ? "text-emerald-600 border-emerald-200 hover:bg-emerald-50"
                                 : "bg-emerald-600 text-white hover:bg-emerald-700"
                             }
                           `}

@@ -8,7 +8,7 @@ export async function PUT(
 ) {
   try {
     const session = await auth();
-    if (!session || (session.user as any).role !== "ADMIN") {
+    if (!session || (session.user as { role?: string }).role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

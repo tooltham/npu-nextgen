@@ -76,6 +76,7 @@ const ReviewSummary = () => {
         },
         { label: "อีเมล", value: formData.email },
         { label: "เบอร์โทรศัพท์", value: formData.phone },
+        { label: "ที่อยู่", value: formData.address },
       ],
     },
     {
@@ -135,9 +136,17 @@ const ReviewSummary = () => {
     },
   ];
 
-  type SectionItem = { label: string; value: any; fullWidth?: boolean };
+  type SectionItem = {
+    label: string;
+    value: React.ReactNode;
+    fullWidth?: boolean;
+  };
   const typedSections: { title: string; step: number; items: SectionItem[] }[] =
-    sections as any;
+    sections as unknown as {
+      title: string;
+      step: number;
+      items: SectionItem[];
+    }[];
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -156,6 +165,7 @@ const ReviewSummary = () => {
           nationalId: formData.nationalId,
           phone: formData.phone,
           lineId: formData.lineId || "",
+          address: formData.address,
         },
         background: {
           education: formData.education,
@@ -193,7 +203,7 @@ const ReviewSummary = () => {
       } else {
         setError(result.error || "เกิดข้อผิดพลาดในการส่งข้อมูล");
       }
-    } catch (err) {
+    } catch {
       setError("ไม่สามารถติดต่อเซิร์ฟเวอร์ได้ โปรดลองอีกครั้ง");
     } finally {
       setIsSubmitting(false);

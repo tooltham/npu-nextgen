@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/app/api/auth/[...nextauth]/route";
-import { Role } from "@prisma/client";
+import { Role, Enrollment } from "@prisma/client";
 
 export interface AuthenticatedUser {
   id: string;
@@ -33,7 +33,12 @@ export async function verifyUserRole(
     };
   }
 
-  const user = session.user as any;
+  const user = session.user as {
+    id?: string;
+    name?: string | null;
+    email?: string | null;
+    role?: string;
+  };
   const userRole = user.role as Role;
 
   if (!allowedRoles.includes(userRole)) {
@@ -83,7 +88,7 @@ export async function verifyStudent() {
  * Returns the enrollment if successful.
  */
 export async function verifyEnrollment(): Promise<
-  | { success: true; user: AuthenticatedUser; enrollment: any }
+  | { success: true; user: AuthenticatedUser; enrollment: Partial<Enrollment> }
   | { success: false; response: NextResponse }
 > {
   const authResult = await verifyStudent();

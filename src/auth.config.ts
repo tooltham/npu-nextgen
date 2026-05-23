@@ -5,7 +5,7 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const userRole = (auth?.user as any)?.role;
+      const userRole = (auth?.user as { role?: string })?.role;
 
       const isAdminRoute = nextUrl.pathname.startsWith("/admin");
       const isStaffRoute = nextUrl.pathname.startsWith("/staff");
@@ -44,15 +44,22 @@ export const authConfig = {
     },
     jwt({ token, user }) {
       if (user) {
-        token.role = (user as any).role;
+        token.role = (user as { role?: string }).role;
         token.id = user.id;
+        token.mustChangePassword = (
+          user as { mustChangePassword?: boolean }
+        ).mustChangePassword;
       }
       return token;
     },
     session({ session, token }) {
       if (session.user) {
-        (session.user as any).role = token.role;
-        (session.user as any).id = token.id as string;
+        (session.user as { role?: string; id?: string }).role =
+          token.role as string;
+        (session.user as { role?: string; id?: string }).id =
+          token.id as string;
+        (session.user as { mustChangePassword?: boolean }).mustChangePassword =
+          token.mustChangePassword as boolean;
       }
       return session;
     },

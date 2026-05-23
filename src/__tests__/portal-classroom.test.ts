@@ -42,7 +42,7 @@ describe("LMS Portal Classroom & Assessment Integration Tests", () => {
   describe("POST /api/portal/progress", () => {
     it("should successfully update lesson progress for authorized STUDENT", async () => {
       // Mock student session
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: {
           id: "student-123",
           email: "student@example.com",
@@ -60,7 +60,7 @@ describe("LMS Portal Classroom & Assessment Integration Tests", () => {
       };
 
       vi.mocked(prisma.lessonProgress.upsert).mockResolvedValue(
-        mockProgress as any,
+        mockProgress as Record<string, unknown>,
       );
 
       const request = new Request("http://localhost:3000/api/portal/progress", {
@@ -93,7 +93,7 @@ describe("LMS Portal Classroom & Assessment Integration Tests", () => {
     });
 
     it("should block anonymous users from updating progress", async () => {
-      vi.mocked(auth as any).mockResolvedValue(null);
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue(null);
 
       const request = new Request("http://localhost:3000/api/portal/progress", {
         method: "POST",
@@ -109,7 +109,7 @@ describe("LMS Portal Classroom & Assessment Integration Tests", () => {
 
   describe("POST /api/portal/quiz/submit", () => {
     it("should process correct answer and save quiz attempt", async () => {
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: {
           id: "student-123",
           email: "student@example.com",
@@ -135,9 +135,11 @@ describe("LMS Portal Classroom & Assessment Integration Tests", () => {
         attemptedAt: new Date(),
       };
 
-      vi.mocked(prisma.quiz.findUnique).mockResolvedValue(mockQuiz as any);
+      vi.mocked(prisma.quiz.findUnique).mockResolvedValue(
+        mockQuiz as Record<string, unknown>,
+      );
       vi.mocked(prisma.quizAttempt.create).mockResolvedValue(
-        mockAttempt as any,
+        mockAttempt as Record<string, unknown>,
       );
 
       const request = new Request(
@@ -171,7 +173,7 @@ describe("LMS Portal Classroom & Assessment Integration Tests", () => {
     });
 
     it("should handle incorrect answers properly", async () => {
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: {
           id: "student-123",
           email: "student@example.com",
@@ -197,9 +199,11 @@ describe("LMS Portal Classroom & Assessment Integration Tests", () => {
         attemptedAt: new Date(),
       };
 
-      vi.mocked(prisma.quiz.findUnique).mockResolvedValue(mockQuiz as any);
+      vi.mocked(prisma.quiz.findUnique).mockResolvedValue(
+        mockQuiz as Record<string, unknown>,
+      );
       vi.mocked(prisma.quizAttempt.create).mockResolvedValue(
-        mockAttempt as any,
+        mockAttempt as Record<string, unknown>,
       );
 
       const request = new Request(
@@ -220,7 +224,7 @@ describe("LMS Portal Classroom & Assessment Integration Tests", () => {
     });
 
     it("should return 404 if quiz is not found", async () => {
-      vi.mocked(auth as any).mockResolvedValue({
+      vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
         user: {
           id: "student-123",
           email: "student@example.com",

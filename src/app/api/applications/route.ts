@@ -97,10 +97,13 @@ export async function POST(req: Request) {
       { success: true, id: application.id },
       { status: 201 },
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Submission error:", error);
 
-    if (error.message === "EMAIL_ALREADY_EXISTS") {
+    if (
+      (error instanceof Error ? error.message : String(error)) ===
+      "EMAIL_ALREADY_EXISTS"
+    ) {
       return NextResponse.json(
         {
           success: false,

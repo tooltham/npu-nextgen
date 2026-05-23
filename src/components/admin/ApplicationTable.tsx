@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -108,10 +109,10 @@ export function ApplicationTable() {
   return (
     <div className="space-y-4">
       <div className="relative w-full max-w-md">
-        <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
         <Input
           placeholder="ค้นหาชื่อ หรือ อีเมล..."
-          className="pl-9 font-noto-thai bg-white border-gray-200"
+          className="pl-9 font-noto-thai bg-white border-zinc-200 rounded-full focus-visible:ring-[#1B5E20]/20 focus-visible:border-[#1B5E20]"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
@@ -120,9 +121,9 @@ export function ApplicationTable() {
         />
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
+      <div className="rounded-2xl border border-zinc-200/80 bg-white overflow-hidden shadow-sm">
         <table className="w-full text-sm text-left">
-          <thead className="bg-gray-50/80 text-gray-600 font-noto-thai border-b border-gray-200">
+          <thead className="bg-zinc-50/80 text-zinc-500 text-xs uppercase font-bold tracking-wider border-b border-zinc-200/80">
             <tr>
               <th className="px-5 py-3.5 font-medium">ชื่อ-สกุล</th>
               <th className="px-5 py-3.5 font-medium">อีเมล / เบอร์โทร</th>
@@ -131,43 +132,55 @@ export function ApplicationTable() {
               <th className="px-5 py-3.5 font-medium">จัดการ</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 font-noto-thai">
+          <tbody className="divide-y divide-zinc-100 font-noto-thai">
             {loading ? (
               <tr>
-                <td colSpan={5} className="px-5 py-10 text-center">
-                  <Loader2 className="h-6 w-6 animate-spin mx-auto text-[#1B5E20]" />
+                <td colSpan={5} className="px-5 py-16 text-center">
+                  <Loader2 className="h-8 w-8 animate-spin mx-auto text-[#1B5E20]/50" />
+                  <p className="text-sm text-zinc-400 mt-3">
+                    กำลังโหลดข้อมูลใบสมัคร...
+                  </p>
                 </td>
               </tr>
             ) : data.length === 0 ? (
               <tr>
                 <td
                   colSpan={5}
-                  className="px-5 py-10 text-center text-gray-500"
+                  className="px-5 py-16 text-center text-zinc-500"
                 >
-                  ไม่พบข้อมูลใบสมัคร
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="w-16 h-16 bg-zinc-50 rounded-2xl flex items-center justify-center border border-zinc-200 mb-4 shadow-inner">
+                      <UserPlus className="w-8 h-8 text-zinc-300" />
+                    </div>
+                    <p className="font-bold text-zinc-700">
+                      ไม่พบข้อมูลใบสมัคร
+                    </p>
+                  </div>
                 </td>
               </tr>
             ) : (
               (data as AppRow[]).map((app) => (
                 <tr
                   key={app.id}
-                  className="hover:bg-gray-50/50 transition-colors"
+                  className="hover:bg-zinc-50/50 transition-colors group"
                 >
-                  <td className="px-5 py-4 font-medium text-gray-900">
+                  <td className="px-5 py-4 font-medium text-zinc-900">
                     <div className="flex items-center gap-3">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1B5E20]/10 text-[#1B5E20] text-sm font-bold">
                         {app.firstNameTh?.charAt(0) || "?"}
                       </div>
-                      <span>
+                      <span className="font-extrabold group-hover:text-[#1B5E20] transition-colors">
                         {app.firstNameTh} {app.lastNameTh}
                       </span>
                     </div>
                   </td>
-                  <td className="px-5 py-4 text-gray-600">
-                    <div>{app.email}</div>
-                    <div className="text-xs">{app.phone}</div>
+                  <td className="px-5 py-4 text-zinc-600">
+                    <div className="font-medium text-xs">{app.email}</div>
+                    <div className="text-xs text-zinc-400 mt-0.5">
+                      {app.phone}
+                    </div>
                   </td>
-                  <td className="px-5 py-4 text-gray-500">
+                  <td className="px-5 py-4 text-zinc-500 font-medium">
                     {new Date(app.createdAt).toLocaleDateString("th-TH")}
                   </td>
                   <td className="px-5 py-4">
@@ -178,7 +191,7 @@ export function ApplicationTable() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="border-[#1B5E20] text-[#1B5E20] hover:bg-[#1B5E20] hover:text-white transition-all duration-300 shadow-sm flex items-center gap-1.5 font-noto-thai"
+                        className="rounded-full border-zinc-200 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 transition-all shadow-sm flex items-center gap-1.5"
                         onClick={() => {
                           setSelectedAppId(app.id);
                           setIsModalOpen(true);
@@ -188,15 +201,15 @@ export function ApplicationTable() {
                         ดูข้อมูล
                       </Button>
                       <Button
-                        size="sm"
-                        variant="outline"
-                        className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm flex items-center gap-1.5 font-noto-thai"
+                        size="icon"
+                        variant="ghost"
+                        className="rounded-full text-rose-500 hover:bg-rose-50 hover:text-rose-600 transition-all shadow-none h-8 w-8"
                         onClick={() =>
                           setDeleteDialog({ show: true, id: app.id })
                         }
+                        title="ลบ"
                       >
                         <Trash2 className="w-4 h-4" />
-                        ลบ
                       </Button>
                     </div>
                   </td>
@@ -207,8 +220,8 @@ export function ApplicationTable() {
         </table>
       </div>
 
-      <div className="flex items-center justify-between px-1">
-        <p className="text-sm text-gray-500 font-noto-thai">
+      <div className="flex items-center justify-between px-2 pt-2">
+        <p className="text-sm text-zinc-500 font-noto-thai font-medium">
           หน้า {page} จาก {totalPages}
         </p>
         <div className="flex gap-2">
@@ -217,7 +230,7 @@ export function ApplicationTable() {
             size="sm"
             disabled={page === 1 || loading}
             onClick={() => setPage((p) => p - 1)}
-            className="font-noto-thai"
+            className="font-noto-thai rounded-full px-4"
           >
             <ChevronLeft className="h-4 w-4 mr-1" /> ก่อนหน้า
           </Button>
@@ -226,7 +239,7 @@ export function ApplicationTable() {
             size="sm"
             disabled={page === totalPages || loading}
             onClick={() => setPage((p) => p + 1)}
-            className="font-noto-thai"
+            className="font-noto-thai rounded-full px-4"
           >
             ถัดไป <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
@@ -234,14 +247,16 @@ export function ApplicationTable() {
       </div>
       {/* Delete Confirmation Dialog Overlay */}
       {deleteDialog.show && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 font-noto-thai">
-          <div className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-[440px] min-h-[255px] flex flex-col justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 font-noto-thai">
+          <div className="bg-white rounded-2xl p-7 shadow-2xl w-full max-w-md border border-zinc-100 flex flex-col justify-between animate-in fade-in zoom-in-95 duration-200">
             <div>
-              <div className="flex items-center gap-3 mb-4 text-red-600">
+              <div className="flex items-center gap-3 mb-4 text-rose-600 bg-rose-50 w-fit p-2 rounded-xl">
                 <AlertCircle className="w-6 h-6" />
-                <h3 className="text-lg font-bold">ยืนยันการลบข้อมูล</h3>
               </div>
-              <p className="text-gray-600 text-sm mb-6">
+              <h3 className="text-xl font-extrabold text-zinc-900 mb-2">
+                ยืนยันการลบข้อมูล
+              </h3>
+              <p className="text-zinc-500 text-sm mb-8 leading-relaxed">
                 คุณต้องการลบใบสมัครนี้ใช่หรือไม่?
                 การดำเนินการนี้ไม่สามารถย้อนกลับได้
                 และข้อมูลทั้งหมดรวมถึงประวัติการดำเนินการจะถูกลบอย่างถาวร
@@ -250,21 +265,23 @@ export function ApplicationTable() {
             <div className="flex justify-end gap-3">
               <Button
                 variant="outline"
+                className="rounded-full px-5"
                 onClick={() => setDeleteDialog({ show: false, id: null })}
                 disabled={deleting}
               >
                 ยกเลิก
               </Button>
               <Button
-                className="bg-red-600 hover:bg-red-700 text-white"
+                className="bg-rose-600 hover:bg-rose-700 text-white shadow-md shadow-rose-600/20 rounded-full px-5"
                 onClick={() => handleDelete(deleteDialog.id!)}
                 disabled={deleting}
               >
                 {deleting ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
                 ) : (
-                  "ยืนยันลบ"
+                  <Trash2 className="w-4 h-4 mr-2" />
                 )}
+                {deleting ? "กำลังลบ..." : "ยืนยันการลบ"}
               </Button>
             </div>
           </div>

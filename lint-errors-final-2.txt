@@ -1,0 +1,230 @@
+
+> npu-nextgen@0.1.0 lint
+> eslint
+
+
+/Users/apiraktooltham/Developer/npu-nextgen/coverage/block-navigation.js
+  1:1  warning  Unused eslint-disable directive (no problems were reported)
+
+/Users/apiraktooltham/Developer/npu-nextgen/prisma/seed.ts
+  101:9  warning  'm1' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  155:9  warning  'm2' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/query.js
+  1:9   warning  'PrismaClient' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  1:26  error    A `require()` style import is forbidden            @typescript-eslint/no-require-imports
+  2:9   warning  'decrypt' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  2:21  error    A `require()` style import is forbidden            @typescript-eslint/no-require-imports
+
+/Users/apiraktooltham/Developer/npu-nextgen/query.ts
+  12:14  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/scratch/check_db.js
+   1:26  error    A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+   2:22  error    A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+   3:18  error    A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+   4:12  error    A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  22:12  warning  'e' is defined but never used            @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/scratch/test_email.js
+   1:20  error    A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+   2:12  error    A `require()` style import is forbidden  @typescript-eslint/no-require-imports
+  23:12  warning  'e' is defined but never used            @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/__tests__/admin-invite.test.ts
+   53:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   72:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   86:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   89:49  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   93:72  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  129:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  151:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  166:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  183:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  188:10  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/__tests__/api/course-builder.test.ts
+  49:11  warning  'req' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/__tests__/portal-classroom.test.ts
+   45:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   63:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   96:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  112:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  138:71  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  140:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  174:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  200:71  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  202:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  223:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/__tests__/portal-grading.test.ts
+   69:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   80:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   88:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  116:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  127:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  131:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  135:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  161:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  185:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  193:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  220:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  228:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  233:68  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  264:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/__tests__/security-core.test.ts
+   50:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   63:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   83:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  102:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  118:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  133:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  146:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  179:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/admin/submissions/[userId]/page.tsx
+  12:3  warning  'User' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/admin/submissions/page.tsx
+   5:49  warning  'ChevronRight' is defined but never used  @typescript-eslint/no-unused-vars
+   5:63  warning  'Inbox' is defined but never used         @typescript-eslint/no-unused-vars
+  27:22  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/admin/users/page.tsx
+  10:3  warning  'MoreVertical' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  48:5  error    Error: Cannot access variable before it is declared
+
+`loadUsers` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/admin/users/page.tsx:48:5
+  46 |
+  47 |   useEffect(() => {
+> 48 |     loadUsers();
+     |     ^^^^^^^^^ `loadUsers` accessed before it is declared
+  49 |   }, []);
+  50 |
+  51 |   const loadUsers = async () => {
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/admin/users/page.tsx:51:3
+  49 |   }, []);
+  50 |
+> 51 |   const loadUsers = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 52 |     setIsLoading(true);
+     | ^^^^^^^^^^^^^^^^^^^^^^^
+> 53 |     try {
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^
+> 63 |     }
+     | ^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |   };
+     | ^^^^^ `loadUsers` is declared here
+  65 |
+  66 |   const handleToggleUserStatusClick = (
+  67 |     userId: string,  react-hooks/immutability
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/api/admin/applications/[id]/route.ts
+  40:14  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/api/admin/applications/route.ts
+  18:16  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/api/admin/courses/modules/route.ts
+  5:27  warning  'req' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/api/admin/export/pdf/route.tsx
+  119:39  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  168:27  warning  'request' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+  180:41  error    Error: Avoid constructing JSX within try/catch
+
+React does not immediately render components when JSX is rendered, so any errors from this component will not be caught by the try/catch. To catch errors in rendering a given component, wrap that component in an error boundary. (https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary).
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/api/admin/export/pdf/route.tsx:180:41
+  178 |     });
+  179 |
+> 180 |     const buffer = await renderToBuffer(<MyDocument data={applications} />);
+      |                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Avoid constructing JSX within try/catch
+  181 |
+  182 |     return new NextResponse(new Uint8Array(buffer), {
+  183 |       headers: {  react-hooks/error-boundaries
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/api/admin/export/route.ts
+   6:27  warning  'request' is defined but never used  @typescript-eslint/no-unused-vars
+  52:12  warning  'error' is defined but never used    @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/api/admin/submissions/[id]/route.ts
+  59:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/api/admin/upload/route.ts
+  33:14  warning  'err' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/api/admin/users/route.ts
+  5:27  warning  'req' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/api/portal/dashboard/route.ts
+   5:27  warning  'req' is defined but never used           @typescript-eslint/no-unused-vars
+  12:37  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  27:27  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  59:45  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  62:41  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  67:45  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  68:55  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/api/portal/submission/submit/route.ts
+  80:21  warning  'uploadData' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/api/staff/courses/modules/route.ts
+  40:3  error  Do not assign to the variable `module`. See: https://nextjs.org/docs/messages/no-assign-module-variable  @next/next/no-assign-module-variable
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/portal/classroom/[moduleId]/page.tsx
+  100:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  103:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  109:55  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  165:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/app/staff/grading/page.tsx
+  44:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/components/admin/ApplicationDetailModal.tsx
+   20:3  warning  'MapPin' is defined but never used                                                                            @typescript-eslint/no-unused-vars
+   23:3  warning  'Calendar' is defined but never used                                                                          @typescript-eslint/no-unused-vars
+   24:3  warning  'Phone' is defined but never used                                                                             @typescript-eslint/no-unused-vars
+   25:3  warning  'Mail' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+   26:3  warning  'GraduationCap' is defined but never used                                                                     @typescript-eslint/no-unused-vars
+   27:3  warning  'Cpu' is defined but never used                                                                               @typescript-eslint/no-unused-vars
+  158:6  warning  React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/components/admin/ApplicationTable.tsx
+  16:3  warning  'UserPlus' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/components/admin/StatsCards.tsx
+  78:31  error  React Hook "useCountUp" cannot be called inside a callback. React Hooks must be called in a React function component or a custom React Hook function  react-hooks/rules-of-hooks
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/components/admin/courses/CourseBuilderClient.tsx
+  9:3  warning  'GripVertical' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/components/landing/CourseDetails.tsx
+  71:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/components/landing/PartnersSection.tsx
+  34:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/components/portal/AssignmentWidget.tsx
+  8:3  warning  'Lightbulb' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/components/portal/ClassroomClient.tsx
+  9:3  warning  'Play' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/apiraktooltham/Developer/npu-nextgen/src/services/applicationService.ts
+  91:9   warning  '_id' is assigned a value but never used                     @typescript-eslint/no-unused-vars
+  92:17  warning  '_nationalId' is assigned a value but never used             @typescript-eslint/no-unused-vars
+  93:13  warning  '_status' is assigned a value but never used                 @typescript-eslint/no-unused-vars
+  94:16  warning  '_createdAt' is assigned a value but never used              @typescript-eslint/no-unused-vars
+  95:16  warning  '_updatedAt' is assigned a value but never used              @typescript-eslint/no-unused-vars
+  96:28  warning  '_isAcceptanceEmailSent' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+✖ 111 problems (70 errors, 41 warnings)
+  0 errors and 1 warning potentially fixable with the `--fix` option.

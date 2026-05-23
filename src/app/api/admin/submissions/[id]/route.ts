@@ -36,7 +36,7 @@ export async function PATCH(
 ) {
   try {
     const session = await auth();
-    if (!session || (session.user as any).role !== "ADMIN") {
+    if (!session || (session.user as { role?: string }).role !== "ADMIN") {
       return NextResponse.json(
         { success: false, error: "Unauthorized" },
         { status: 401 },
@@ -56,7 +56,7 @@ export async function PATCH(
 
     const numScore = Number(score);
     const status = numScore >= 70 ? "PASS" : "FAIL";
-    const graderId = (session.user as any).id;
+    const graderId = (session.user as { id?: string; role?: string }).id;
 
     const updatedSubmission = await prisma.submission.update({
       where: { id: submissionId },
@@ -76,10 +76,10 @@ export async function PATCH(
       );
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       data: updatedSubmission,
-      isCertificateIssued 
+      isCertificateIssued,
     });
   } catch (error) {
     console.error("Failed to grade submission:", error);

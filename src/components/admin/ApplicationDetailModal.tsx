@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -10,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Loader2,
   X,
@@ -45,13 +47,15 @@ export function ApplicationDetailModal({
   onClose,
   onStatusUpdated,
 }: ApplicationDetailModalProps) {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<Record<string, any> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState(false);
   const [activeTab, setActiveTab] = useState<"info" | "logs">("info");
   const [isEditing, setIsEditing] = useState(false);
-  const [editedData, setEditedData] = useState<any>(null);
+  const [editedData, setEditedData] = useState<Record<string, any> | null>(
+    null,
+  );
   const [saving, setSaving] = useState(false);
 
   // Note Submission state
@@ -70,8 +74,8 @@ export function ApplicationDetailModal({
     if (!data || !editedData) return false;
     const keys = Object.keys(editedData);
     return keys.some((key) => {
-      const oldVal = (data as any)[key] ?? "";
-      const newVal = (editedData as any)[key] ?? "";
+      const oldVal = data[key] ?? "";
+      const newVal = editedData[key] ?? "";
       return oldVal !== newVal;
     });
   };
@@ -226,7 +230,7 @@ export function ApplicationDetailModal({
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         // Passing the same status just to add a log
-        body: JSON.stringify({ status: data.status, noteDetails: noteText }),
+        body: JSON.stringify({ status: data!.status, noteDetails: noteText }),
       });
       if (res.ok) {
         setNoteText("");
@@ -286,52 +290,108 @@ export function ApplicationDetailModal({
       {/* Confirmation Dialog Overlay */}
       {confirmDialog.show && confirmDialog.status && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl p-6 shadow-2xl w-full max-w-[440px] min-h-[255px] flex flex-col justify-between">
-            <div>
-              <div className="flex items-center gap-3 mb-4 text-amber-600">
-                <AlertCircle className="w-6 h-6" />
-                <h3 className="text-lg font-bold">ยืนยันการเปลี่ยนสถานะ</h3>
-              </div>
-              <p className="text-gray-600 text-sm mb-6">
-                คุณต้องการเปลี่ยนสถานะผู้สมัครเป็น{" "}
-                <span className="font-semibold text-gray-900">
-                  {confirmDialog.status === "ACCEPTED"
-                    ? "อนุมัติผ่าน "
-                    : confirmDialog.status === "WAITLISTED"
-                      ? "ตัวสำรอง "
-                      : confirmDialog.status === "REJECTED"
-                        ? "ไม่ผ่าน "
-                        : "กำลังพิจารณา "}
-                </span>
-                ใช่หรือไม่?
-                {confirmDialog.status === "ACCEPTED" && (
-                  <span className="block mt-2 text-[#1B5E20] font-medium">
-                    * ระบบจะสร้างบัญชีผู้เรียน ลงทะเบียนวิชาเรียน
-                    และส่งอีเมลแจ้งข้อมูลพร้อมรหัสผ่านชั่วคราวให้ผู้เรียนโดยอัตโนมัติ
-                  </span>
-                )}
-              </p>
-            </div>
-            <div className="flex justify-end gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setConfirmDialog({ show: false, status: null })}
-                disabled={updating}
-              >
-                ยกเลิก
-              </Button>
-              <Button
-                className="bg-amber-600 hover:bg-amber-700 text-white"
-                onClick={() => handleUpdateStatus(confirmDialog.status!)}
-                disabled={updating}
-              >
-                {updating ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  "ยืนยัน"
-                )}
-              </Button>
-            </div>
+          <div className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-[440px] min-h-[255px] flex flex-col justify-between">
+            {(() => {
+              const getStatusUI = (s: ApplicationStatus) => {
+                switch (s) {
+                  case "ACCEPTED":
+                    return {
+                      icon: <CheckCircle className="w-6 h-6" />,
+                      btnIcon: <CheckCircle className="w-4 h-4 mr-2" />,
+                      colorClass: "text-emerald-600",
+                      btnClass:
+                        "bg-emerald-600 hover:bg-emerald-700 text-white",
+                    };
+                  case "REJECTED":
+                    return {
+                      icon: <XCircle className="w-6 h-6" />,
+                      btnIcon: <XCircle className="w-4 h-4 mr-2" />,
+                      colorClass: "text-rose-600",
+                      btnClass: "bg-rose-600 hover:bg-rose-700 text-white",
+                    };
+                  case "WAITLISTED":
+                    return {
+                      icon: <Clock className="w-6 h-6" />,
+                      btnIcon: <Clock className="w-4 h-4 mr-2" />,
+                      colorClass: "text-amber-500",
+                      btnClass: "bg-amber-500 hover:bg-amber-600 text-white",
+                    };
+                  default:
+                    return {
+                      icon: <AlertCircle className="w-6 h-6" />,
+                      btnIcon: <AlertCircle className="w-4 h-4 mr-2" />,
+                      colorClass: "text-blue-500",
+                      btnClass: "bg-blue-600 hover:bg-blue-700 text-white",
+                    };
+                }
+              };
+              const ui = getStatusUI(confirmDialog.status);
+              return (
+                <>
+                  <div>
+                    <div
+                      className={`flex items-center gap-3 mb-4 ${ui.colorClass}`}
+                    >
+                      {ui.icon}
+                      <h3 className="text-lg font-extrabold">
+                        ยืนยันการเปลี่ยนสถานะ
+                      </h3>
+                    </div>
+                    <p className="text-zinc-600 text-sm mb-6">
+                      คุณต้องการเปลี่ยนสถานะผู้สมัครเป็น{" "}
+                      <span className={`font-bold ${ui.colorClass}`}>
+                        {confirmDialog.status === "ACCEPTED"
+                          ? "อนุมัติผ่าน"
+                          : confirmDialog.status === "WAITLISTED"
+                            ? "ตัวสำรอง"
+                            : confirmDialog.status === "REJECTED"
+                              ? "ไม่ผ่าน"
+                              : "กำลังพิจารณา"}
+                      </span>{" "}
+                      ใช่หรือไม่?
+                      {confirmDialog.status === "ACCEPTED" && (
+                        <span className="block mt-3 text-emerald-700 font-medium bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                          * ระบบจะสร้างบัญชีผู้เรียน ลงทะเบียนวิชาเรียน
+                          และส่งอีเมลแจ้งข้อมูลพร้อมรหัสผ่านชั่วคราวให้ผู้เรียนโดยอัตโนมัติ
+                        </span>
+                      )}
+                      {confirmDialog.status === "REJECTED" && (
+                        <span className="block mt-3 text-rose-700 font-medium bg-rose-50 p-3 rounded-xl border border-rose-100">
+                          *
+                          ผู้สมัครจะไม่สามารถเข้าสู่ระบบและเข้าเรียนในหลักสูตรนี้ได้
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <div className="flex justify-end gap-3">
+                    <Button
+                      variant="outline"
+                      className="rounded-full font-bold"
+                      onClick={() =>
+                        setConfirmDialog({ show: false, status: null })
+                      }
+                      disabled={updating}
+                    >
+                      ยกเลิก
+                    </Button>
+                    <Button
+                      className={`rounded-full font-bold shadow-sm transition-all hover:-translate-y-0.5 ${ui.btnClass}`}
+                      onClick={() => handleUpdateStatus(confirmDialog.status!)}
+                      disabled={updating}
+                    >
+                      {updating ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <>
+                          {ui.btnIcon}
+                          <span>ยืนยัน</span>
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         </div>
       )}
@@ -432,14 +492,14 @@ export function ApplicationDetailModal({
                         {isEditing ? (
                           <div className="grid grid-cols-3 gap-2">
                             <Select
-                              value={editedData.titleTh}
+                              value={editedData!.titleTh}
                               onValueChange={(val) =>
-                                setEditedData({ ...editedData, titleTh: val })
+                                setEditedData({ ...editedData!, titleTh: val })
                               }
                             >
                               <SelectTrigger>
                                 <SelectValue placeholder="คำนำหน้า">
-                                  {editedData.titleTh}
+                                  {editedData!.titleTh}
                                 </SelectValue>
                               </SelectTrigger>
                               <SelectContent>
@@ -449,20 +509,20 @@ export function ApplicationDetailModal({
                               </SelectContent>
                             </Select>
                             <Input
-                              value={editedData.firstNameTh}
+                              value={editedData!.firstNameTh}
                               onChange={(e) =>
                                 setEditedData({
-                                  ...editedData,
+                                  ...editedData!,
                                   firstNameTh: e.target.value,
                                 })
                               }
                               placeholder="ชื่อจริง"
                             />
                             <Input
-                              value={editedData.lastNameTh}
+                              value={editedData!.lastNameTh}
                               onChange={(e) =>
                                 setEditedData({
-                                  ...editedData,
+                                  ...editedData!,
                                   lastNameTh: e.target.value,
                                 })
                               }
@@ -471,8 +531,8 @@ export function ApplicationDetailModal({
                           </div>
                         ) : (
                           <p className="font-medium text-gray-900">
-                            {data.titleTh}
-                            {data.firstNameTh} {data.lastNameTh}
+                            {data!.titleTh}
+                            {data!.firstNameTh} {data!.lastNameTh}
                           </p>
                         )}
                       </div>
@@ -483,20 +543,20 @@ export function ApplicationDetailModal({
                         {isEditing ? (
                           <div className="grid grid-cols-2 gap-2">
                             <Input
-                              value={editedData.firstNameEn}
+                              value={editedData!.firstNameEn}
                               onChange={(e) =>
                                 setEditedData({
-                                  ...editedData,
+                                  ...editedData!,
                                   firstNameEn: e.target.value,
                                 })
                               }
                               placeholder="First Name (EN)"
                             />
                             <Input
-                              value={editedData.lastNameEn}
+                              value={editedData!.lastNameEn}
                               onChange={(e) =>
                                 setEditedData({
-                                  ...editedData,
+                                  ...editedData!,
                                   lastNameEn: e.target.value,
                                 })
                               }
@@ -512,11 +572,11 @@ export function ApplicationDetailModal({
                                 นางสาว: "Ms.",
                               };
                               const prefix =
-                                prefixMap[data.titleTh as string] || "";
-                              const fullName = `${data.firstNameEn} ${data.lastNameEn}`;
+                                prefixMap[data!.titleTh as string] || "";
+                              const fullName = `${data!.firstNameEn} ${data!.lastNameEn}`;
                               if (
                                 prefix &&
-                                !data.firstNameEn?.startsWith(prefix)
+                                !data!.firstNameEn?.startsWith(prefix)
                               ) {
                                 return `${prefix} ${fullName}`;
                               }
@@ -530,17 +590,18 @@ export function ApplicationDetailModal({
                           เลขประจำตัวประชาชน
                         </p>
                         <p className="font-medium text-gray-900">
-                          {data.nationalId
-                            ? data.nationalId.includes(":")
+                          {data!.nationalId
+                            ? data!.nationalId.includes(":")
                               ? "(ข้อมูลเข้ารหัส / ไม่สามารถถอดรหัสได้)"
-                              : data.nationalId.replace(/\D/g, "").length === 13
-                                ? data.nationalId
+                              : data!.nationalId.replace(/\D/g, "").length ===
+                                  13
+                                ? data!.nationalId
                                     .replace(/\D/g, "")
                                     .replace(
                                       /(\d{1})(\d{4})(\d{5})(\d{2})(\d{1})/,
                                       "$1-$2-$3-$4-$5",
                                     )
-                                : data.nationalId
+                                : data!.nationalId
                             : "-"}
                         </p>
                       </div>
@@ -550,17 +611,17 @@ export function ApplicationDetailModal({
                         </p>
                         {isEditing ? (
                           <Input
-                            value={editedData.email}
+                            value={editedData!.email}
                             onChange={(e) =>
                               setEditedData({
-                                ...editedData,
+                                ...editedData!,
                                 email: e.target.value,
                               })
                             }
                           />
                         ) : (
                           <p className="font-medium text-gray-900">
-                            {data.email}
+                            {data!.email}
                           </p>
                         )}
                       </div>
@@ -570,17 +631,17 @@ export function ApplicationDetailModal({
                         </p>
                         {isEditing ? (
                           <Input
-                            value={editedData.phone}
+                            value={editedData!.phone}
                             onChange={(e) =>
                               setEditedData({
-                                ...editedData,
+                                ...editedData!,
                                 phone: e.target.value,
                               })
                             }
                           />
                         ) : (
                           <p className="font-medium text-gray-900">
-                            {data.phone}
+                            {data!.phone}
                           </p>
                         )}
                       </div>
@@ -590,17 +651,38 @@ export function ApplicationDetailModal({
                         </p>
                         {isEditing ? (
                           <Input
-                            value={editedData.lineId || ""}
+                            value={editedData!.lineId || ""}
                             onChange={(e) =>
                               setEditedData({
-                                ...editedData,
+                                ...editedData!,
                                 lineId: e.target.value,
                               })
                             }
                           />
                         ) : (
                           <p className="font-medium text-gray-900">
-                            {data.lineId || "-"}
+                            {data!.lineId || "-"}
+                          </p>
+                        )}
+                      </div>
+                      <div className="md:col-span-2">
+                        <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
+                          ที่อยู่
+                        </p>
+                        {isEditing ? (
+                          <Textarea
+                            value={editedData!.address || ""}
+                            onChange={(e) =>
+                              setEditedData({
+                                ...editedData!,
+                                address: e.target.value,
+                              })
+                            }
+                            className="min-h-[80px]"
+                          />
+                        ) : (
+                          <p className="font-medium text-gray-900 whitespace-pre-wrap">
+                            {data!.address || "-"}
                           </p>
                         )}
                       </div>
@@ -610,15 +692,15 @@ export function ApplicationDetailModal({
                         </p>
                         {isEditing ? (
                           <Select
-                            value={editedData.education}
+                            value={editedData!.education}
                             onValueChange={(val) =>
-                              setEditedData({ ...editedData, education: val })
+                              setEditedData({ ...editedData!, education: val })
                             }
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="การศึกษา">
-                                {educationMap[editedData.education] ||
-                                  editedData.education}
+                                {educationMap[editedData!.education] ||
+                                  editedData!.education}
                               </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
@@ -638,7 +720,7 @@ export function ApplicationDetailModal({
                           </Select>
                         ) : (
                           <p className="font-medium text-gray-900">
-                            {educationMap[data.education] || data.education}
+                            {educationMap[data!.education] || data!.education}
                           </p>
                         )}
                       </div>
@@ -648,10 +730,10 @@ export function ApplicationDetailModal({
                         </p>
                         {isEditing ? (
                           <Select
-                            value={editedData.digitalSkillLevel}
+                            value={editedData!.digitalSkillLevel}
                             onValueChange={(val) =>
                               setEditedData({
-                                ...editedData,
+                                ...editedData!,
                                 digitalSkillLevel: val,
                               })
                             }
@@ -659,8 +741,8 @@ export function ApplicationDetailModal({
                             <SelectTrigger>
                               <SelectValue placeholder="ทักษะดิจิทัล">
                                 {digitalSkillMap[
-                                  editedData.digitalSkillLevel
-                                ] || editedData.digitalSkillLevel}
+                                  editedData!.digitalSkillLevel
+                                ] || editedData!.digitalSkillLevel}
                               </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
@@ -676,17 +758,17 @@ export function ApplicationDetailModal({
                         ) : (
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              data.digitalSkillLevel === "EXCELLENT"
+                              data!.digitalSkillLevel === "EXCELLENT"
                                 ? "bg-green-100 text-green-800"
-                                : data.digitalSkillLevel === "GOOD"
+                                : data!.digitalSkillLevel === "GOOD"
                                   ? "bg-blue-100 text-blue-800"
-                                  : data.digitalSkillLevel === "AVERAGE"
+                                  : data!.digitalSkillLevel === "AVERAGE"
                                     ? "bg-yellow-100 text-yellow-800"
                                     : "bg-gray-100 text-gray-800"
                             }`}
                           >
-                            {digitalSkillMap[data.digitalSkillLevel] ||
-                              data.digitalSkillLevel}
+                            {digitalSkillMap[data!.digitalSkillLevel] ||
+                              data!.digitalSkillLevel}
                           </span>
                         )}
                       </div>
@@ -706,7 +788,7 @@ export function ApplicationDetailModal({
                         ท่านอยู่ในกลุ่มเป้าหมายใด
                       </p>
                       <div className="flex flex-wrap gap-2">
-                        {(data.targetGroup as string[])?.map((id) => (
+                        {(data!.targetGroup as string[])?.map((id) => (
                           <span
                             key={id}
                             className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-100"
@@ -715,7 +797,7 @@ export function ApplicationDetailModal({
                           </span>
                         )) || "-"}
                       </div>
-                      {data.targetGroupOther && (
+                      {data!.targetGroupOther && (
                         <div className="mt-3 p-3 bg-gray-50 rounded-md border border-gray-100">
                           {isEditing ? (
                             <div className="flex flex-col gap-1">
@@ -723,10 +805,10 @@ export function ApplicationDetailModal({
                                 ระบุอื่นๆ (แก้ไข):
                               </p>
                               <Input
-                                value={editedData.targetGroupOther || ""}
+                                value={editedData!.targetGroupOther || ""}
                                 onChange={(e) =>
                                   setEditedData({
-                                    ...editedData,
+                                    ...editedData!,
                                     targetGroupOther: e.target.value,
                                   })
                                 }
@@ -738,7 +820,7 @@ export function ApplicationDetailModal({
                               <span className="font-medium text-gray-700">
                                 ระบุอื่นๆ:
                               </span>{" "}
-                              {data.targetGroupOther}
+                              {data!.targetGroupOther}
                             </p>
                           )}
                         </div>
@@ -760,12 +842,12 @@ export function ApplicationDetailModal({
                           เคยทำเกษตรหรือไม่
                         </p>
                         <p className="font-medium text-gray-900">
-                          {data.hasAgriExperience
-                            ? `มีประสบการณ์ (${data.agriExperienceYears} ปี)`
+                          {data!.hasAgriExperience
+                            ? `มีประสบการณ์ (${data!.agriExperienceYears} ปี)`
                             : "ไม่มีประสบการณ์"}
                         </p>
                       </div>
-                      {data.hasAgriExperience && (
+                      {data!.hasAgriExperience && (
                         <>
                           <div>
                             <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
@@ -773,17 +855,17 @@ export function ApplicationDetailModal({
                             </p>
                             {isEditing ? (
                               <Input
-                                value={editedData.farmName || ""}
+                                value={editedData!.farmName || ""}
                                 onChange={(e) =>
                                   setEditedData({
-                                    ...editedData,
+                                    ...editedData!,
                                     farmName: e.target.value,
                                   })
                                 }
                               />
                             ) : (
                               <p className="font-medium text-gray-900">
-                                {data.farmName || "-"}
+                                {data!.farmName || "-"}
                               </p>
                             )}
                           </div>
@@ -793,17 +875,17 @@ export function ApplicationDetailModal({
                             </p>
                             {isEditing ? (
                               <Input
-                                value={editedData.farmLocation || ""}
+                                value={editedData!.farmLocation || ""}
                                 onChange={(e) =>
                                   setEditedData({
-                                    ...editedData,
+                                    ...editedData!,
                                     farmLocation: e.target.value,
                                   })
                                 }
                               />
                             ) : (
                               <p className="font-medium text-gray-900">
-                                {data.farmLocation || "-"}
+                                {data!.farmLocation || "-"}
                               </p>
                             )}
                           </div>
@@ -826,7 +908,7 @@ export function ApplicationDetailModal({
                           สิ่งที่คาดหวังจากโครงการ
                         </p>
                         <div className="flex flex-wrap gap-2">
-                          {(data.expectations as string[])?.map((id) => (
+                          {(data!.expectations as string[])?.map((id) => (
                             <span
                               key={id}
                               className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100"
@@ -835,7 +917,7 @@ export function ApplicationDetailModal({
                             </span>
                           )) || "-"}
                         </div>
-                        {data.expectationsOther && (
+                        {data!.expectationsOther && (
                           <div className="mt-3 p-3 bg-gray-50 rounded-md border border-gray-100">
                             {isEditing ? (
                               <div className="flex flex-col gap-1">
@@ -843,10 +925,10 @@ export function ApplicationDetailModal({
                                   ระบุอื่นๆ (แก้ไข):
                                 </p>
                                 <Input
-                                  value={editedData.expectationsOther || ""}
+                                  value={editedData!.expectationsOther || ""}
                                   onChange={(e) =>
                                     setEditedData({
-                                      ...editedData,
+                                      ...editedData!,
                                       expectationsOther: e.target.value,
                                     })
                                   }
@@ -858,7 +940,7 @@ export function ApplicationDetailModal({
                                 <span className="font-medium text-gray-700">
                                   ระบุอื่นๆ:
                                 </span>{" "}
-                                {data.expectationsOther}
+                                {data!.expectationsOther}
                               </p>
                             )}
                           </div>
@@ -870,12 +952,12 @@ export function ApplicationDetailModal({
                         </p>
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            data.canCommitTime
+                            data!.canCommitTime
                               ? "bg-green-100 text-green-800"
                               : "bg-yellow-100 text-yellow-800"
                           }`}
                         >
-                          {data.canCommitTime
+                          {data!.canCommitTime
                             ? "พร้อมเข้าร่วม 100%"
                             : "ไม่แน่ใจ"}
                         </span>
@@ -917,41 +999,49 @@ export function ApplicationDetailModal({
                     <h3 className="text-sm font-semibold text-gray-900 mb-4">
                       ประวัติการดำเนินการ
                     </h3>
-                    {!data.logs || data.logs.length === 0 ? (
+                    {!data!.logs || data!.logs.length === 0 ? (
                       <p className="text-sm text-gray-500 text-center py-4">
                         ยังไม่มีประวัติการดำเนินการ
                       </p>
                     ) : (
                       <div className="space-y-4">
-                        {data.logs.map((log: any) => (
-                          <div key={log.id} className="flex gap-3 text-sm">
-                            <div className="flex flex-col items-center">
-                              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center shrink-0 text-green-700">
-                                {log.action === "STATUS_CHANGE" ? (
-                                  <Clock className="w-4 h-4" />
-                                ) : (
-                                  <User className="w-4 h-4" />
-                                )}
-                              </div>
-                              <div className="w-px h-full bg-gray-200 mt-2"></div>
-                            </div>
-                            <div className="pb-4 pt-1">
-                              <div className="flex items-baseline gap-2 mb-1">
-                                <span className="font-semibold text-gray-900">
-                                  {log.adminEmail}
-                                </span>
-                                <span className="text-xs text-gray-500">
-                                  {new Date(log.createdAt).toLocaleString(
-                                    "th-TH",
+                        {data!.logs.map(
+                          (log: {
+                            id: string;
+                            action: string;
+                            adminEmail: string;
+                            createdAt: string | Date;
+                            details: string;
+                          }) => (
+                            <div key={log.id} className="flex gap-3 text-sm">
+                              <div className="flex flex-col items-center">
+                                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center shrink-0 text-green-700">
+                                  {log.action === "STATUS_CHANGE" ? (
+                                    <Clock className="w-4 h-4" />
+                                  ) : (
+                                    <User className="w-4 h-4" />
                                   )}
-                                </span>
+                                </div>
+                                <div className="w-px h-full bg-gray-200 mt-2"></div>
                               </div>
-                              <p className="text-gray-700 bg-gray-50 p-3 rounded-md border border-gray-100 mt-1">
-                                {log.details}
-                              </p>
+                              <div className="pb-4 pt-1">
+                                <div className="flex items-baseline gap-2 mb-1">
+                                  <span className="font-semibold text-gray-900">
+                                    {log.adminEmail}
+                                  </span>
+                                  <span className="text-xs text-gray-500">
+                                    {new Date(log.createdAt).toLocaleString(
+                                      "th-TH",
+                                    )}
+                                  </span>
+                                </div>
+                                <p className="text-gray-700 bg-gray-50 p-3 rounded-md border border-gray-100 mt-1">
+                                  {log.details}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ),
+                        )}
                       </div>
                     )}
                   </div>
@@ -965,7 +1055,7 @@ export function ApplicationDetailModal({
                 <span className="text-sm font-medium text-gray-600">
                   สถานะปัจจุบัน:
                 </span>
-                <StatusBadge status={data.status as ApplicationStatus} />
+                <StatusBadge status={data!.status as ApplicationStatus} />
               </div>
 
               <div className="flex flex-wrap gap-2 justify-center">
@@ -975,7 +1065,7 @@ export function ApplicationDetailModal({
                   onClick={() =>
                     setConfirmDialog({ show: true, status: "REVIEWED" })
                   }
-                  disabled={data.status === "REVIEWED"}
+                  disabled={data!.status === "REVIEWED"}
                 >
                   <Search className="w-4 h-4" />
                   กำลังพิจารณา
@@ -986,7 +1076,7 @@ export function ApplicationDetailModal({
                   onClick={() =>
                     setConfirmDialog({ show: true, status: "WAITLISTED" })
                   }
-                  disabled={data.status === "WAITLISTED"}
+                  disabled={data!.status === "WAITLISTED"}
                 >
                   <Clock className="w-4 h-4" />
                   สำรอง
@@ -997,7 +1087,7 @@ export function ApplicationDetailModal({
                   onClick={() =>
                     setConfirmDialog({ show: true, status: "REJECTED" })
                   }
-                  disabled={data.status === "REJECTED"}
+                  disabled={data!.status === "REJECTED"}
                 >
                   <XCircle className="w-4 h-4" />
                   ไม่ผ่าน
@@ -1008,7 +1098,7 @@ export function ApplicationDetailModal({
                   onClick={() =>
                     setConfirmDialog({ show: true, status: "ACCEPTED" })
                   }
-                  disabled={data.status === "ACCEPTED"}
+                  disabled={data!.status === "ACCEPTED"}
                 >
                   <UserPlus className="w-4 h-4" />
                   อนุมัติ & เชิญ

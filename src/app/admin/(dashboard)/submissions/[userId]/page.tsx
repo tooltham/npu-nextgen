@@ -21,7 +21,7 @@ export default async function UserSubmissionsPage({
 }) {
   const session = await auth();
 
-  if (!session || (session.user as any).role !== "ADMIN") {
+  if (!session || (session.user as { role?: string }).role !== "ADMIN") {
     redirect("/admin/login");
   }
 
@@ -45,8 +45,12 @@ export default async function UserSubmissionsPage({
     return (
       <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center font-noto-thai">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">ไม่พบผู้ใช้งาน</h1>
-          <p className="text-gray-500 mb-6">ระบบไม่พบข้อมูลผู้เรียนที่คุณต้องการตรวจงาน</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            ไม่พบผู้ใช้งาน
+          </h1>
+          <p className="text-gray-500 mb-6">
+            ระบบไม่พบข้อมูลผู้เรียนที่คุณต้องการตรวจงาน
+          </p>
           <Link
             href="/admin/submissions"
             className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
@@ -97,7 +101,9 @@ export default async function UserSubmissionsPage({
             </div>
           )}
           <div>
-            <h2 className="text-xl font-bold text-gray-900">{user.name || "ไม่มีชื่อ"}</h2>
+            <h2 className="text-xl font-bold text-gray-900">
+              {user.name || "ไม่มีชื่อ"}
+            </h2>
             <p className="text-gray-500">{user.email}</p>
           </div>
         </div>
@@ -107,7 +113,9 @@ export default async function UserSubmissionsPage({
           {submissions.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-gray-200">
               <Inbox className="w-12 h-12 text-gray-300 mb-4" />
-              <p className="text-gray-500 font-medium">ผู้เรียนรายนี้ยังไม่มีผลงานที่ถูกส่งมา</p>
+              <p className="text-gray-500 font-medium">
+                ผู้เรียนรายนี้ยังไม่มีผลงานที่ถูกส่งมา
+              </p>
             </div>
           ) : (
             submissions.map((submission) => {
@@ -154,7 +162,9 @@ export default async function UserSubmissionsPage({
                       </span>
                       <span className="text-sm text-gray-500 font-medium">
                         ส่งเมื่อ{" "}
-                        {new Date(submission.submittedAt).toLocaleString("th-TH")}
+                        {new Date(submission.submittedAt).toLocaleString(
+                          "th-TH",
+                        )}
                       </span>
                     </div>
 

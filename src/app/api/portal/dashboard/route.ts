@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const userId = (session.user as any).id;
+    const userId = (session.user as { id?: string; role?: string }).id;
 
     // 1. Get all published modules and their lessons/quizzes
     const publishedModules = await prisma.courseModule.findMany({
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     });
 
     let totalLessons = 0;
-    const orderedLessons: any[] = [];
+    const orderedLessons: Record<string, unknown>[] = [];
 
     publishedModules.forEach((mod) => {
       totalLessons += mod.lessons.length;
@@ -56,17 +56,19 @@ export async function GET(req: NextRequest) {
       return quizAttempts.some((a) => a.quizId === quizId && a.isCorrect);
     };
 
-    const isLessonFullyCompleted = (lesson: any) => {
+    const isLessonFullyCompleted = (lesson: Record<string, unknown>) => {
       if (!completedLessonIds.has(lesson.id)) return false;
       if (lesson.quizzes && lesson.quizzes.length > 0) {
-        return lesson.quizzes.every((q: any) => isQuizPassed(q.id));
+        return lesson.quizzes.every((q: Record<string, unknown>) =>
+          isQuizPassed(q.id),
+        );
       }
       return true;
     };
 
-    const isModuleFullyCompleted = (module: any) => {
-      const allLessonsDone = module.lessons.every((l: any) =>
-        isLessonFullyCompleted(l),
+    const isModuleFullyCompleted = (module: Record<string, unknown>) => {
+      const allLessonsDone = module.lessons.every(
+        (l: Record<string, unknown>) => isLessonFullyCompleted(l),
       );
       if (!allLessonsDone) return false;
       const submission = submissions.find((s) => s.moduleId === module.id);

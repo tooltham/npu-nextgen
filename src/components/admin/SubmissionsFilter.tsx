@@ -9,7 +9,9 @@ export default function SubmissionsFilter() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get("search") || "",
+  );
   const currentFilter = searchParams.get("filter") || "all";
 
   // Create a query string with updated params
@@ -42,12 +44,12 @@ export default function SubmissionsFilter() {
     <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
       {/* Search Input */}
       <div className="relative flex-1 sm:w-64">
-        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-zinc-400">
           <Search className="w-4 h-4" />
         </div>
         <input
           type="text"
-          className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow placeholder:text-gray-400 font-noto-thai"
+          className="w-full pl-10 pr-4 py-2 bg-white border border-zinc-200 rounded-full text-sm focus:ring-2 focus:ring-[#1B5E20]/20 focus:border-[#1B5E20] outline-none transition-all shadow-sm placeholder:text-zinc-400 font-noto-thai text-zinc-700"
           placeholder="ค้นหาชื่อ หรือ อีเมล..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -56,14 +58,16 @@ export default function SubmissionsFilter() {
 
       {/* Status Filter */}
       <div className="relative sm:w-48">
-        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-zinc-400">
           <Filter className="w-4 h-4" />
         </div>
         <select
-          className="w-full pl-10 pr-8 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none font-noto-thai cursor-pointer"
+          className="w-full pl-10 pr-8 py-2 bg-white border border-zinc-200 rounded-full text-sm focus:ring-2 focus:ring-[#1B5E20]/20 focus:border-[#1B5E20] outline-none appearance-none font-noto-thai cursor-pointer shadow-sm text-zinc-700 hover:border-zinc-300 transition-colors"
           value={currentFilter}
           onChange={(e) => {
-            router.push(`${pathname}?${createQueryString("filter", e.target.value)}`);
+            router.push(
+              `${pathname}?${createQueryString("filter", e.target.value)}`,
+            );
           }}
         >
           <option value="all">นักศึกษาทั้งหมด</option>
@@ -71,8 +75,18 @@ export default function SubmissionsFilter() {
           <option value="graded">ตรวจครบแล้ว</option>
         </select>
         <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M19 9l-7 7-7-7"
+            ></path>
           </svg>
         </div>
       </div>

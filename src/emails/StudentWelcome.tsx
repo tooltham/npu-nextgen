@@ -25,7 +25,7 @@ export const StudentWelcomeEmail = ({
   email,
   password,
   course = "นักจัดการฟาร์มเกษตรแบบผสมผสานอัจฉริยะ",
-  loginUrl = "http://localhost:3000/login",
+  loginUrl = "http://localhost:3000/admin/login",
 }: StudentWelcomeEmailProps) => {
   return (
     <Html>

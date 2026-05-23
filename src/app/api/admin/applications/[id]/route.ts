@@ -14,7 +14,7 @@ export async function GET(
 ) {
   const session = await auth();
 
-  if (!session || (session.user as any).role !== "ADMIN") {
+  if (!session || (session.user as { role?: string }).role !== "ADMIN") {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
@@ -45,10 +45,15 @@ export async function GET(
     }
 
     return NextResponse.json({ data: application });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("GET application error:", error);
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to fetch details" },
+      {
+        success: false,
+        error:
+          (error instanceof Error ? error.message : String(error)) ||
+          "Failed to fetch details",
+      },
       { status: 500 },
     );
   }
@@ -60,7 +65,7 @@ export async function PATCH(
 ) {
   const session = await auth();
 
-  if (!session || (session.user as any).role !== "ADMIN") {
+  if (!session || (session.user as { role?: string }).role !== "ADMIN") {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
@@ -87,9 +92,14 @@ export async function PATCH(
     );
 
     return NextResponse.json({ success: true, status: updated.status });
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to update status" },
+      {
+        success: false,
+        error:
+          (error instanceof Error ? error.message : String(error)) ||
+          "Failed to update status",
+      },
       { status: 400 },
     );
   }
@@ -101,7 +111,7 @@ export async function PUT(
 ) {
   const session = await auth();
 
-  if (!session || (session.user as any).role !== "ADMIN") {
+  if (!session || (session.user as { role?: string }).role !== "ADMIN") {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
@@ -114,12 +124,14 @@ export async function PUT(
     const updated = await updateApplicationData(id, body, adminEmail);
 
     return NextResponse.json({ success: true, data: updated });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("PUT application error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error.message || "Failed to update application data",
+        error:
+          (error instanceof Error ? error.message : String(error)) ||
+          "Failed to update application data",
       },
       { status: 500 },
     );
@@ -132,7 +144,7 @@ export async function DELETE(
 ) {
   const session = await auth();
 
-  if (!session || (session.user as any).role !== "ADMIN") {
+  if (!session || (session.user as { role?: string }).role !== "ADMIN") {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
@@ -149,12 +161,14 @@ export async function DELETE(
       success: true,
       message: "Application deleted successfully",
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("DELETE application error:", error);
     return NextResponse.json(
       {
         success: false,
-        error: error.message || "Failed to delete application",
+        error:
+          (error instanceof Error ? error.message : String(error)) ||
+          "Failed to delete application",
       },
       { status: 500 },
     );

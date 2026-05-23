@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface GradingFormProps {
@@ -53,8 +53,8 @@ export default function GradingForm({
 
       setSuccess(true);
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setIsLoading(false);
     }
@@ -106,12 +106,15 @@ export default function GradingForm({
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+        className="w-full bg-[#1B5E20] hover:bg-[#154a19] text-white font-bold py-2.5 px-4 rounded-full text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
       >
         {isLoading ? (
           <Loader2 className="w-4 h-4 animate-spin" />
         ) : (
-          "บันทึกการประเมิน"
+          <>
+            <Save className="w-4 h-4" />
+            <span>บันทึกการประเมิน</span>
+          </>
         )}
       </button>
     </form>

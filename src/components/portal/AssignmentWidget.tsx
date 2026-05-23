@@ -23,7 +23,7 @@ interface Submission {
 interface AssignmentWidgetProps {
   moduleId: string;
   previousSubmission?: Submission | null;
-  onSuccess?: (submission: any) => void;
+  onSuccess?: (submission: Submission) => void;
 }
 
 export default function AssignmentWidget({
@@ -105,8 +105,8 @@ export default function AssignmentWidget({
       setIsEditing(false);
       setFile(null);
       if (onSuccess) onSuccess(res.data);
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -215,12 +215,14 @@ export default function AssignmentWidget({
           )}
         </div>
 
-        {isFail && (
+        {(isFail || isPending) && (
           <button
             onClick={() => setIsEditing(true)}
             className="mt-6 w-full relative z-10 flex items-center justify-center gap-2 py-3 px-6 rounded-xl font-bold bg-zinc-900 hover:bg-zinc-800 text-white shadow-lg transition-all hover:-translate-y-0.5"
           >
-            ส่งงานแก้อีกครั้ง
+            {isPending
+              ? "แก้ไขการส่งงาน (อัปโหลดไฟล์ใหม่)"
+              : "ส่งงานแก้อีกครั้ง"}
           </button>
         )}
       </div>
@@ -302,7 +304,7 @@ export default function AssignmentWidget({
         )}
 
         <div className="flex gap-3 pt-2">
-          {previousSubmission && (
+          {submission && (
             <button
               type="button"
               onClick={() => setIsEditing(false)}

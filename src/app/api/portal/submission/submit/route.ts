@@ -71,8 +71,8 @@ export async function POST(request: Request) {
 
     let assignmentUrl = "";
 
-    const useSupabase = 
-      process.env.NEXT_PUBLIC_SUPABASE_URL && 
+    const useSupabase =
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     if (useSupabase) {
@@ -102,13 +102,22 @@ export async function POST(request: Request) {
       // Local File System Fallback
       const fs = await import("fs/promises");
       const path = await import("path");
-      
-      const uploadDir = path.join(process.cwd(), "public", "uploads", "assignments", user.id);
+
+      const uploadDir = path.join(
+        process.cwd(),
+        "public",
+        "uploads",
+        "assignments",
+        user.id,
+      );
       await fs.mkdir(uploadDir, { recursive: true });
-      
-      const filePath = path.join(uploadDir, `${moduleId}-${uuidv4()}.${fileExt}`);
+
+      const filePath = path.join(
+        uploadDir,
+        `${moduleId}-${uuidv4()}.${fileExt}`,
+      );
       await fs.writeFile(filePath, buffer);
-      
+
       assignmentUrl = `/uploads/assignments/${user.id}/${path.basename(filePath)}`;
     }
 
@@ -123,6 +132,17 @@ export async function POST(request: Request) {
     let submission;
 
     if (existingSubmission) {
+      if (existingSubmission.status === "PASS") {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "ไม่สามารถส่งงานใหม่ได้ เนื่องจากโครงงานนี้ผ่านการประเมินแล้ว",
+          },
+          { status: 403 },
+        );
+      }
+
       // Update and reset grading status for re-submission
       submission = await prisma.submission.update({
         where: { id: existingSubmission.id },

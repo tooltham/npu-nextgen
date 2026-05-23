@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Quiz, Lesson } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { Loader2, X, Plus, Trash2, Edit, AlertCircle } from "lucide-react";
@@ -27,16 +28,7 @@ export function QuizBuilderModal({ isOpen, onClose, lesson }: Props) {
   const [options, setOptions] = useState<string[]>(["", "", "", ""]);
   const [correctIdx, setCorrectIdx] = useState<number>(0);
 
-  useEffect(() => {
-    if (isOpen && lesson) {
-      loadQuizzes();
-    } else {
-      setQuizzes([]);
-      setIsEditing(false);
-    }
-  }, [isOpen, lesson]);
-
-  const loadQuizzes = async () => {
+  const loadQuizzes = useCallback(async () => {
     if (!lesson) return;
     setIsLoading(true);
     try {
@@ -52,7 +44,16 @@ export function QuizBuilderModal({ isOpen, onClose, lesson }: Props) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [lesson]);
+
+  useEffect(() => {
+    if (isOpen && lesson) {
+      loadQuizzes();
+    } else {
+      setQuizzes([]);
+      setIsEditing(false);
+    }
+  }, [isOpen, lesson, loadQuizzes]);
 
   const handleAddNew = () => {
     setEditingId(null);

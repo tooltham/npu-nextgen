@@ -3,8 +3,10 @@ import { render } from "@react-email/render";
 import { ApplicantConfirmationEmail } from "@/emails/ApplicantConfirmation";
 import { AdminNotificationEmail } from "@/emails/AdminNotification";
 import { StudentWelcomeEmail } from "@/emails/StudentWelcome";
+import { PasswordResetEmail } from "@/emails/PasswordReset";
 import * as React from "react";
 import { env } from "./env";
+import { Application } from "@prisma/client";
 
 // Fallback to nodemailer only if Resend not configured (unlikely in production)
 import nodemailer from "nodemailer";
@@ -48,7 +50,7 @@ export const maskNationalId = (id: string) => {
   return `${core[0]}-${core.slice(1, 5)}-${core.slice(5, 10)}-${core.slice(10, 12)}-${core[12]}`;
 };
 
-export const sendApplicantConfirmation = async (application: any) => {
+export const sendApplicantConfirmation = async (application: Application) => {
   const resend = getResend();
   if (!resend) {
     // Fallback to nodemailer if Resend not available
@@ -74,9 +76,12 @@ export const sendApplicantConfirmation = async (application: any) => {
         html: emailHtml,
       });
       return { id: info.messageId };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to send applicant confirmation email:", error);
-      return { success: false, error: error.message };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
     }
   }
 
@@ -103,16 +108,19 @@ export const sendApplicantConfirmation = async (application: any) => {
       return { success: false, error: error.message };
     }
     return { id: data?.id };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(
       "Failed to send applicant confirmation email via Resend:",
       error,
     );
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 };
 
-export const sendAdminNotification = async (application: any) => {
+export const sendAdminNotification = async (application: Application) => {
   const resend = getResend();
   if (!resend) {
     const transporter = getTransporter();
@@ -132,9 +140,12 @@ export const sendAdminNotification = async (application: any) => {
         html: emailHtml,
       });
       return { id: info.messageId };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to send admin notification email:", error);
-      return { success: false, error: error.message };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
     }
   }
 
@@ -157,13 +168,16 @@ export const sendAdminNotification = async (application: any) => {
       return { success: false, error: error.message };
     }
     return { id: data?.id };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failed to send admin notification email via Resend:", error);
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 };
 
-export const sendApprovalEmail = async (application: any) => {
+export const sendApprovalEmail = async (application: Application) => {
   if (!transporter)
     return { success: false, error: "Email service not configured" };
 
@@ -175,14 +189,17 @@ export const sendApprovalEmail = async (application: any) => {
       html: `<p>เรียน คุณ${application.firstNameTh} ${application.lastNameTh},</p><p>ขอแสดงความยินดี คุณผ่านการคัดเลือก...</p>`,
     });
     return { success: true, messageId: info.messageId };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failed to send approval email:", error);
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 };
 
 export const sendStudentWelcomeEmail = async (
-  application: any,
+  application: Application,
   tempPassword: string,
 ) => {
   const resend = getResend();
@@ -190,7 +207,7 @@ export const sendStudentWelcomeEmail = async (
     env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
     "http://localhost:3000";
-  const loginUrl = `${siteUrl}/login`;
+  const loginUrl = `${siteUrl}/admin/login`;
 
   if (!resend) {
     const transporter = getTransporter();
@@ -216,9 +233,12 @@ export const sendStudentWelcomeEmail = async (
         html: emailHtml,
       });
       return { id: info.messageId };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to send student welcome email:", error);
-      return { success: false, error: error.message };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
     }
   }
 
@@ -245,8 +265,75 @@ export const sendStudentWelcomeEmail = async (
       return { success: false, error: error.message };
     }
     return { id: data?.id };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Failed to send student welcome email via Resend:", error);
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+};
+
+// Exported utility to send password reset email
+export const sendPasswordResetEmail = async (
+  email: string,
+  name: string,
+  token: string,
+) => {
+  const resetLink = `${env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/reset-password?token=${token}`;
+
+  const resend = getResend();
+  if (!resend) {
+    const transporter = getTransporter();
+    if (!transporter)
+      return { success: false, error: "Email service not configured" };
+
+    const emailHtml = await render(
+      React.createElement(PasswordResetEmail, { name, resetLink }),
+    );
+
+    try {
+      const info = await transporter.sendMail({
+        from: `"NPU System" <${env.SMTP_USER}>`,
+        to: email,
+        subject: `[รีเซ็ตรหัสผ่าน] คำขอรีเซ็ตรหัสผ่าน NPU NextGen`,
+        html: emailHtml,
+      });
+      return { id: info.messageId };
+    } catch (error: unknown) {
+      console.error(
+        "Failed to send password reset email via transporter:",
+        error,
+      );
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+  }
+
+  // Resend
+  const emailHtml = await render(
+    React.createElement(PasswordResetEmail, { name, resetLink }),
+  );
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: `"NPU NextGen" <${env.RESEND_FROM_EMAIL || env.SMTP_USER}>`,
+      to: email,
+      subject: `[รีเซ็ตรหัสผ่าน] คำขอรีเซ็ตรหัสผ่าน NPU NextGen`,
+      html: emailHtml,
+    });
+    if (error) {
+      console.error("Resend error:", error);
+      return { success: false, error: error.message };
+    }
+    return { id: data?.id };
+  } catch (error: unknown) {
+    console.error("Failed to send password reset email via Resend:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 };

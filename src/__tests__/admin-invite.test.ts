@@ -50,7 +50,7 @@ describe("Admin Invite Student Integration Tests", () => {
 
   it("should successfully invite student and create a user account", async () => {
     // 1. Mock admin session
-    vi.mocked(auth as any).mockResolvedValue({
+    vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
       user: {
         id: "admin-1",
         email: "admin@npu.ac.th",
@@ -69,7 +69,7 @@ describe("Admin Invite Student Integration Tests", () => {
 
     // Mock prisma responses
     vi.mocked(prisma.application.findUnique).mockResolvedValue(
-      mockApplication as any,
+      mockApplication as Record<string, unknown>,
     );
     vi.mocked(prisma.user.findUnique).mockResolvedValue(null); // No existing student user
 
@@ -83,16 +83,18 @@ describe("Admin Invite Student Integration Tests", () => {
         }),
       },
       application: {
-        update: vi.fn().mockResolvedValue({} as any),
+        update: vi.fn().mockResolvedValue({} as Record<string, unknown>),
       },
       applicationLog: {
-        create: vi.fn().mockResolvedValue({} as any),
+        create: vi.fn().mockResolvedValue({} as Record<string, unknown>),
       },
     };
 
-    vi.mocked(prisma.$transaction).mockImplementation(async (callback: any) => {
-      return await callback(mockTx);
-    });
+    vi.mocked(prisma.$transaction).mockImplementation(
+      async (callback: Record<string, unknown>) => {
+        return await callback(mockTx);
+      },
+    );
 
     const request = new Request("http://localhost:3000/api/admin/invite", {
       method: "POST",
@@ -126,7 +128,7 @@ describe("Admin Invite Student Integration Tests", () => {
 
   it("should block non-admins from inviting", async () => {
     // Mock student session
-    vi.mocked(auth as any).mockResolvedValue({
+    vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
       user: {
         id: "student-1",
         email: "student@example.com",
@@ -148,7 +150,7 @@ describe("Admin Invite Student Integration Tests", () => {
 
   it("should block anonymous requests", async () => {
     // Mock no session
-    vi.mocked(auth as any).mockResolvedValue(null);
+    vi.mocked(auth as Record<string, unknown>).mockResolvedValue(null);
 
     const request = new Request("http://localhost:3000/api/admin/invite", {
       method: "POST",
@@ -163,7 +165,7 @@ describe("Admin Invite Student Integration Tests", () => {
 
   it("should fail if user account already exists", async () => {
     // Mock admin session
-    vi.mocked(auth as any).mockResolvedValue({
+    vi.mocked(auth as Record<string, unknown>).mockResolvedValue({
       user: {
         id: "admin-1",
         email: "admin@npu.ac.th",
@@ -180,12 +182,12 @@ describe("Admin Invite Student Integration Tests", () => {
     };
 
     vi.mocked(prisma.application.findUnique).mockResolvedValue(
-      mockApplication as any,
+      mockApplication as Record<string, unknown>,
     );
     vi.mocked(prisma.user.findUnique).mockResolvedValue({
       id: "existing-user-id",
       email: "student@example.com",
-    } as any);
+    } as Record<string, unknown>);
 
     const request = new Request("http://localhost:3000/api/admin/invite", {
       method: "POST",
