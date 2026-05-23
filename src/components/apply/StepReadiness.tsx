@@ -56,7 +56,31 @@ const StepReadiness = () => {
     const updated = current.includes(id)
       ? current.filter((x) => x !== id)
       : [...current, id];
+    const newFormData = { ...formData, expectations: updated };
     updateFormData({ expectations: updated });
+
+    if (Object.keys(errors).length > 0) {
+      validate({
+        digitalSkillLevel: newFormData.digitalSkillLevel,
+        expectations: updated,
+        expectationsOther: newFormData.expectationsOther,
+        canCommitTime: newFormData.canCommitTime,
+      });
+    }
+  };
+
+  const handleInputChange = (fieldName: string, value: any) => {
+    const newFormData = { ...formData, [fieldName]: value };
+    updateFormData({ [fieldName]: value });
+
+    if (Object.keys(errors).length > 0) {
+      validate({
+        digitalSkillLevel: newFormData.digitalSkillLevel,
+        expectations: newFormData.expectations as unknown as string[],
+        expectationsOther: newFormData.expectationsOther,
+        canCommitTime: newFormData.canCommitTime,
+      });
+    }
   };
 
   const handleNext = () => {
@@ -89,17 +113,7 @@ const StepReadiness = () => {
             ระดับทักษะดิจิทัลพื้นฐาน <span className="text-red-500">*</span>
           </Label>
           <Select
-            onValueChange={(val) =>
-              updateFormData({
-                digitalSkillLevel: (val ?? undefined) as
-                  | "EXCELLENT"
-                  | "GOOD"
-                  | "AVERAGE"
-                  | "LOW"
-                  | "NONE"
-                  | undefined,
-              })
-            }
+            onValueChange={(val) => handleInputChange("digitalSkillLevel", val)}
             value={formData.digitalSkillLevel ?? ""}
           >
             <SelectTrigger
@@ -175,7 +189,7 @@ const StepReadiness = () => {
               className="min-h-[100px] font-noto-thai"
               value={formData.expectationsOther || ""}
               onChange={(e) =>
-                updateFormData({ expectationsOther: e.target.value })
+                handleInputChange("expectationsOther", e.target.value)
               }
             />
           </div>
@@ -193,7 +207,19 @@ const StepReadiness = () => {
               type="button"
               variant={formData.canCommitTime === true ? "default" : "outline"}
               className={`flex-1 font-noto-thai ${formData.canCommitTime === true ? "bg-[#1B5E20]" : ""}`}
-              onClick={() => updateFormData({ canCommitTime: true })}
+              onClick={() => {
+                const newFormData = { ...formData, canCommitTime: true };
+                updateFormData({ canCommitTime: true });
+                if (Object.keys(errors).length > 0) {
+                  validate({
+                    digitalSkillLevel: newFormData.digitalSkillLevel,
+                    expectations:
+                      newFormData.expectations as unknown as string[],
+                    expectationsOther: newFormData.expectationsOther,
+                    canCommitTime: true,
+                  });
+                }
+              }}
             >
               พร้อมเข้าร่วม (100%)
             </Button>
@@ -201,7 +227,19 @@ const StepReadiness = () => {
               type="button"
               variant={formData.canCommitTime === false ? "default" : "outline"}
               className={`flex-1 font-noto-thai ${formData.canCommitTime === false ? "bg-[#1B5E20]" : ""}`}
-              onClick={() => updateFormData({ canCommitTime: false })}
+              onClick={() => {
+                const newFormData = { ...formData, canCommitTime: false };
+                updateFormData({ canCommitTime: false });
+                if (Object.keys(errors).length > 0) {
+                  validate({
+                    digitalSkillLevel: newFormData.digitalSkillLevel,
+                    expectations:
+                      newFormData.expectations as unknown as string[],
+                    expectationsOther: newFormData.expectationsOther,
+                    canCommitTime: false,
+                  });
+                }
+              }}
             >
               ไม่แน่ใจ
             </Button>

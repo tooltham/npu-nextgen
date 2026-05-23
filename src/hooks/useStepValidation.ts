@@ -29,7 +29,41 @@ export function validateWithSchema(
   for (const issue of result.error.issues) {
     const field = issue.path[0]?.toString();
     if (field && !errors[field]) {
-      errors[field] = issue.message;
+      let message = issue.message;
+
+      // Custom translation map for Zod's default English messages
+      if (
+        message.includes("expected array") ||
+        message.includes("Expected array")
+      ) {
+        if (field === "targetGroup") {
+          message = "กรุณาเลือกกลุ่มเป้าหมายอย่างน้อย 1 กลุ่ม";
+        } else if (field === "expectations") {
+          message = "กรุณาเลือกความคาดหวังอย่างน้อย 1 ข้อ";
+        } else {
+          message = "กรุณาเลือกอย่างน้อย 1 ตัวเลือก";
+        }
+      } else if (
+        message.includes("expected boolean") ||
+        message.includes("Expected boolean")
+      ) {
+        if (field === "hasAgriExperience") {
+          message = "กรุณาระบุว่ามีประสบการณ์การทำเกษตรหรือไม่";
+        } else if (field === "canCommitTime") {
+          message = "กรุณายืนยันความพร้อมเรื่องเวลาเข้าร่วมโครงการ";
+        } else {
+          message = "กรุณาระบุตัวเลือกนี้";
+        }
+      } else if (
+        message.includes("expected string") ||
+        message.includes("Expected string")
+      ) {
+        message = "กรุณากรอกข้อมูลในช่องนี้";
+      } else if (message === "Required") {
+        message = "กรุณาระบุข้อมูลในช่องนี้";
+      }
+
+      errors[field] = message;
     }
   }
 

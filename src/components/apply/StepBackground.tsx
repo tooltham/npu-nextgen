@@ -53,7 +53,37 @@ const StepBackground = () => {
     const newGroups = currentGroups.includes(groupId)
       ? currentGroups.filter((id) => id !== groupId)
       : [...currentGroups, groupId];
+    const newFormData = { ...formData, targetGroup: newGroups };
     updateFormData({ targetGroup: newGroups });
+
+    if (Object.keys(errors).length > 0) {
+      validate({
+        education: newFormData.education,
+        targetGroup: newGroups,
+        targetGroupOther: newFormData.targetGroupOther,
+        hasAgriExperience: newFormData.hasAgriExperience,
+        agriExperienceYears: newFormData.agriExperienceYears,
+        farmName: newFormData.farmName,
+        farmLocation: newFormData.farmLocation,
+      });
+    }
+  };
+
+  const handleInputChange = (fieldName: string, value: any) => {
+    const newFormData = { ...formData, [fieldName]: value };
+    updateFormData({ [fieldName]: value });
+
+    if (Object.keys(errors).length > 0) {
+      validate({
+        education: newFormData.education,
+        targetGroup: newFormData.targetGroup as unknown as string[],
+        targetGroupOther: newFormData.targetGroupOther,
+        hasAgriExperience: newFormData.hasAgriExperience,
+        agriExperienceYears: newFormData.agriExperienceYears,
+        farmName: newFormData.farmName,
+        farmLocation: newFormData.farmLocation,
+      });
+    }
   };
 
   const handleNext = () => {
@@ -86,15 +116,26 @@ const StepBackground = () => {
             ระดับการศึกษาสูงสุด <span className="text-red-500">*</span>
           </Label>
           <Select
-            onValueChange={(val) =>
+            onValueChange={(val) => {
+              const newFormData = {
+                ...formData,
+                education: val as any,
+              };
               updateFormData({
-                education: val as
-                  | "HIGH_SCHOOL_OR_VOC"
-                  | "DIPLOMA"
-                  | "BACHELOR"
-                  | "ABOVE_BACHELOR",
-              })
-            }
+                education: val as any,
+              });
+              if (Object.keys(errors).length > 0) {
+                validate({
+                  education: val as any,
+                  targetGroup: newFormData.targetGroup as unknown as string[],
+                  targetGroupOther: newFormData.targetGroupOther,
+                  hasAgriExperience: newFormData.hasAgriExperience,
+                  agriExperienceYears: newFormData.agriExperienceYears,
+                  farmName: newFormData.farmName,
+                  farmLocation: newFormData.farmLocation,
+                });
+              }
+            }}
             value={formData.education ?? ""}
           >
             <SelectTrigger
@@ -163,7 +204,7 @@ const StepBackground = () => {
               className="font-noto-thai"
               value={formData.targetGroupOther || ""}
               onChange={(e) =>
-                updateFormData({ targetGroupOther: e.target.value })
+                handleInputChange("targetGroupOther", e.target.value)
               }
             />
           </div>
@@ -183,7 +224,21 @@ const StepBackground = () => {
                 formData.hasAgriExperience === true ? "default" : "outline"
               }
               className={`flex-1 font-noto-thai ${formData.hasAgriExperience === true ? "bg-[#1B5E20]" : ""}`}
-              onClick={() => updateFormData({ hasAgriExperience: true })}
+              onClick={() => {
+                const newFormData = { ...formData, hasAgriExperience: true };
+                updateFormData({ hasAgriExperience: true });
+                if (Object.keys(errors).length > 0) {
+                  validate({
+                    education: newFormData.education,
+                    targetGroup: newFormData.targetGroup as unknown as string[],
+                    targetGroupOther: newFormData.targetGroupOther,
+                    hasAgriExperience: true,
+                    agriExperienceYears: newFormData.agriExperienceYears,
+                    farmName: newFormData.farmName,
+                    farmLocation: newFormData.farmLocation,
+                  });
+                }
+              }}
             >
               มีประสบการณ์
             </Button>
@@ -193,7 +248,21 @@ const StepBackground = () => {
                 formData.hasAgriExperience === false ? "default" : "outline"
               }
               className={`flex-1 font-noto-thai ${formData.hasAgriExperience === false ? "bg-[#1B5E20]" : ""}`}
-              onClick={() => updateFormData({ hasAgriExperience: false })}
+              onClick={() => {
+                const newFormData = { ...formData, hasAgriExperience: false };
+                updateFormData({ hasAgriExperience: false });
+                if (Object.keys(errors).length > 0) {
+                  validate({
+                    education: newFormData.education,
+                    targetGroup: newFormData.targetGroup as unknown as string[],
+                    targetGroupOther: newFormData.targetGroupOther,
+                    hasAgriExperience: false,
+                    agriExperienceYears: newFormData.agriExperienceYears,
+                    farmName: newFormData.farmName,
+                    farmLocation: newFormData.farmLocation,
+                  });
+                }
+              }}
             >
               ไม่มีประสบการณ์
             </Button>
@@ -208,7 +277,7 @@ const StepBackground = () => {
             </Label>
             <Select
               onValueChange={(val) =>
-                updateFormData({ agriExperienceYears: parseInt(val || "0") })
+                handleInputChange("agriExperienceYears", parseInt(val || "0"))
               }
               value={formData.agriExperienceYears?.toString() ?? ""}
             >
@@ -234,7 +303,9 @@ const StepBackground = () => {
                   className="font-noto-thai"
                   placeholder="เช่น มินะฟาร์ม"
                   value={formData.farmName || ""}
-                  onChange={(e) => updateFormData({ farmName: e.target.value })}
+                  onChange={(e) =>
+                    handleInputChange("farmName", e.target.value)
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -247,7 +318,7 @@ const StepBackground = () => {
                   placeholder="เช่น อ.เมือง จ.นครพนม"
                   value={formData.farmLocation || ""}
                   onChange={(e) =>
-                    updateFormData({ farmLocation: e.target.value })
+                    handleInputChange("farmLocation", e.target.value)
                   }
                 />
               </div>
