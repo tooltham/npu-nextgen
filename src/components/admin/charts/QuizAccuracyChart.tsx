@@ -57,7 +57,7 @@ export default function QuizAccuracyChart({ data }: { data: QuizData[] }) {
                 fontWeight: 600,
                 color: "#18181B",
               }}
-              formatter={(value: number) => [`${value}%`, "ความแม่นยำ"]}
+              formatter={(value: any) => [`${value}%`, "ความแม่นยำ"]}
             />
             <ReferenceLine y={50} stroke="#E4E4E7" strokeDasharray="3 3" />
             <Bar dataKey="accuracy" radius={[8, 8, 0, 0]} maxBarSize={50}>

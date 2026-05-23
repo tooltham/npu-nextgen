@@ -57,21 +57,22 @@ export async function GET(req: NextRequest) {
     };
 
     const isLessonFullyCompleted = (lesson: Record<string, unknown>) => {
-      if (!completedLessonIds.has(lesson.id)) return false;
-      if (lesson.quizzes && lesson.quizzes.length > 0) {
-        return lesson.quizzes.every((q: Record<string, unknown>) =>
-          isQuizPassed(q.id),
-        );
+      const lessonId = lesson.id as string;
+      if (!completedLessonIds.has(lessonId)) return false;
+      const quizzes = lesson.quizzes as Record<string, unknown>[] | undefined;
+      if (quizzes && quizzes.length > 0) {
+        return quizzes.every((q) => isQuizPassed(q.id as string));
       }
       return true;
     };
 
     const isModuleFullyCompleted = (module: Record<string, unknown>) => {
-      const allLessonsDone = module.lessons.every(
-        (l: Record<string, unknown>) => isLessonFullyCompleted(l),
-      );
+      const lessons = module.lessons as Record<string, unknown>[];
+      const allLessonsDone = lessons.every((l) => isLessonFullyCompleted(l));
       if (!allLessonsDone) return false;
-      const submission = submissions.find((s) => s.moduleId === module.id);
+      const submission = submissions.find(
+        (s) => s.moduleId === (module.id as string),
+      );
       if (!submission) return false;
       return true;
     };

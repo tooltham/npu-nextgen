@@ -55,7 +55,7 @@ export default function DropoffFunnelChart({ data }: { data: FunnelData[] }) {
                 fontWeight: 600,
                 color: "#18181B",
               }}
-              formatter={(value: number) => [`${value} คน`, "จำนวนผู้เรียน"]}
+              formatter={(value: any) => [`${value} คน`, "จำนวนผู้เรียน"]}
             />
             <Bar dataKey="count" radius={[0, 8, 8, 0]} barSize={32}>
               {data.map((entry, index) => (

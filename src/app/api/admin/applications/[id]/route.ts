@@ -91,6 +91,10 @@ export async function PATCH(
         `เปลี่ยนสถานะเป็น ${statusMap[status as string] || status}`,
     );
 
+    if (!updated) {
+      throw new Error("Failed to update application status");
+    }
+
     return NextResponse.json({ success: true, status: updated.status });
   } catch (error: unknown) {
     return NextResponse.json(

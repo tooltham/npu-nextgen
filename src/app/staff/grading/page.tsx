@@ -41,7 +41,7 @@ export default async function GradingPage() {
 
   return (
     <GradingDashboardClient
-      initialSubmissions={submissions as Record<string, unknown>}
+      initialSubmissions={submissions as any}
       modules={modules}
       currentUser={{
         id: user.id,
