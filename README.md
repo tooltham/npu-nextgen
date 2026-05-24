@@ -1,4 +1,4 @@
-# 🌾 NPU NextGen — Smart Farm Manager System
+# NPU NextGen — Smart Farm Manager System
 
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-16.2.6-black?style=for-the-badge&logo=next.js" alt="Next.js" />
@@ -12,7 +12,7 @@
 
 ---
 
-## 🌟 Overview
+## Overview
 
 **ระบบสมัครและจัดการหลักสูตรฝึกอบรมระยะสั้นระดับโปรดักชัน (Production-Grade Short Course & LMS)**
 โครงการผลิตบัณฑิตพันธุ์ใหม่ **"นักจัดการฟาร์มเกษตรแบบผสมผสานอัจฉริยะ"** พัฒนาขึ้นโดย **มหาวิทยาลัยนครพนม (Nakhon Phanom University - NPU)** ร่วมกับหน่วยวิจัย **Internet of Things and Embedded Systems (IoTES) / SITC**
@@ -24,7 +24,7 @@
 
 ---
 
-## 🏗️ System Architecture & Infrastructure
+## System Architecture & Infrastructure
 
 ระบบได้รับการ Deploy อย่างเต็มรูปแบบภายใต้เครือข่ายของมหาวิทยาลัยนครพนม โดยนำเทคโนโลยีระดับสูงเข้ามาควบคุม Reverse Proxy และความปลอดภัยระดับไฟล์อย่างรัดกุม:
 
@@ -34,18 +34,18 @@
                   │   Landing Page  │  Application Form  │  Admin Dashboard   │
                   └──────────────────────────────┬────────────────────────────┘
                                                  │ HTTPS / Wildcard SSL
-                  ┌──────────────────────────────▼────────────────────────────┐
+                  ┌──────────────────────────────▼────────────────────────────┘
                   │              NPU Edge Gateway (iotes-nginx Proxy)         │
                   │   • Port 80/443 Redirect      • Certs Auto-Load (wildcard)│
                   └──────────────────────────────┬────────────────────────────┘
                                                  │ proxy_pass (production-network)
-                  ┌──────────────────────────────▼────────────────────────────┐
+                  ┌──────────────────────────────▼────────────────────────────┘
                   │               Next.js Application (Docker Container)      │
                   │   • nextgen-website-prod      • Next.js 16 Standalone     │
                   │   • Security Headers (App)    • Session Timeout (8 Hours) │
                   └──────────────────────────────┬────────────────────────────┘
                                                  │ Prisma ORM (Driver Adapter)
-                  ┌──────────────────────────────▼────────────────────────────┐
+                  ┌──────────────────────────────▼────────────────────────────┘
                   │                 PostgreSQL Database (iotes-db)             │
                   │   • AES-256-GCM Encryption    • PDPA Consent Versioning   │
                   └───────────────────────────────────────────────────────────┘
@@ -53,7 +53,7 @@
 
 ---
 
-## 🛠️ Tech Stack & Lab Standards
+## Tech Stack & Lab Standards
 
 | Layer                  | Technology                      | Key Benefits & Standards                                  |
 | :--------------------- | :------------------------------ | :-------------------------------------------------------- |
@@ -68,15 +68,15 @@
 
 ---
 
-## 💎 Features (ฟีเจอร์เด่นระดับโปรดักชัน)
+## System Features
 
-### 🌾 ระบบสมัครอัจฉริยะ (Applicant Journey)
+### ระบบสมัครอัจฉริยะ (Applicant Journey)
 
 - **4-Step Smart Form Progress:** การเผยแพร่แบบฟอร์มทีละขั้นตอนพร้อมการตรวจสอบความถูกต้องการบันทึกสถานะชั่วคราว (`sessionStorage`) ป้องกันข้อมูลหาย
 - **PDPA Scroll-Lock Verification:** ผู้สมัครต้องเลื่อนอ่านเงื่อนไขความคุ้มครองข้อมูลส่วนบุคคลจนสิ้นสุดเพื่อปลดล็อกปุ่มยอมรับ เป็นข้อกำหนดทางกฎหมาย PDPA แท้จริง
 - **Masked National ID:** การแสดงผลและส่งเมลแจ้งเตือนที่ทำการบดบังหลักบัตรประชาชนบางส่วนเพื่อป้องกันการขโมยข้อมูลอัตลักษณ์ส่วนบุคคล
 
-### 📊 แดชบอร์ดผู้ดูแลและเจ้าหน้าที่ (Admin & Staff Ecosystem)
+### แดชบอร์ดผู้ดูแลและเจ้าหน้าที่ (Admin & Staff Ecosystem)
 
 - **Learning Analytics Dashboard:** สรุปจำนวนตัวเลขและสถิติผู้สมัคร (รอตรวจ/ผ่าน/ตก) พร้อมแผนภูมิวงกลมและแท่งวิเคราะห์ความสามารถทางดิจิทัลและประสบการณ์
 - **Course & Lesson Builder:** ระบบจัดการโมดูลการเรียนและบทเรียน (วีดีโอ/Markdown) แบบลากวางและเผยแพร่ (Publish/Draft)
@@ -85,7 +85,7 @@
 
 ---
 
-## 🔒 Security Hardening Standards
+## Security & Hardening Standards
 
 1. **AES-256-GCM Data Encryption:** ข้อมูลเลขบัตรประชาชน (National ID) จะถูกเข้ารหัสอย่างหนาแน่นที่ระดับแอปพลิเคชันก่อนบันทึกสู่ฐานข้อมูล และสามารถถอดรหัสมาอ่านได้เฉพาะผู้ใช้ที่มีสิทธิ์ตามระบบเท่านั้น
 2. **Session Lifetime Enforcement:** ปรับจูนระบบรักษาความปลอดภัยของ NextAuth Session ให้หมดอายุใน **8 ชั่วโมง** ( maxAge: `28,800` วินาที) สอดคล้องกับชั่วโมงการทำงานปกติ และบังคับให้ออกจากระบบอัตโนมัติเมื่อสิ้นสุดวันเพื่อความปลอดภัยสูงสุด
@@ -93,7 +93,7 @@
 
 ---
 
-## 🚀 Getting Started (วิธีการเตรียมการพัฒนา)
+## Getting Started
 
 ### ข้อกำหนดพื้นฐาน (Prerequisites)
 
@@ -101,7 +101,7 @@
 - `Docker & Docker Compose`
 - `PostgreSQL Database`
 
-### 🛠️ วิธีการติดตั้งแบบ Local Dev
+### วิธีการติดตั้งแบบ Local Dev
 
 ```bash
 # 1. โคลนคลังเก็บรหัส
@@ -127,7 +127,7 @@ npm run dev
 
 ---
 
-## 👨‍🔬 Research & Development Team
+## Research & Development Team
 
 **มหาวิทยาลัยนครพนม (Nakhon Phanom University - NPU)**
 **หน่วยวิจัย Internet of Things and Embedded Systems (IoTES) / วิทยาลัยการคอมพิวเตอร์ (SITC)**
@@ -140,6 +140,6 @@ npm run dev
 
 ---
 
-## ⚖️ License
+## License
 
 สงวนลิขสิทธิ์ทั้งหมด © 2026. ส่วนหนึ่งของโครงการวิจัยความเชี่ยวชาญเทคโนโลยีอัจฉริยะและการผลิตบัณฑิตพันธุ์ใหม่ มหาวิทยาลัยนครพนม
