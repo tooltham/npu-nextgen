@@ -45,3 +45,4 @@ next-env.d.ts
 # added ignore rules for private keys and SSL directory
 *.key
 npu-ssl/
+/public/uploads/

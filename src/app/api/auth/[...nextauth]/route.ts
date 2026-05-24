@@ -8,6 +8,11 @@ import { env } from "@/lib/env";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
+  session: {
+    strategy: "jwt",
+    maxAge: 8 * 60 * 60, // 8 hours (28,800 seconds)
+    updateAge: 1 * 60 * 60, // Update token maxage every 1 hour (3,600 seconds)
+  },
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
