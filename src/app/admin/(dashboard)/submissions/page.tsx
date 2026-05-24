@@ -23,7 +23,12 @@ export default async function AdminSubmissionsPage({
 }) {
   const session = await auth();
 
-  if (!session || (session.user as { role?: string }).role !== "ADMIN") {
+  if (!session || !session.user) {
+    redirect("/admin/login");
+  }
+
+  const userRole = (session.user as { role?: string }).role;
+  if (userRole !== "ADMIN" && userRole !== "STAFF") {
     redirect("/admin/login");
   }
 
