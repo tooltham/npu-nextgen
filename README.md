@@ -1,209 +1,145 @@
-# NPU NextGen
+# 🌾 NPU NextGen — Smart Farm Manager System
 
-[![Next.js 15](https://img.shields.io/badge/Next.js-15.0-black.svg)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC.svg)](https://tailwindcss.com/)
-[![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748.svg)](https://www.prisma.io/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791.svg)](https://www.postgresql.org/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com/)
-
-**Online Application System for Smart Integrated Farm Manager Program**
-
-A production-grade, secure application platform for the "Smart Integrated Farm Manager" Non-Degree Certificate program. Developed by Nakhon Phanom University (NPU) as part of the "New Breed Grad" initiative (โครงการผลิตบัณฑิตพันธุ์ใหม่), the system handles complex multi-step applications with legal PDPA compliance, real-time validation, and high-security data encryption.
-
-**Live:** [npu-nextgen.npu.ac.th](https://npu-nextgen.npu.ac.th) (Hypothetical)
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-16.2.6-black?style=for-the-badge&logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-19.2.4-61DAFB?style=for-the-badge&logo=react" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma" alt="Prisma" />
+  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Docker-Lightweight-2496ED?style=for-the-badge&logo=docker" alt="Docker" />
+  <img src="https://img.shields.io/badge/PDPA-Compliant-success?style=for-the-badge&logo=security" alt="PDPA" />
+</p>
 
 ---
 
-## Table of Contents
+## 🌟 Overview
 
-- [Overview](#overview)
-- [Architecture](#architecture)
-- [Tech Stack](#tech-stack)
-- [Features](#features)
-- [Security & Compliance](#security--compliance)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Deployment](#deployment)
-- [Research & Development Team](#research-team)
-- [License](#license)
+**ระบบสมัครและจัดการหลักสูตรฝึกอบรมระยะสั้นระดับโปรดักชัน (Production-Grade Short Course & LMS)**
+โครงการผลิตบัณฑิตพันธุ์ใหม่ **"นักจัดการฟาร์มเกษตรแบบผสมผสานอัจฉริยะ"** พัฒนาขึ้นโดย **มหาวิทยาลัยนครพนม (Nakhon Phanom University - NPU)** ร่วมกับหน่วยวิจัย **Internet of Things and Embedded Systems (IoTES) / SITC**
+
+ระบบนี้ออกแบบมาเพื่อรองรับกระบวนการลงทะเบียนที่มีความปลอดภัยสูงสุดตามกฎหมาย **PDPA** มีระบบกรอกข้อมูลอัจฉริยะ 4 ขั้นตอน (4-Step Smart Form), ระบบตรวจสอบสิทธิแบบ RBAC (Role-Based Access Control) สำหรับ Admin/Staff, แดชบอร์ดวิเคราะห์ข้อมูลผู้สมัคร (Learning Analytics) และระบบส่งออกรายงานใบสมัครพร้อมการพิมพ์ตัวอย่างเป็นเอกสาร PDF ในรูปแบบไร้รอยต่อ
+
+> [!NOTE]
+> **ระบบกำลังทำงานจริงที่:** [nextgen.npu.ac.th](https://nextgen.npu.ac.th) 🚀
 
 ---
 
-## Overview
+## 🏗️ System Architecture & Infrastructure
 
-NPU NextGen is designed to bridge the gap between traditional farming and modern technology. The system serves as the primary gateway for recruiting 80 smart innovators (2 batches) into an intensive 285-hour program focusing on AI, IoT, and Digital Commerce in agriculture.
-
-### Program Core Pillars
-
-1. **AI-Powered Farm Planning** — Using data for precision agriculture.
-2. **IoT Implementation** — Real-time control and environmental monitoring.
-3. **AI-Commerce** — Modern branding and sales powered by Generative AI.
-
----
-
-## Architecture
+ระบบได้รับการ Deploy อย่างเต็มรูปแบบภายใต้เครือข่ายของมหาวิทยาลัยนครพนม โดยนำเทคโนโลยีระดับสูงเข้ามาควบคุม Reverse Proxy และความปลอดภัยระดับไฟล์อย่างรัดกุม:
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                       Browser / Mobile                       │
-│   Landing Page  │  Application Form  │  Admin Dashboard      │
-└───────┬──────────────────┬───────────────────────┬───────────┘
-        │                  │                       │ HTTPS (HSTS)
-┌───────▼──────────────────▼───────────────────────▼────────────┐
-│                      Next.js App (Vercel/Docker)              │
-│  ┌─────────────────────────┐  ┌──────────────────────────┐    │
-│  │    App Router (Pages)   │  │   API Routes (/api/*)    │    │
-│  │  /          ← Landing   │  │   POST /api/applications │    │
-│  │  /apply     ← Form      │  │   GET  /api/admin/apps   │    │
-│  │  /apply/success         │  │   GET  /api/admin/export │    │
-│  │  /admin     ← Dashboard │  │   POST /api/auth/[...]   │    │
-│  └─────────────────────────┘  └─────────┬────────────────┘    │
-└─────────────────────────────────────────┼─────────────────────┘
-                                          │ Prisma Client
-┌─────────────────────────────────────────▼──────────────────────┐
-│                    PostgreSQL (Supabase)                       │
-│   applications  │  consents  │  admin_users  │  export_logs    │
-└────────────────────────────────────────────────────────────────┘
-                                          │
-              ┌───────────────────────────┴──────────────────────┐
-              │                Resend Email                      │
-              │ 1. Applicant Confirmation 2. Admin Notification  │
-              └──────────────────────────────────────────────────┘
+                  ┌───────────────────────────────────────────────────────────┐
+                  │                      Browser Client                       │
+                  │   Landing Page  │  Application Form  │  Admin Dashboard   │
+                  └──────────────────────────────┬────────────────────────────┘
+                                                 │ HTTPS / Wildcard SSL
+                  ┌──────────────────────────────▼────────────────────────────┐
+                  │              NPU Edge Gateway (iotes-nginx Proxy)         │
+                  │   • Port 80/443 Redirect      • Certs Auto-Load (wildcard)│
+                  └──────────────────────────────┬────────────────────────────┘
+                                                 │ proxy_pass (production-network)
+                  ┌──────────────────────────────▼────────────────────────────┐
+                  │               Next.js Application (Docker Container)      │
+                  │   • nextgen-website-prod      • Next.js 16 Standalone     │
+                  │   • Security Headers (App)    • Session Timeout (8 Hours) │
+                  └──────────────────────────────┬────────────────────────────┘
+                                                 │ Prisma ORM (Driver Adapter)
+                  ┌──────────────────────────────▼────────────────────────────┐
+                  │                 PostgreSQL Database (iotes-db)             │
+                  │   • AES-256-GCM Encryption    • PDPA Consent Versioning   │
+                  └───────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack & Lab Standards
 
-| Layer          | Technology                                    |
-| -------------- | --------------------------------------------- |
-| **Framework**  | Next.js 15 (App Router)                       |
-| **Language**   | TypeScript (Strict)                           |
-| **Styling**    | Tailwind CSS v4 + shadcn/ui                   |
-| **Database**   | PostgreSQL (Supabase Managed)                 |
-| **ORM**        | Prisma                                        |
-| **Auth**       | NextAuth.js v5 (Auth.js)                      |
-| **Email**      | Resend SDK + React Email                      |
-| **Security**   | AES-256-GCM Encryption, Upstash Rate Limiting |
-| **Validation** | Zod + React Hook Form                         |
-| **Container**  | Docker (Multi-stage alpine build)             |
+| Layer                  | Technology                      | Key Benefits & Standards                                  |
+| :--------------------- | :------------------------------ | :-------------------------------------------------------- |
+| **Frontend Framework** | `Next.js 16.2.6 (Turbopack)`    | App Router, SSR, Server Component, High-speed Compile     |
+| **UI & Styling**       | `React 19` + `Tailwind CSS v4`  | Modern Layouts, Responsive UI, sleek glassmorphism        |
+| **Database Engine**    | `PostgreSQL (Supabase Managed)` | Production-grade relational database, HASTS-ready         |
+| **ORM Framework**      | `Prisma ORM (v7.8.0)`           | Type-safe queries, driver adapter, seamless schema sync   |
+| **Authentication**     | `NextAuth.js v5 (beta-31)`      | Credentials & Google SSO providers, Role check callbacks  |
+| **Communication**      | `Resend SMTP` + `React Email`   | Rich transactional notification emails (Admin/Applicant)  |
+| **Security Layer**     | `AES-256-GCM` + `Upstash Redis` | Encryption-at-rest for National ID, API rate-limiting     |
+| **Containerization**   | `Docker (Multi-stage Alpine)`   | Multi-stage build, minimal attack surface (SSD-optimized) |
 
 ---
 
-## Features
+## 💎 Features (ฟีเจอร์เด่นระดับโปรดักชัน)
 
-### Applicant Flow
+### 🌾 ระบบสมัครอัจฉริยะ (Applicant Journey)
 
-- **High-Fidelity Landing Page** — Course details, eligibility, outcomes, and FAQ.
-- **4-Step Smart Form** — Progressive disclosure with validation at every step.
-- **PDPA Scroll Lock** — Legally binding consent mechanism with scroll detection.
-- **State Persistence** — `sessionStorage` integration to prevent data loss on refresh.
-- **Auto-Email System** — Immediate receipt confirmation with masked ID for privacy.
+- **4-Step Smart Form Progress:** การเผยแพร่แบบฟอร์มทีละขั้นตอนพร้อมการตรวจสอบความถูกต้องการบันทึกสถานะชั่วคราว (`sessionStorage`) ป้องกันข้อมูลหาย
+- **PDPA Scroll-Lock Verification:** ผู้สมัครต้องเลื่อนอ่านเงื่อนไขความคุ้มครองข้อมูลส่วนบุคคลจนสิ้นสุดเพื่อปลดล็อกปุ่มยอมรับ เป็นข้อกำหนดทางกฎหมาย PDPA แท้จริง
+- **Masked National ID:** การแสดงผลและส่งเมลแจ้งเตือนที่ทำการบดบังหลักบัตรประชาชนบางส่วนเพื่อป้องกันการขโมยข้อมูลอัตลักษณ์ส่วนบุคคล
 
-### Admin Dashboard
+### 📊 แดชบอร์ดผู้ดูแลและเจ้าหน้าที่ (Admin & Staff Ecosystem)
 
-- **KPI Monitoring** — Real-time stats on applicant counts and status distribution.
-- **Application Management** — Paginated table with status controls (Review/Accept/Reject).
-- **Secure Data Export** — Excel-compatible CSV exports with UTF-8 BOM.
-- **Audit Logs** — Logging for data access and exports.
+- **Learning Analytics Dashboard:** สรุปจำนวนตัวเลขและสถิติผู้สมัคร (รอตรวจ/ผ่าน/ตก) พร้อมแผนภูมิวงกลมและแท่งวิเคราะห์ความสามารถทางดิจิทัลและประสบการณ์
+- **Course & Lesson Builder:** ระบบจัดการโมดูลการเรียนและบทเรียน (วีดีโอ/Markdown) แบบลากวางและเผยแพร่ (Publish/Draft)
+- **Grading & Submissions:** เจ้าหน้าที่ฝ่ายตรวจการบ้านสามารถตรวจผลงานที่นักศึกษาส่งเข้ามา ให้คะแนน และให้ข้อแนะนำรายข้อได้อย่างลื่นไหล
+- **PDF & CSV Secure Export:** ส่งออกข้อมูลผู้สมัครในโหมด CSV (UTF-8 BOM ป้องกันฟอนต์เพี้ยน) และปุ่มดูตัวอย่างเอกสารก่อนส่งออกเป็น PDF Preview (SAMEORIGIN Protected) แบบทันที
 
 ---
 
-## Security & Compliance
+## 🔒 Security Hardening Standards
 
-- **Zero-Secret Leak** — Strict environment validation and git-ignored secrets.
-- **Data Encryption** — Thai National IDs are encrypted at rest using AES-256-GCM.
-- **PDPA Ready** — Consent versioning and text snapshots stored for every applicant.
-- **Rate Limiting** — Sliding window rate limit (5 req/hour/IP) via Upstash Redis.
-- **Hardened Headers** — HSTS, X-Frame-Options, and Content Security Policy enabled.
+1. **AES-256-GCM Data Encryption:** ข้อมูลเลขบัตรประชาชน (National ID) จะถูกเข้ารหัสอย่างหนาแน่นที่ระดับแอปพลิเคชันก่อนบันทึกสู่ฐานข้อมูล และสามารถถอดรหัสมาอ่านได้เฉพาะผู้ใช้ที่มีสิทธิ์ตามระบบเท่านั้น
+2. **Session Lifetime Enforcement:** ปรับจูนระบบรักษาความปลอดภัยของ NextAuth Session ให้หมดอายุใน **8 ชั่วโมง** ( maxAge: `28,800` วินาที) สอดคล้องกับชั่วโมงการทำงานปกติ และบังคับให้ออกจากระบบอัตโนมัติเมื่อสิ้นสุดวันเพื่อความปลอดภัยสูงสุด
+3. **Hardened Headers:** เสริมเกราะป้องกันความปลอดภัยของ Edge Gateway ด้วย Security Headers เต็มรูปแบบ (HSTS, nosniff, Referrer-Policy, Strict CSP)
 
 ---
 
-## Project Structure
+## 🚀 Getting Started (วิธีการเตรียมการพัฒนา)
 
-```
-npu-nextgen/
-├── app/                      # Next.js App Router
-│   ├── (public)/             # Landing & Application Form
-│   ├── (admin)/              # Protected Admin Dashboard
-│   └── api/                  # Secure API Endpoints
-├── components/               # React Components
-│   ├── landing/              # Hero, FAQ, Course Details
-│   ├── apply/                # Multi-step Form Steps
-│   └── admin/                # Stats, Tables, Export Buttons
-├── lib/                      # Shared Utilities
-│   ├── encrypt.ts            # AES-256-GCM Logic
-│   ├── email.ts              # Resend Integration
-│   └── ratelimit.ts          # Upstash Config
-├── prisma/                   # Database Schema & Migrations
-├── emails/                   # React Email Templates
-└── schemas/                  # Zod Validation Schemas
-```
+### ข้อกำหนดพื้นฐาน (Prerequisites)
 
----
+- `Node.js 22+`
+- `Docker & Docker Compose`
+- `PostgreSQL Database`
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 22+
-- Docker & Docker Compose
-- PostgreSQL (Local or Supabase)
-
-### Setup
+### 🛠️ วิธีการติดตั้งแบบ Local Dev
 
 ```bash
-# Clone the repo
+# 1. โคลนคลังเก็บรหัส
 git clone https://github.com/tooltham/npu-nextgen.git
 cd npu-nextgen
 
-# Install dependencies
+# 2. ติดตั้งแพ็กเกจระบบ
 npm install
 
-# Setup environment
+# 3. เตรียมสิ่งแวดล้อม
 cp .env.example .env
-# Edit .env with your keys
+# เปิดและกำหนดค่าในไฟล์ .env ให้ครบถ้วน
 
-# Initialize database
-npx prisma generate
+# 4. สตาร์ท PostgreSQL Database (ผ่าน Docker Local)
+docker compose -f docker-compose.dev.yml up -d
+
+# 5. ซิงค์ตารางข้อมูลและสร้าง Client
 npx prisma db push
 
-# Start development
+# 6. สตาร์ทโปรแกรมโหมดพัฒนา
 npm run dev
 ```
 
 ---
 
-## Deployment
+## 👨‍🔬 Research & Development Team
 
-### Docker Production
+**มหาวิทยาลัยนครพนม (Nakhon Phanom University - NPU)**
+**หน่วยวิจัย Internet of Things and Embedded Systems (IoTES) / วิทยาลัยการคอมพิวเตอร์ (SITC)**
+📧 _อีเมลติดต่อ:_ apirak@npu.ac.th
 
-The system is Pulsar-compliant and ready for containerized deployment.
-
-```bash
-docker-compose up -d --build
-```
-
-### Vercel
-
-Connect your GitHub repository to Vercel. Ensure all environment variables from `.env.example` are configured in the Vercel dashboard.
+| ชื่อ-นามสกุล             | บทบาทหน้าที่ในโครงการ                                                |
+| :----------------------- | :------------------------------------------------------------------- |
+| **ดร. อภิรักษ์ ทูลธรรม** | หัวหน้าโครงการวิจัยวิศวกรรมข้อมูล / สถาปนิกโครงสร้างระบบ (Architect) |
+| **มินะ (Mina-Chan)**     | ปัญญาประดิษฐ์นักพัฒนาหลักและประสานงานระบบ (Lead Dev Agent)           |
 
 ---
 
-## Research & Development Team
+## ⚖️ License
 
-**Institution:** Nakhon Phanom University
-**Research Unit:** Internet of Things and Embedded Systems (IoTES) / SITC
-**Contact:** apirak@npu.ac.th
-
-| Name                    | Role                          |
-| ----------------------- | ----------------------------- |
-| **Dr. Apirak Tooltham** | Project Lead / Architect      |
-| **Mina-Chan**           | Lead Orchestrator & Developer |
-
----
-
-## License
-
-All rights reserved. Part of the New Breed Grad Research Initiative at Nakhon Phanom University.
+สงวนลิขสิทธิ์ทั้งหมด © 2026. ส่วนหนึ่งของโครงการวิจัยความเชี่ยวชาญเทคโนโลยีอัจฉริยะและการผลิตบัณฑิตพันธุ์ใหม่ มหาวิทยาลัยนครพนม
