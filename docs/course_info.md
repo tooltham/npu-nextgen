@@ -36,5 +36,4 @@
 
 - **Lead Researcher:** Dr. Apirak Tooltham
 - **Email:** apirak@npu.ac.th
-- **Phone:** 062-441-9599
 - **Website:** https://iotes-sitc.npu.ac.th/
