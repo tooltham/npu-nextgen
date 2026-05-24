@@ -37,6 +37,17 @@ This project follows the **Puy-Lab Global AI Framework** synthesized with the **
 2. **Implement:** Follow the surgical folder structure.
 3. **Verify:** Run `npx vitest run` and `pre-commit run`.
 
+## 6. Role & Access Control (RBAC)
+
+- **ADMIN Role:** Full access to all dashboard routes (`/admin/*`) and API routes.
+- **STAFF Role:** Restricted access. Can only access and manage:
+  - Users (`/admin/users`, `/api/admin/users/*`)
+  - Submissions (`/admin/submissions`, `/api/admin/submissions/*`)
+  - Courses (`/admin/courses`, `/api/admin/courses/*`)
+  - File Uploads (`/api/admin/upload`)
+- **Routing:** STAFF login redirects to `/admin/users`. Unauthorized admin routes redirect STAFF to `/admin/users` or `/admin/login` depending on the guard.
+- **SSO Auto-Provisioning:** Any login via Google SSO with an `@npu.ac.th` email domain automatically provisions a `STAFF` account.
+
 ---
 
 _For machine-specific setup, refer to the private project memory._
