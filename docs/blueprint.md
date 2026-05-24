@@ -3,8 +3,6 @@
 **Version:** 1.1
 **Date:** 2026-05-17
 **Owner:** ดร.อภิรักษ์ ทูลธรรม — IoTES/SITC มหาวิทยาลัยนครพนม
-**Contact:** apirak@npu.ac.th | 062-441-9599
-**Course Site:** https://iotes-sitc.npu.ac.th/
 
 ---
 
@@ -54,30 +52,30 @@
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                       Browser / Mobile                        │
-│   Landing Page  │  Application Form  │  Admin Dashboard       │
-└───────┬──────────────────┬───────────────────────┬────────────┘
+│                       Browser / Mobile                       │
+│   Landing Page  │  Application Form  │  Admin Dashboard      │
+└───────┬──────────────────┬───────────────────────┬───────────┘
         │                  │                       │ HTTPS
 ┌───────▼──────────────────▼───────────────────────▼────────────┐
-│                      Next.js App (Vercel)                      │
+│                      Next.js App (Vercel)                     │
 │  ┌─────────────────────────┐  ┌──────────────────────────┐    │
 │  │    App Router (Pages)   │  │   API Routes (/api/*)    │    │
-│  │  /          ← Landing   │  │   POST /api/applications  │    │
-│  │  /apply     ← Form      │  │   GET  /api/admin/apps    │    │
-│  │  /apply/success         │  │   GET  /api/admin/export  │    │
-│  │  /admin     ← Dashboard │  │   POST /api/auth/[...]    │    │
-│  │  /admin/login           │  └──────────┬───────────────┘    │
-│  └─────────────────────────┘             │                     │
-└─────────────────────────────────────────┼──────────────────────┘
+│  │  /          ← Landing   │  │   POST /api/applications │    │
+│  │  /apply     ← Form      │  │   GET  /api/admin/apps   │    │
+│  │  /apply/success         │  │   GET  /api/admin/export │    │
+│  │  /admin     ← Dashboard │  │   POST /api/auth/[...]   │    │
+│  │  /admin/login           │  └─────────┬────────────────┘    │
+│  └─────────────────────────┘            │                     │
+└─────────────────────────────────────────┼─────────────────────┘
                                           │ Prisma Client
 ┌─────────────────────────────────────────▼──────────────────────┐
-│                    PostgreSQL (Supabase)                        │
+│                    PostgreSQL (Supabase)                       │
 │   applications  │  consents  │  admin_users  │  export_logs    │
-└─────────────────────────────────────────────────────────────────┘
+└────────────────────────────────────────────────────────────────┘
                                           │
-              ┌───────────────────────────┴────────────────────┐
-              │                Resend Email                     │
-              │  ① Applicant confirmation  ② Admin notification │
+              ┌───────────────────────────┴─────────────────────┐
+              │                 Resend Email                    │
+              │ 1. Applicant confirmation 2. Admin notification │
               └─────────────────────────────────────────────────┘
 ```
 
