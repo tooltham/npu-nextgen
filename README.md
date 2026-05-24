@@ -8,6 +8,7 @@
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql" alt="PostgreSQL" />
   <img src="https://img.shields.io/badge/Docker-Lightweight-2496ED?style=for-the-badge&logo=docker" alt="Docker" />
   <img src="https://img.shields.io/badge/PDPA-Compliant-success?style=for-the-badge&logo=security" alt="PDPA" />
+  <img src="https://img.shields.io/badge/License-NPU_Custom-blue?style=for-the-badge" alt="License" />
 </p>
 
 ---
@@ -148,4 +149,13 @@ npm run dev
 
 ## License
 
-สงวนลิขสิทธิ์ทั้งหมด © 2026 ส่วนหนึ่งของโครงการวิจัยความเชี่ยวชาญเทคโนโลยีอัจฉริยะและการผลิตบัณฑิตพันธุ์ใหม่ มหาวิทยาลัยนครพนม
+**Copyright © 2026 หน่วยวิจัยอินเทอร์เน็ตของสรรพสิ่งและระบบสมองกลฝังตัว (Internet of Things and Embedded Systems Research Unit)**
+**วิทยาลัยเทคโนโลยีอุตสาหกรรมศรีสงคราม มหาวิทยาลัยนครพนม (Nakhon Phanom University)**
+
+ซอร์สโค้ดและระบบนี้ (NPU NextGen - Smart Integrated Farm Manager Application System) เป็นผลงานและทรัพย์สินทางปัญญาของ "หน่วยวิจัยอินเทอร์เน็ตของสรรพสิ่งและระบบสมองกลฝังตัว"
+
+- อนุญาตให้เข้าถึงและศึกษาเพื่อเป็นกรณีศึกษา (Educational & Blueprint Purposes)
+- **ไม่อนุญาตให้นำไปใช้เพื่อแสวงหาผลกำไร หรือใช้ในเชิงพาณิชย์ (Non-Commercial Use Only) โดยเด็ดขาด** เว้นแต่จะได้รับอนุญาตเป็นลายลักษณ์อักษร
+- โปรดอ่านรายละเอียดเพิ่มเติมในไฟล์ `LICENSE`
+
+> **Security Warning & Disclaimer:** ซอฟต์แวร์นี้จัดทำขึ้นเพื่อการวิจัยและการศึกษา ทางผู้จัดทำไม่มีการรับประกันใดๆ หากนำไปใช้ต่อ ผู้ใช้งานต้องรับผิดชอบเรื่องความปลอดภัย (Security, PDPA) ด้วยตนเอง และต้องทำการกำหนดค่ารหัสผ่าน เช่น `ENCRYPTION_KEY` และ `NEXTAUTH_SECRET` ใหม่ทั้งหมด ห้ามคัดลอกไฟล์ที่เป็นความลับของระบบไปใช้เด็ดขาด
