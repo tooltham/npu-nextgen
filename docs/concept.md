@@ -13,7 +13,6 @@
 | Organizer               | Nakhon Phanom University (NPU)                                                       |
 | Partners                | สำนักงานเกษตรจังหวัดนครพนม, สำนักงานพาณิชย์จังหวัดนครพนม, Young Smart Farmer Network |
 | Contact person          | ดร.อภิรักษ์ ทูลธรรม                                                                  |
-| Phone                   | 062-441-9599                                                                         |
 | Email                   | apirak@npu.ac.th                                                                     |
 | Website                 | https://iotes-sitc.npu.ac.th/                                                        |
 | Eligibility requirement | Must have mixed farming experience (crops and/or livestock)                          |
