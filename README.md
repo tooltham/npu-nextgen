@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/Next.js-16.2.6-black?style=for-the-badge&logo=next.js" alt="Next.js" />
   <img src="https://img.shields.io/badge/React-19.2.4-61DAFB?style=for-the-badge&logo=react" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma" alt="Prisma" />
+  <img src="https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma" alt="Prisma" /><br />
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql" alt="PostgreSQL" />
   <img src="https://img.shields.io/badge/Docker-Lightweight-2496ED?style=for-the-badge&logo=docker" alt="Docker" />
   <img src="https://img.shields.io/badge/PDPA-Compliant-success?style=for-the-badge&logo=security" alt="PDPA" />
@@ -20,7 +20,7 @@
 ระบบนี้ออกแบบมาเพื่อรองรับกระบวนการลงทะเบียนที่มีความปลอดภัยสูงสุดตามกฎหมาย **PDPA** มีระบบกรอกข้อมูลอัจฉริยะ 4 ขั้นตอน (4-Step Smart Form), ระบบตรวจสอบสิทธิแบบ RBAC (Role-Based Access Control) สำหรับ Admin/Staff, แดชบอร์ดวิเคราะห์ข้อมูลผู้สมัคร (Learning Analytics) และระบบส่งออกรายงานใบสมัครพร้อมการพิมพ์ตัวอย่างเป็นเอกสาร PDF ในรูปแบบไร้รอยต่อ
 
 > [!NOTE]
-> **ระบบกำลังทำงานจริงที่:** [nextgen.npu.ac.th](https://nextgen.npu.ac.th) 🚀
+> **ระบบกำลังทำงานจริงที่:** [nextgen.npu.ac.th](https://nextgen.npu.ac.th) 
 
 ---
 
@@ -46,7 +46,7 @@
                   └──────────────────────────────┬────────────────────────────┘
                                                  │ Prisma ORM (Driver Adapter)
                   ┌──────────────────────────────▼────────────────────────────┘
-                  │                 PostgreSQL Database (iotes-db)             │
+                  │                 PostgreSQL Database (iotes-db)            │
                   │   • AES-256-GCM Encryption    • PDPA Consent Versioning   │
                   └───────────────────────────────────────────────────────────┘
 ```
@@ -130,16 +130,16 @@ npm run dev
 ## Research & Development Team
 
 **มหาวิทยาลัยนครพนม (Nakhon Phanom University - NPU)**
-**หน่วยวิจัย Internet of Things and Embedded Systems (IoTES) / วิทยาลัยการคอมพิวเตอร์ (SITC)**
-📧 _อีเมลติดต่อ:_ apirak@npu.ac.th
+**หน่วยวิจัย Internet of Things and Embedded Systems (IoTES) / วิทยาลัยเทคโนโลยีอุตสาหกรรมศรีสงคราม (SITC)**
+ อีเมลติดต่อ: apirak@npu.ac.th
 
 | ชื่อ-นามสกุล             | บทบาทหน้าที่ในโครงการ                                                |
 | :----------------------- | :------------------------------------------------------------------- |
-| **ดร. อภิรักษ์ ทูลธรรม** | หัวหน้าโครงการวิจัยวิศวกรรมข้อมูล / สถาปนิกโครงสร้างระบบ (Architect) |
-| **มินะ (Mina-Chan)**     | ปัญญาประดิษฐ์นักพัฒนาหลักและประสานงานระบบ (Lead Dev Agent)           |
+| **ดร. อภิรักษ์ ทูลธรรม** | หัวหน้าโครงการวิจัย / สถาปนิกโครงสร้างระบบ  |
+| **มินะ (Mina-Chan)**     | นักพัฒนาหลักและประสานงานระบบ (Lead Dev Agent)           |
 
 ---
 
 ## License
 
-สงวนลิขสิทธิ์ทั้งหมด © 2026. ส่วนหนึ่งของโครงการวิจัยความเชี่ยวชาญเทคโนโลยีอัจฉริยะและการผลิตบัณฑิตพันธุ์ใหม่ มหาวิทยาลัยนครพนม
+สงวนลิขสิทธิ์ทั้งหมด © 2026 ส่วนหนึ่งของโครงการวิจัยความเชี่ยวชาญเทคโนโลยีอัจฉริยะและการผลิตบัณฑิตพันธุ์ใหม่ มหาวิทยาลัยนครพนม
