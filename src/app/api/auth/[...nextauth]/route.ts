@@ -34,7 +34,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         ) {
           return {
             id: "dev-admin-id",
-            name: "Dr. Puy (Dev)",
+            name: "Dr. Pui (Dev)",
             email: env.ADMIN_NOTIFY_EMAIL,
             role: "ADMIN",
           };
