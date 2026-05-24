@@ -10,10 +10,12 @@
    - ดูแลภาพรวมทั้งหมด, จัดการบัญชี Staff/Admin
    - จัดการโครงสร้างเนื้อหา (Modules, Lessons, Quizzes)
    - อนุมัติผู้สมัคร (Application -> Student User)
-2. **STAFF (`/staff/*`)**
-   - ตรวจการบ้าน (Submissions), ประเมินผล
-   - ติดตามความคืบหน้าของผู้เรียนแบบรายบุคคล
-   - ไม่สามารถแก้ไขเนื้อหาหลักสูตรหรือจัดการระบบผู้ใช้ได้
+2. **STAFF (Restricted `/admin/*`)**
+   - เข้าใช้งานผ่านหน้า Admin Dashboard เหมือน ADMIN แต่เห็นเมนูจำกัด
+   - จัดการข้อมูลผู้เรียน (`/admin/users`)
+   - ตรวจการบ้านและประเมินผล (`/admin/submissions`)
+   - จัดการเนื้อหาหลักสูตร (`/admin/courses`)
+   - ไม่มีสิทธิ์เข้าถึงเมนูแดชบอร์ดหลัก (Analytics) หรือการรับสมัคร (Applications)
 3. **STUDENT (`/portal/*`)**
    - เข้าถึงบทเรียนวิดีโอ (YouTube) และดาวน์โหลดเอกสารจาก Production Server
    - ทำแบบทดสอบและดูรายงานผลการเรียน (Academic Report)
@@ -195,7 +197,7 @@ model Certificate {
 
 ### Phase 4: Grading & E-Certificate Pipeline (Effort: 2 Days)
 
-1. **Staff Grading:** สร้างหน้า `/staff/grading` ให้ Staff ตรวจงาน
+1. **Staff Grading:** สร้างหน้า `/admin/submissions` ให้ Staff เข้าไปตรวจงานผ่าน Dashboard กลาง
 2. **Notification Webhooks:** ทริกเกอร์ฟังก์ชันส่งอีเมล (Resend) แจ้งเตือนผู้เรียนทันทีที่ Staff กดยืนยันผลตรวจ
 3. **E-Certificate Generator:** สร้าง Service อัตโนมัติ (เช่น ใช้ `@react-pdf/renderer` ทางฝั่ง Server) เพื่อ Generate ไฟล์ PDF ทันทีที่ผู้เรียนเก็บคะแนนและสถานะครบทั้ง 3 โมดูล พร้อมบันทึกพาร์ทลงฐานข้อมูล
 
