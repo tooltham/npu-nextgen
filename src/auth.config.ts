@@ -8,7 +8,6 @@ export const authConfig = {
       const userRole = (auth?.user as { role?: string })?.role;
 
       const isAdminRoute = nextUrl.pathname.startsWith("/admin");
-      const isStaffRoute = nextUrl.pathname.startsWith("/staff");
       const isPortalRoute = nextUrl.pathname.startsWith("/portal");
 
       // Handle redirect if already logged in on login page
@@ -18,7 +17,7 @@ export const authConfig = {
             return Response.redirect(new URL("/admin", nextUrl));
           }
           if (userRole === "STAFF") {
-            return Response.redirect(new URL("/staff/grading", nextUrl));
+            return Response.redirect(new URL("/admin/users", nextUrl));
           }
           if (userRole === "STUDENT") {
             return Response.redirect(new URL("/portal", nextUrl));
@@ -29,11 +28,23 @@ export const authConfig = {
 
       // Role check protection
       if (isAdminRoute) {
-        return isLoggedIn && userRole === "ADMIN";
-      }
+        if (userRole === "STAFF") {
+          const allowedPaths = [
+            "/admin/users",
+            "/admin/submissions",
+            "/admin/courses",
+          ];
+          const isAllowed = allowedPaths.some((p) =>
+            nextUrl.pathname.startsWith(p),
+          );
 
-      if (isStaffRoute) {
-        return isLoggedIn && (userRole === "STAFF" || userRole === "ADMIN");
+          if (nextUrl.pathname === "/admin") {
+            return Response.redirect(new URL("/admin/users", nextUrl));
+          }
+
+          return isLoggedIn && isAllowed;
+        }
+        return isLoggedIn && userRole === "ADMIN";
       }
 
       if (isPortalRoute) {

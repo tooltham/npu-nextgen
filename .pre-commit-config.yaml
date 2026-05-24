@@ -30,7 +30,15 @@ repos:
     rev: 1.9.4
     hooks:
       - id: bandit
-        args: ["--skip", "B101,B310,B311,B110,B404,B603", "--severity-level", "medium", "--exclude", "./scripts"]
+        args:
+          [
+            "--skip",
+            "B101,B310,B311,B110,B404,B603",
+            "--severity-level",
+            "medium",
+            "--exclude",
+            "./scripts",
+          ]
         types: [python]
 
   # ── C++ · naka-aqi (auto-skip if no .cpp/.h files) ────────────────

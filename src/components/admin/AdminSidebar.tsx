@@ -29,7 +29,11 @@ const navLinks = [
   { name: "จัดการหลักสูตร", href: "/admin/courses", icon: BookOpen },
 ];
 
-export default function AdminSidebar() {
+export default function AdminSidebar({
+  userRole = "ADMIN",
+}: {
+  userRole?: string;
+}) {
   const pathname = usePathname();
 
   return (
@@ -48,24 +52,35 @@ export default function AdminSidebar() {
 
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto py-6 px-4 space-y-1.5">
-        {navLinks.map((link) => {
-          const isActive = pathname === link.href;
-          const Icon = link.icon;
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                isActive
-                  ? "bg-[#1B5E20] text-white shadow-md"
-                  : "text-zinc-400 hover:bg-white/10 hover:text-white"
-              }`}
-            >
-              <Icon className="w-5 h-5 shrink-0" />
-              <span className="truncate">{link.name}</span>
-            </Link>
-          );
-        })}
+        {navLinks
+          .filter((link) => {
+            if (userRole === "STAFF") {
+              return [
+                "/admin/users",
+                "/admin/submissions",
+                "/admin/courses",
+              ].includes(link.href);
+            }
+            return true;
+          })
+          .map((link) => {
+            const isActive = pathname === link.href;
+            const Icon = link.icon;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                  isActive
+                    ? "bg-[#1B5E20] text-white shadow-md"
+                    : "text-zinc-400 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <Icon className="w-5 h-5 shrink-0" />
+                <span className="truncate">{link.name}</span>
+              </Link>
+            );
+          })}
       </div>
     </aside>
   );

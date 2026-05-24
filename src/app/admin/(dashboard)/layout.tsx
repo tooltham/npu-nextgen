@@ -11,7 +11,8 @@ export default async function AdminDashboardLayout({
 }) {
   const session = await auth();
 
-  if (!session || (session.user as { role?: string }).role !== "ADMIN") {
+  const userRole = (session.user as { role?: string }).role;
+  if (!session || (userRole !== "ADMIN" && userRole !== "STAFF")) {
     redirect("/admin/login");
   }
 
@@ -20,7 +21,7 @@ export default async function AdminDashboardLayout({
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-noto-thai flex">
       {/* Sidebar (Desktop) */}
-      <AdminSidebar />
+      <AdminSidebar userRole={userRole} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">

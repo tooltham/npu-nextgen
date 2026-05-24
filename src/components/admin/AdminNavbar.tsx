@@ -60,6 +60,16 @@ export default function AdminNavbar({ user }: { user: any }) {
     { name: "จัดการหลักสูตร", href: "/admin/courses", icon: BookOpen },
   ];
 
+  const userRole = user?.role;
+  const filteredNavLinks = navLinks.filter((link) => {
+    if (userRole === "STAFF") {
+      return ["/admin/users", "/admin/submissions", "/admin/courses"].includes(
+        link.href,
+      );
+    }
+    return true;
+  });
+
   return (
     <>
       <nav className="sticky top-0 z-40 w-full bg-white/70 backdrop-blur-xl border-b border-zinc-200/50 shadow-sm transition-all font-noto-thai">
@@ -115,7 +125,7 @@ export default function AdminNavbar({ user }: { user: any }) {
 
                   {/* Mobile Links */}
                   <div className="md:hidden border-b border-zinc-100 mb-2 pb-2">
-                    {navLinks.map((link) => {
+                    {filteredNavLinks.map((link) => {
                       const isActive = pathname === link.href;
                       const Icon = link.icon;
                       return (
